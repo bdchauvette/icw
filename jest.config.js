@@ -23,4 +23,11 @@ const config = {
   }
 };
 
+if (process.env.CI) {
+  Object.assign(config, {
+    verbose: true,
+    collectCoverage: true
+  });
+}
+
 module.exports = config;
