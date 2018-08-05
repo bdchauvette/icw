@@ -1,0 +1,147 @@
+{
+  "root": true,
+
+  "plugins": [
+    "filenames",
+    "import",
+    "jest",
+    "node",
+    "prefer-let",
+    "typescript"
+  ],
+
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+
+  "parser": "typescript-eslint-parser",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+
+  "settings": {
+    "import/parsers": {
+      "typescript-eslint-parser": [".ts"]
+    }
+  },
+
+  "env": {
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+
+  "rules": {
+    // Typescript compat
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "no-use-before-define": "off",
+
+    // Possible errors
+    "no-inner-declarations": "off",
+    "no-prototype-builtins": "error",
+    "no-template-curly-in-string": "error",
+
+    // Best practices
+    "eqeqeq": ["error", "always", { "null": "never" }],
+    "max-classes-per-file": ["error", 1],
+    "no-caller": "error",
+    "no-duplicate-imports": "error",
+    "no-eval": "error",
+    "no-extend-native": "error",
+    "no-extra-bind": "error",
+    "no-implied-eval": "error",
+    "no-return-await": "error",
+    "no-throw-literal": "error",
+    "no-useless-call": "error",
+    "no-useless-concat": "error",
+
+    "no-void": "error",
+    "no-with": "error",
+    "prefer-promise-reject-errors": "error",
+    "radix": "error",
+    "yoda": "error",
+
+    // Strict mode (handled by TS)
+    "strict": "off",
+
+    // Node
+    "handle-callback-err": "error",
+    "no-buffer-constructor": "error",
+    "no-sync": "error",
+
+    // Stylistic issues
+    "camelcase": "error",
+    "max-statements-per-line": ["error", { "max": 1 }],
+    "no-lonely-if": "error",
+    "no-multi-assign": "error",
+    "no-negated-condition": "error",
+    "no-new-object": "error",
+    "no-plusplus": "error",
+    "no-unneeded-ternary": "error",
+    "operator-assignment": "error",
+    "prefer-object-spread": "error",
+    "quotes": "error",
+
+    // ES2015
+    "no-useless-computed-key": "error",
+    "no-useless-constructor": "error",
+    "prefer-destructuring": "error",
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+    "prefer-template": "error",
+    "symbol-description": "error",
+
+    // eslint-plugin-filenames
+    "filenames/match-regex": ["error", "^[a-zA-Z][a-zA-Z0-9]*(\\.spec)?"],
+
+    // eslint-plugin-import
+    "import/no-cycle": "error",
+    "import/no-mutable-exports": "error",
+    "import/first": "error",
+    "import/no-duplicates": "error",
+    "import/order": "error",
+    "import/newline-after-import": "error",
+    "import/no-default-export": "error",
+    "import/no-anonymous-default-export": "error",
+
+    // eslint-plugin-node
+    "node/no-deprecated-api": "error",
+    "node/no-unsupported-features/es-builtins": "error",
+
+    // eslint-plugin-prefer-let
+    "prefer-let/prefer-let": "error",
+
+    // eslint-plugin-typescript
+    "typescript/class-name-casing": "error",
+    "typescript/no-angle-bracket-type-assertion": "error",
+    "typescript/no-inferrable-types": "error",
+    "typescript/no-parameter-properties": "error",
+    "typescript/no-triple-slash-reference": "error",
+    "typescript/no-var-requires": "error"
+  },
+
+  "overrides": [
+    {
+      "files": ["test/**/*.ts"],
+      "rules": {
+        "jest/consistent-test-it": [
+          "error",
+          { "fn": "test", "withinDescribe": "test" }
+        ],
+        "jest/lowercase-name": "error",
+        "jest/no-hooks": "error",
+        "jest/no-disabled-tests": "error",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/no-jasmine-globals": "error",
+        "jest/no-jest-import": "error",
+        "jest/prefer-expect-assertions": "error",
+        "jest/prefer-to-be-null": "error",
+        "jest/prefer-to-be-undefined": "error",
+        "jest/prefer-to-have-length": "error",
+        "jest/prefer-inline-snapshots": "error",
+        "jest/valid-describe": "error",
+        "jest/valid-expect": "error"
+      }
+    }
+  ]
+}

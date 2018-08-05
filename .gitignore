@@ -1,0 +1,9 @@
+node_modules
+lib
+cjs
+
+coverage
+.stryker-tmp
+
+.vscode
+scratchpad*

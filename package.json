@@ -1,0 +1,80 @@
+{
+  "name": "@icw/icw",
+  "version": "0.1.0",
+  "description": "Stream-like async iterable utility library",
+  "license": "0BSD",
+  "author": "Benjamin Chauvette <bdchauvette@gmail.com>",
+  "homepage": "https://github.com/icwjs/icw#readme",
+  "repository": "github:icwjs/icw",
+  "bugs": "https://github.com/icwjs/icw/issues",
+  "keywords": [
+    "async",
+    "asynchronous",
+    "iteration",
+    "iterator",
+    "iterable",
+    "stream",
+    "reactive",
+    "frp"
+  ],
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "main": "cjs/index",
+  "module": "lib/index",
+  "optionalDependencies": {
+    "@types/node": "^10.5.4"
+  },
+  "devDependencies": {
+    "@babel/core": "7.0.0-beta.56",
+    "@commitlint/cli": "7.0.0",
+    "@commitlint/config-conventional": "7.0.1",
+    "@types/jest": "23.3.1",
+    "cross-env": "5.2.0",
+    "eslint": "5.3.0",
+    "eslint-config-prettier": "2.9.0",
+    "eslint-plugin-filenames": "1.3.2",
+    "eslint-plugin-import": "2.13.0",
+    "eslint-plugin-jest": "21.18.0",
+    "eslint-plugin-node": "7.0.1",
+    "eslint-plugin-prefer-let": "1.0.1",
+    "eslint-plugin-prettier": "2.6.2",
+    "eslint-plugin-typescript": "0.12.0",
+    "husky": "1.0.0-rc.13",
+    "jest": "23.4.2",
+    "npm-run-all": "4.1.3",
+    "postinstall-build": "5.0.1",
+    "prettier": "1.14.0",
+    "rimraf": "2.6.2",
+    "stryker": "0.26.1",
+    "stryker-api": "^0.18.0",
+    "stryker-jest-runner": "1.0.1",
+    "stryker-typescript": "^0.12.0",
+    "ts-jest": "23.1.2",
+    "typescript": "3.0.1",
+    "typescript-eslint-parser": "17.0.1"
+  },
+  "buildDependencies": [
+    "npm-run-all",
+    "rimraf",
+    "typescript"
+  ],
+  "scripts": {
+    "clean": "npm-run-all --parallel clean:*",
+    "clean:esm": "rimraf lib",
+    "clean:cjs": "rimraf cjs",
+    "clean:test": "rimraf coverage .stryker-tmp",
+    "build": "npm-run-all --parallel build:*",
+    "prebuild:esm": "npm run clean:esm",
+    "build:esm": "tsc -p tsconfig.prod.json --module es2015 --outDir lib",
+    "prebuild:cjs": "npm run clean:cjs",
+    "build:cjs": "tsc -p tsconfig.prod.json --module commonjs --outDir cjs",
+    "test": "cross-env JEST_ENV=node jest",
+    "test:dom": "cross-env JEST_ENV=jsdom jest",
+    "test:mutation": "stryker run",
+    "style:lint": "eslint \"src/**\"",
+    "style:prettier": "prettier \"./**/*.{md,json}\" --write",
+    "style:fix": "npm-run-all \"lint -- --fix\" prettier",
+    "postinstall": "postinstall-build lib cjs --script build"
+  }
+}

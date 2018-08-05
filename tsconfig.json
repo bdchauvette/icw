@@ -1,0 +1,26 @@
+{
+  "include": ["src/**/*", "test/**/*"],
+
+  "compilerOptions": {
+    "lib": ["dom", "esnext"],
+
+    // Emit
+    "target": "es5",
+    "downlevelIteration": true,
+    "alwaysStrict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": true,
+
+    // Module Resolution
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+
+    // Type checking
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}
