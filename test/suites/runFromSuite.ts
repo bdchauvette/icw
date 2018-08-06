@@ -1,6 +1,6 @@
 import { DelegatingAsyncIterable } from "../../src/__internal__/DelegatingAsyncIterable";
 
-export const fromSuite = (from: Function) => {
+export const runFromSuite = (from: Function) => {
   describe("async iterable input", () => {
     test("returns an async iterable", async () => {
       expect.assertions(1);
@@ -73,23 +73,21 @@ export const fromSuite = (from: Function) => {
       }
     });
   });
-  // eslint-disable-next-line jest/lowercase-name
-  describe("invalid input", () => {
-    test.each`
-      inputType                               | input
-      ${"Array-like with negative index"}     | ${{ length: -1 }}
-      ${"Array-like with too large an index"} | ${{ length: Number.MAX_SAFE_INTEGER + 1 }}
-      ${"non-iterable object"}                | ${{}}
-      ${"number"}                             | ${123}
-      ${"Symbol"}                             | ${Symbol.asyncIterator}
-      ${true}                                 | ${true}
-      ${false}                                | ${true}
-      ${null}                                 | ${null}
-      ${undefined}                            | ${undefined}
-    `("throws an error when input is $inputType", ({ input }) => {
-      expect.assertions(1);
-      // eslint-disable-next-line jest/prefer-inline-snapshots
-      expect(() => from(input)).toThrowErrorMatchingSnapshot();
-    });
+
+  test.each`
+    inputType                               | input
+    ${"Array-like with negative index"}     | ${{ length: -1 }}
+    ${"Array-like with too large an index"} | ${{ length: Number.MAX_SAFE_INTEGER + 1 }}
+    ${"non-iterable object"}                | ${{}}
+    ${"number"}                             | ${123}
+    ${"Symbol"}                             | ${Symbol.asyncIterator}
+    ${true}                                 | ${true}
+    ${false}                                | ${true}
+    ${null}                                 | ${null}
+    ${undefined}                            | ${undefined}
+  `("throws an error when input is $inputType", ({ input }) => {
+    expect.assertions(1);
+    // eslint-disable-next-line jest/prefer-inline-snapshots
+    expect(() => from(input)).toThrowErrorMatchingSnapshot();
   });
 };

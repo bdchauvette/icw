@@ -1,11 +1,6 @@
 import { DelegatingAsyncIterable } from "../src/__internal__/DelegatingAsyncIterable";
 import { from } from "../src/from";
-import { fromSuite } from "./suites/fromSuite";
-
-test("is a function", () => {
-  expect.assertions(1);
-  expect(from).toBeFunction();
-});
+import { runFromSuite } from "./suites/runFromSuite";
 
 test("returns original input if it's already an async iterable", async () => {
   expect.assertions(2);
@@ -14,4 +9,4 @@ test("returns original input if it's already an async iterable", async () => {
   expect(from(input)).toBe(input);
 });
 
-fromSuite(from);
+runFromSuite(from);

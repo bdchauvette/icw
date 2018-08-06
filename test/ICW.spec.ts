@@ -1,6 +1,6 @@
 import { ICW } from "../src/ICW";
-import { ofSuite } from "./suites/ofSuite";
-import { fromSuite } from "./suites/fromSuite";
+import { runOfSuite } from "./suites/runOfSuite";
+import { runFromSuite } from "./suites/runFromSuite";
 
 test("is a class", () => {
   expect.assertions(2);
@@ -13,26 +13,35 @@ test("is an async iterable", async () => {
   await expect(new ICW([])).toBeAsyncIterable();
 });
 
-interface StaticMethodTableColumns {
-  method: Exclude<keyof typeof ICW, "prototype">;
-  runSuite: Function;
-}
-
-describe.each`
-  method    | runSuite     | args
-  ${"from"} | ${fromSuite} | ${[]}
-  ${"of"}   | ${ofSuite}   | ${[]}
-`("$method", ({ method, runSuite }: StaticMethodTableColumns) => {
+describe("::from", () => {
   test("is a function", () => {
     expect.assertions(1);
-    expect(ICW[method]).toBeFunction();
+    expect(ICW.from).toBeFunction();
   });
 
   test("returns an ICW instance", () => {
     expect.assertions(1);
-    let returnValue = (ICW as any)[method]([]);
-    expect(returnValue).toBeInstanceOf(ICW);
+    expect(ICW.from([])).toBeInstanceOf(ICW);
   });
 
-  runSuite(ICW[method]);
+  runFromSuite(ICW.from);
+});
+
+describe("::of", () => {
+  test("is a function", () => {
+    expect.assertions(1);
+    expect(ICW.of).toBeFunction();
+  });
+
+  test("returns an ICW instance", () => {
+    expect.assertions(1);
+    expect(ICW.of()).toBeInstanceOf(ICW);
+  });
+
+  runOfSuite(ICW.of);
+});
+  });
+
+  ofSuite(ICW.of);
+});
 });

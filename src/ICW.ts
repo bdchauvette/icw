@@ -1,6 +1,6 @@
+import { DelegatingAsyncIterable } from "./__internal__/DelegatingAsyncIterable";
 import { of } from "./of";
 import { from, FromInput } from "./from";
-import { DelegatingAsyncIterable } from "./__internal__/DelegatingAsyncIterable";
 
 export class ICW<T> extends DelegatingAsyncIterable<T> {
   static from<U>(input: FromInput<U>): ICW<U> {

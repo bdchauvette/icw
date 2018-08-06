@@ -1,4 +1,4 @@
-export function ofSuite(of: Function) {
+export const runOfSuite = (of: Function) => {
   test("returns an async iterable", async () => {
     expect.assertions(1);
     await expect(of([1, 2, 3])).toBeAsyncIterable();
@@ -14,4 +14,4 @@ export function ofSuite(of: Function) {
       expect(result).toEqual(expectedResults.shift());
     }
   });
-}
+};
