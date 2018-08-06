@@ -1,0 +1,7 @@
+.vscode
+assets
+
+# Generated files
+coverage
+cjs
+lib

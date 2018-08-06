@@ -1,0 +1,4 @@
+{
+  "*.{js,ts}": "eslint",
+  "*.{json,md,yml}": "prettier"
+}

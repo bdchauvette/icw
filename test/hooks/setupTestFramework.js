@@ -19,7 +19,7 @@ async function toBeAsyncIterable(received /* , argument*/) {
   if (typeof iterator.next !== "function") {
     return {
       message: () =>
-        `expected \`Symbol.asyncIterator\` return an object with a \`next\` method`,
+        "expected `Symbol.asyncIterator` return an object with a `next` method",
       pass: false
     };
   }
@@ -28,7 +28,7 @@ async function toBeAsyncIterable(received /* , argument*/) {
 
   if (!(pendingResult instanceof Promise)) {
     return {
-      message: () => `expected \`next\` return a Promise`,
+      message: () => "expected `next` return a Promise",
       pass: false
     };
   }
