@@ -1,8 +1,8 @@
 import { of } from "./of";
 import { from, FromInput } from "./from";
-import { AsyncDelegator } from "./__internal__/AsyncDelegator";
+import { DelegatingAsyncIterable } from "./__internal__/DelegatingAsyncIterable";
 
-export class ICW<T> extends AsyncDelegator<T> {
+export class ICW<T> extends DelegatingAsyncIterable<T> {
   static from<U>(input: FromInput<U>): ICW<U> {
     return new ICW(from(input));
   }
