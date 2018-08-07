@@ -1,10 +1,13 @@
 import { ICW } from "../src/ICW";
+import { isEven } from "./helpers/isEven";
 import { noop } from "./helpers/noop";
 import { runOfSuite } from "./suites/runOfSuite";
 import { runFromSuite } from "./suites/runFromSuite";
 import { runConsumeSuite } from "./suites/runConsumeSuite";
+import { runFilterSuite } from "./suites/runFilterSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
+import { runRejectSuite } from "./suites/runRejectSuite";
 
 const bindMethod = <T>(method: keyof ICW<T>) => (
   iterable: Iterable<T> | AsyncIterable<T>,
@@ -67,6 +70,20 @@ describe("#consume", () => {
   runConsumeSuite(bindMethod("consume"));
 });
 
+describe("#filter", () => {
+  test("is a function", () => {
+    expect.assertions(1);
+    expect(ICW.prototype.reject).toBeFunction();
+  });
+
+  test("returns an ICW instance", () => {
+    expect.assertions(1);
+    expect(new ICW([]).filter(isEven)).toBeInstanceOf(ICW);
+  });
+
+  runFilterSuite(bindMethod("filter"));
+});
+
 describe("#map", () => {
   test("is a function", () => {
     expect.assertions(1);
@@ -79,6 +96,20 @@ describe("#map", () => {
   });
 
   runMapSuite(bindMethod("map"));
+});
+
+describe("#reject", () => {
+  test("is a function", () => {
+    expect.assertions(1);
+    expect(ICW.prototype.reject).toBeFunction();
+  });
+
+  test("returns an ICW instance", () => {
+    expect.assertions(1);
+    expect(new ICW([]).reject(isEven)).toBeInstanceOf(ICW);
+  });
+
+  runRejectSuite(bindMethod("reject"));
 });
 
 describe("#withIndex", () => {
