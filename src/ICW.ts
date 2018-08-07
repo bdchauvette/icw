@@ -1,9 +1,13 @@
 import { DelegatingAsyncIterable } from "./__internal__/DelegatingAsyncIterable";
-import { of } from "./of";
+
+// Static methods
 import { from, FromInput } from "./from";
-import { map } from "./map";
+import { of } from "./of";
+
+// Prototype methods
 import { consume } from "./consume";
 import { filter, FilterCallback } from "./filter";
+import { map, MapCallback } from "./map";
 import { reject } from "./reject";
 import { withIndex } from "./withIndex";
 
@@ -21,22 +25,15 @@ export class ICW<T> extends DelegatingAsyncIterable<T> {
   }
 
   filter<TH>(shouldInclude: FilterCallback<T, TH>, thisArg?: TH): ICW<T> {
-    return new ICW(filter(this, shouldInclude, thisArg));
+    return new ICW(filter<T, TH>(this, shouldInclude, thisArg));
   }
 
-  map<U>(
-    callbackFn: (
-      result: T,
-      index?: number,
-      iterable?: Iterable<T> | AsyncIterable<T>
-    ) => U | Promise<U>,
-    thisArg?: any
-  ): ICW<U> {
+  map<U, TH>(callbackFn: MapCallback<T, U, TH>, thisArg?: TH): ICW<U> {
     return new ICW(map(this, callbackFn, thisArg));
   }
 
   reject<TH>(shouldReject: FilterCallback<T, TH>, thisArg?: TH): ICW<T> {
-    return new ICW(reject(this, shouldReject, thisArg));
+    return new ICW(reject<T, TH>(this, shouldReject, thisArg));
   }
 
   withIndex<T>(): ICW<[T, number]> {
