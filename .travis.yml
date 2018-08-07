@@ -2,9 +2,9 @@ language: node_js
 node_js:
   - "10"
 script:
-  - npm install codecov -g
-  - npm test -- --coverage --verbose
-  - npm run style:lint
+  - npm install --global codecov
+  - npm test
+  - npm run lint
   - npm audit
 after_success:
   - codecov
