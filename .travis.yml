@@ -1,7 +1,10 @@
 language: node_js
 node_js:
   - "10"
-script:
+scripts:
+  - npm install codecov -g
   - npm test
   - npm run style:lint
   - npm audit
+after_success:
+  - codecov
