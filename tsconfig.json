@@ -5,7 +5,7 @@
     "lib": ["dom", "esnext"],
 
     // Emit
-    "target": "es5",
+    "target": "esnext",
     "downlevelIteration": true,
     "alwaysStrict": true,
     "declaration": true,
