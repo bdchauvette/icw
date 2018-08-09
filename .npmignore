@@ -1,0 +1,14 @@
+# Ignore everything by default
+*
+
+# Include our build artifacts
+!/__internal__/*
+!/cjs/*
+!/*.js
+!/*.d.ts
+!/*.map
+
+# Then re-ignore files that look like build artifacts, but really aren't
+*.config.js
+*.conf.js
+scratchpad*
