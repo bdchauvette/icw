@@ -1,9 +1,20 @@
 node_modules
-lib
-cjs
 
+# Build artifacts
+__internal__
+cjs
+/*.js
+/*.d.ts
+/*.map
+
+# Files that look like build artifacts, but really aren't
+!*.config.js
+!*.conf.js
+
+# Test artifacts
 coverage
 .stryker-tmp
 
+# Editor config and noodling around
 .vscode
 scratchpad*
