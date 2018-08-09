@@ -68,7 +68,6 @@
     "build:esm": "tsc -p tsconfig.prod.json --module es2015 --outDir .",
     "build:cjs": "tsc -p tsconfig.prod.json --module commonjs --outDir cjs",
     "test": "cross-env JEST_ENV=node jest",
-    "test:dom": "cross-env JEST_ENV=jsdom jest",
     "test:mutation": "stryker run",
     "lint": "npm-run-all lint:eslint \"lint:prettier -- --list-different\"",
     "lint:eslint": "eslint . --ext .js,.ts",
