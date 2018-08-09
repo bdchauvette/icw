@@ -9,6 +9,7 @@ import { consume } from "./consume";
 import { filter, FilterCallback } from "./filter";
 import { map, MapCallback } from "./map";
 import { reject } from "./reject";
+import { scan, ScanCallback } from "./scan";
 import { withIndex } from "./withIndex";
 
 const _iterable = Symbol("@icw/ICW/_iterable");
@@ -46,6 +47,14 @@ export class ICW<T> implements AsyncIterable<T> {
 
   reject<TH>(shouldReject: FilterCallback<T, TH>, thisArg?: TH): ICW<T> {
     return new ICW(reject<T, TH>(this, shouldReject, thisArg));
+  }
+
+  scan(accumulate: ScanCallback<T>, initialValue?: T): ICW<T> {
+    let useFirstResultAsInitialValue = arguments.length < 2;
+
+    return useFirstResultAsInitialValue
+      ? new ICW(scan(this, accumulate))
+      : new ICW(scan(this, accumulate, initialValue));
   }
 
   withIndex(): ICW<[T, number]> {

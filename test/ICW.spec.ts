@@ -1,12 +1,15 @@
 import { ICW } from "../src/ICW";
 import { isEven } from "./helpers/isEven";
 import { noop } from "./helpers/noop";
+import { sum } from "./helpers/sum";
+
 import { runFromSuite } from "./suites/runFromSuite";
 import { runOfSuite } from "./suites/runOfSuite";
 import { runConsumeSuite } from "./suites/runConsumeSuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
+import { runScanSuite } from "./suites/runScanSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
 const bindMethod = <T>(method: keyof ICW<T>) => (
@@ -52,6 +55,7 @@ describe.each`
   ${"filter"}    | ${[isEven]} | ${ICW}         | ${runFilterSuite}
   ${"map"}       | ${[noop]}   | ${ICW}         | ${runMapSuite}
   ${"reject"}    | ${[isEven]} | ${ICW}         | ${runRejectSuite}
+  ${"scan"}      | ${[sum]}    | ${ICW}         | ${runScanSuite}
   ${"withIndex"} | ${[]}       | ${ICW}         | ${runWithIndexSuite}
 `("prototype method $method", ({ method, args, returnInstance, runSuite }) => {
   // eslint-disable-next-line jest/no-identical-title
