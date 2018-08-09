@@ -42,7 +42,7 @@ export class ICW<T> implements AsyncIterable<T> {
   }
 
   map<U, TH>(callbackFn: MapCallback<T, U, TH>, thisArg?: TH): ICW<U> {
-    return new ICW(map(this, callbackFn, thisArg));
+    return new ICW(map<T, U, TH>(this, callbackFn, thisArg));
   }
 
   reject<TH>(shouldReject: FilterCallback<T, TH>, thisArg?: TH): ICW<T> {
