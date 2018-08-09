@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/sailboat.png" width="128" height="128" alt="A sailboat icon">
+  <img src="assets/sailboat.svg" width="128" height="128" alt="A sailboat icon">
   <h2>icw</h2>
   <p><strong>A stream-like utility library for JavaScript iterators</strong></p>
 
