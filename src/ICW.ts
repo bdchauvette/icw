@@ -1,7 +1,7 @@
-import { DelegatingAsyncIterable } from "./__internal__/DelegatingAsyncIterable";
+import { AnyIterable } from "./types";
 
 // Static methods
-import { from, FromInput } from "./from";
+import { from } from "./from";
 import { of } from "./of";
 
 // Prototype methods
@@ -11,13 +11,25 @@ import { map, MapCallback } from "./map";
 import { reject } from "./reject";
 import { withIndex } from "./withIndex";
 
-export class ICW<T> extends DelegatingAsyncIterable<T> {
-  static from<U>(input: FromInput<U>): ICW<U> {
+const _iterable = Symbol("@icw/ICW/_iterable");
+
+export class ICW<T> implements AsyncIterable<T> {
+  private [_iterable]: AnyIterable<T>;
+
+  static from<U>(input: AnyIterable<U> | ArrayLike<U> | Promise<U>): ICW<U> {
     return new ICW(from(input));
   }
 
   static of<U>(...items: U[]): ICW<U> {
     return new ICW(of(...items));
+  }
+
+  constructor(iterable: AnyIterable<T>) {
+    this[_iterable] = iterable;
+  }
+
+  async *[Symbol.asyncIterator]() {
+    return yield* this[_iterable];
   }
 
   consume(): Promise<void> {
@@ -36,7 +48,7 @@ export class ICW<T> extends DelegatingAsyncIterable<T> {
     return new ICW(reject<T, TH>(this, shouldReject, thisArg));
   }
 
-  withIndex<T>(): ICW<[T, number]> {
+  withIndex(): ICW<[T, number]> {
     return new ICW(withIndex(this));
   }
 }

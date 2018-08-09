@@ -1,18 +1,28 @@
-import { DelegatingAsyncIterable } from "../../src/__internal__/DelegatingAsyncIterable";
-
 export const runFromSuite = (from: Function) => {
   describe("async iterable input", () => {
     test("returns an async iterable", async () => {
       expect.assertions(1);
-      await expect(
-        from(new DelegatingAsyncIterable([1, 2, 3]))
-      ).toBeAsyncIterable();
+
+      let input = {
+        async *[Symbol.asyncIterator]() {
+          yield true;
+        }
+      };
+
+      await expect(from(input)).toBeAsyncIterable();
     });
 
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
-      let input = new DelegatingAsyncIterable([1, 2, 3]);
+      let input = {
+        async *[Symbol.asyncIterator]() {
+          yield 1;
+          yield 2;
+          yield 3;
+        }
+      };
+
       let expectedResults = [1, 2, 3];
 
       for await (let result of from(input)) {
