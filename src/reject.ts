@@ -9,10 +9,10 @@ import { withIndex } from "./withIndex";
  *
  * This function is the complement of `filter`.
  */
-export const reject = <T, TH>(
+export const reject = <T>(
   iterable: AnyIterable<T>,
-  shouldReject: FilterCallback<T, TH>,
-  thisArg?: TH
+  shouldReject: FilterCallback<T>,
+  thisArg?: any
 ): AsyncIterable<T> => ({
   async *[Symbol.asyncIterator]() {
     for await (let [result, index] of withIndex(iterable)) {

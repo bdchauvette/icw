@@ -15,8 +15,6 @@ import { withIndex } from "./withIndex";
 const _iterable = Symbol("@icw/ICW/_iterable");
 
 export class ICW<T> implements AsyncIterable<T> {
-  private [_iterable]: AnyIterable<T>;
-
   static from<U>(input: AnyIterable<U> | ArrayLike<U> | Promise<U>): ICW<U> {
     return new ICW(from(input));
   }
@@ -24,6 +22,8 @@ export class ICW<T> implements AsyncIterable<T> {
   static of<U>(...items: U[]): ICW<U> {
     return new ICW(of(...items));
   }
+
+  private [_iterable]: AnyIterable<T>;
 
   constructor(iterable: AnyIterable<T>) {
     this[_iterable] = iterable;
