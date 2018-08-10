@@ -51,7 +51,25 @@ or
 yarn add @icw/icw
 ```
 
-## Performance
+## Design Goals & Philosophy
+
+### Idiomatic JavaScript API
+
+`icw` aims to be as idiomatic as possible, in the sense that the API should
+closely match any existing native APIs for built-in JavaScript iterables. For
+example, all functions are iterable-first, and functions that accept
+callbacks &ndash; e.g. `map` and `filter` &ndash; should generally have an
+optional final argument that allows users to set the `this` context for the
+callback.
+
+The library does not aim or intend to ever have a currying-friendly API.
+Currying and data-last APIs are great, but there are some good arguments for
+why they're not very idiomatic in JavaScript:
+
+- [Currying is not idiomatic in JavaScript][2017-11-10 rauschmayer] by Dr Axel Rauschmayer
+- [Does Curry help?][2016-01 jackson] by Hugh FD Jackson
+
+### Performance
 
 Performance is not currently a priority for this project. In the words of
 [Johnson & Kernighan (1983)][1983-08 johnson and kernighan], 'the strategy is
@@ -65,7 +83,7 @@ focuses exclusively on synchronous iteration.
 In general, if your project involves a lot of async workflows, the high-level
 nature of `icw` may be worth the trade-off in performance. If your only
 iterating over synchronous iterators, however, you would probably be better
-off using a library like [`iterall`][] instead.
+off using a library like [`lodash`][] or [`ramda`][] instead.
 
 That's not to say you _can't_ use `icw` for heavily synchronous workloads.
 But if you care about **Maximum Performance** :rocket:, the overhead of passing
@@ -101,7 +119,7 @@ a bunch of Promises around is probably not what you want.
 ---
 
 <div align="center">
-  :sailboat: :v:
+  :whale:
 </div>
 
 <!-- Badges -->
@@ -121,13 +139,17 @@ a bunch of Promises around is probably not what you want.
 [`highland`]: https://highlandjs.org/
 [`immutable`]: http://facebook.github.io/immutable-js/
 [`iterall`]: https://github.com/leebyron/iterall
+[`lodash`]: https://lodash.com/
+[`ramda`]: https://ramdajs.com/
 
 <!-- Articles & blog posts -->
 
 [1983-08 johnson and kernighan]: https://archive.org/details/byte-magazine-1983-08
+[2016-01 jackson]: https://hughfdjackson.com/javascript/does-curry-help/
 [2016-10-02 rauschmayer]: http://2ality.com/2016/10/asynchronous-iteration.html
 [2017-04-18 archibald]: https://jakearchibald.com/2017/async-iterators-and-generators/
 [2017-08-22 vanderkam]: https://medium.com/netscape/async-iterators-these-promises-are-killing-my-performance-4767df03d85b
+[2017-11-10 rauschmayer]: http://2ality.com/2017/11/currying-in-js.html
 
 <!-- References -->
 
