@@ -21,7 +21,7 @@
     "node": ">=10.0.0"
   },
   "main": "cjs/index",
-  "module": "lib/index",
+  "module": "index",
   "dependencies": {
     "postinstall-build": "^5.0.1"
   },
