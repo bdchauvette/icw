@@ -1,4 +1,4 @@
-import { map } from "../src/map";
+import { map } from "../src";
 import { runMapSuite } from "./suites/runMapSuite";
 
 runMapSuite(map);

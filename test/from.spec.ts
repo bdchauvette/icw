@@ -1,4 +1,4 @@
-import { from } from "../src/from";
+import { from } from "../src";
 import { runFromSuite } from "./suites/runFromSuite";
 
 test("returns original input if it's already an async iterable", async () => {

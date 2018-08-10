@@ -1,4 +1,4 @@
-import { ICW } from "../src/ICW";
+import { ICW } from "../src";
 import { isEven } from "./helpers/isEven";
 import { noop } from "./helpers/noop";
 import { sum } from "./helpers/sum";
