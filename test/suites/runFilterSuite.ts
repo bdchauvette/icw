@@ -1,4 +1,4 @@
-import { consume } from "../../src/consume";
+import { drain } from "../../src/drain";
 import { isEven, isEvenAsync } from "../helpers/isEven";
 
 export function runFilterSuite(filter: Function) {
@@ -28,7 +28,7 @@ export function runFilterSuite(filter: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn(isEven);
-    await consume(filter([1, 2, 3], mockCallback));
+    await drain(filter([1, 2, 3], mockCallback));
 
     expect(mockCallback.mock.calls[0][0]).toEqual(1);
     expect(mockCallback.mock.calls[1][0]).toEqual(2);
@@ -39,7 +39,7 @@ export function runFilterSuite(filter: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn(isEven);
-    await consume(filter([1, 2, 3], mockCallback));
+    await drain(filter([1, 2, 3], mockCallback));
 
     expect(mockCallback.mock.calls[0][1]).toEqual(0);
     expect(mockCallback.mock.calls[1][1]).toEqual(1);
@@ -48,7 +48,7 @@ export function runFilterSuite(filter: Function) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await consume(filter([1], mockCallback));
+    await drain(filter([1], mockCallback));
 
     function mockCallback(this: undefined) {
       expect(this).toBeUndefined();
@@ -58,7 +58,7 @@ export function runFilterSuite(filter: Function) {
   test("calls callback with the `this`-context provided by the second argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await consume(filter([1], mockCallback, expectedThis));
+    await drain(filter([1], mockCallback, expectedThis));
 
     function mockCallback(this: typeof expectedThis) {
       expect(this).toBe(expectedThis);

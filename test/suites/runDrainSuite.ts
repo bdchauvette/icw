@@ -1,7 +1,7 @@
-export function runConsumeSuite(consume: Function) {
+export function runDrainSuite(drain: Function) {
   test("returns a Promise", async () => {
     expect.assertions(1);
-    expect(consume([])).toBeInstanceOf(Promise);
+    expect(drain([])).toBeInstanceOf(Promise);
   });
 
   test("runs the provided iterable to completion", async () => {
@@ -9,7 +9,7 @@ export function runConsumeSuite(consume: Function) {
     let tick = jest.fn();
 
     let iterations = 3;
-    let result = await consume(createConsumableIterable(iterations, tick));
+    let result = await drain(createConsumableIterable(iterations, tick));
 
     expect(result).toBeUndefined();
     expect(tick).toHaveBeenCalledTimes(iterations);
@@ -20,7 +20,7 @@ export function runConsumeSuite(consume: Function) {
     let tick = jest.fn();
 
     let iterations = 3;
-    let result = await consume(createConsumableAsyncIterable(iterations, tick));
+    let result = await drain(createConsumableAsyncIterable(iterations, tick));
 
     expect(result).toBeUndefined();
     expect(tick).toHaveBeenCalledTimes(iterations);

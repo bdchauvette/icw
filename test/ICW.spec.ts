@@ -5,7 +5,7 @@ import { sum } from "./helpers/sum";
 
 import { runFromSuite } from "./suites/runFromSuite";
 import { runOfSuite } from "./suites/runOfSuite";
-import { runConsumeSuite } from "./suites/runConsumeSuite";
+import { runDrainSuite } from "./suites/runDrainSuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
@@ -43,7 +43,7 @@ describe.each`
 
 describe.each`
   method         | args        | returnInstance | runSuite
-  ${"consume"}   | ${[]}       | ${Promise}     | ${runConsumeSuite}
+  ${"drain"}     | ${[]}       | ${Promise}     | ${runDrainSuite}
   ${"filter"}    | ${[isEven]} | ${ICW}         | ${runFilterSuite}
   ${"map"}       | ${[noop]}   | ${ICW}         | ${runMapSuite}
   ${"reject"}    | ${[isEven]} | ${ICW}         | ${runRejectSuite}

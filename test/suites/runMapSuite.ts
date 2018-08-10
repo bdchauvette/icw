@@ -1,4 +1,4 @@
-import { consume } from "../../src/consume";
+import { drain } from "../../src/drain";
 import { noop } from "../helpers/noop";
 import { toUpperCase, toUpperCaseAsync } from "../helpers/toUpperCase";
 
@@ -29,7 +29,7 @@ export function runMapSuite(map: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn();
-    await consume(map(["foo", "bar", "baz"], mockCallback));
+    await drain(map(["foo", "bar", "baz"], mockCallback));
 
     expect(mockCallback.mock.calls[0][0]).toEqual("foo");
     expect(mockCallback.mock.calls[1][0]).toEqual("bar");
@@ -40,7 +40,7 @@ export function runMapSuite(map: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn();
-    await consume(map(["foo", "bar", "baz"], mockCallback));
+    await drain(map(["foo", "bar", "baz"], mockCallback));
 
     expect(mockCallback.mock.calls[0][1]).toEqual(0);
     expect(mockCallback.mock.calls[1][1]).toEqual(1);
@@ -49,7 +49,7 @@ export function runMapSuite(map: Function) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await consume(map([123], mockCallback));
+    await drain(map([123], mockCallback));
 
     function mockCallback(this: undefined) {
       expect(this).toBeUndefined();
@@ -59,7 +59,7 @@ export function runMapSuite(map: Function) {
   test("calls callback with the `this`-context provided by the second argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await consume(map([123], mockCallback, expectedThis));
+    await drain(map([123], mockCallback, expectedThis));
 
     function mockCallback(this: typeof expectedThis) {
       expect(this).toBe(expectedThis);

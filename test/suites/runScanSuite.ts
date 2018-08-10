@@ -1,5 +1,5 @@
 import { sum, sumAsync } from "../helpers/sum";
-import { consume } from "../../src/consume";
+import { drain } from "../../src/drain";
 
 export function runScanSuite(scan: Function) {
   test("returns an async iterable", async () => {
@@ -30,7 +30,7 @@ export function runScanSuite(scan: Function) {
     let sumSpy = jest.fn();
     let firstResult = Symbol("first result");
     let initialValue = Symbol("initial value");
-    await consume(scan([firstResult], sumSpy, initialValue));
+    await drain(scan([firstResult], sumSpy, initialValue));
     expect(sumSpy.mock.calls[0][0]).toBe(initialValue);
   });
 
@@ -38,7 +38,7 @@ export function runScanSuite(scan: Function) {
     expect.assertions(1);
     let sumSpy = jest.fn();
     let firstResult = Symbol("first result");
-    await consume(scan([firstResult], sumSpy));
+    await drain(scan([firstResult], sumSpy));
     expect(sumSpy.mock.calls[0][0]).toBe(firstResult);
   });
 
@@ -46,7 +46,7 @@ export function runScanSuite(scan: Function) {
     expect.assertions(1);
     let sumSpy = jest.fn();
     let firstResult = Symbol("first result");
-    await consume(scan([firstResult], sumSpy, undefined));
+    await drain(scan([firstResult], sumSpy, undefined));
     expect(sumSpy.mock.calls[0][0]).toBeUndefined();
   });
 
@@ -54,7 +54,7 @@ export function runScanSuite(scan: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn(sum);
-    await consume(scan([1, 2, 3], mockCallback));
+    await drain(scan([1, 2, 3], mockCallback));
 
     expect(mockCallback.mock.calls[0][0]).toEqual(1);
     expect(mockCallback.mock.calls[1][0]).toEqual(2);
@@ -65,7 +65,7 @@ export function runScanSuite(scan: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn(sum);
-    await consume(scan([1, 2, 3], mockCallback));
+    await drain(scan([1, 2, 3], mockCallback));
 
     expect(mockCallback.mock.calls[0][1]).toEqual(1);
     expect(mockCallback.mock.calls[1][1]).toEqual(2);
@@ -76,7 +76,7 @@ export function runScanSuite(scan: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn(sum);
-    await consume(scan([1, 2, 3], mockCallback));
+    await drain(scan([1, 2, 3], mockCallback));
 
     expect(mockCallback.mock.calls[0][2]).toEqual(0);
     expect(mockCallback.mock.calls[1][2]).toEqual(1);

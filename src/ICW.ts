@@ -3,7 +3,7 @@ import { from } from "./from";
 import { of } from "./of";
 
 // Prototype methods
-import { consume } from "./consume";
+import { drain } from "./drain";
 import { filter } from "./filter";
 import { map } from "./map";
 import { reject } from "./reject";
@@ -33,8 +33,8 @@ export class ICW<T> implements AsyncIterable<T> {
     yield* this[_iterable];
   }
 
-  consume(): Promise<void> {
-    return consume(this);
+  drain(): Promise<void> {
+    return drain(this);
   }
 
   filter(

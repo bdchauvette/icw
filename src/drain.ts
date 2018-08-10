@@ -1,4 +1,4 @@
-export async function consume<T>(
+export async function drain<T>(
   iterable: AsyncIterable<T> | Iterable<T>
 ): Promise<void> {
   // @ts-ignore
