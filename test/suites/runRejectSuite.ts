@@ -1,7 +1,7 @@
 import { consume } from "../../src/consume";
 import { isEven, isEvenAsync } from "../helpers/isEven";
 
-export const runRejectSuite = (reject: Function) => {
+export function runRejectSuite(reject: Function) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
     await expect(reject([1, 2, 3], isEven)).toBeAsyncIterable();
@@ -64,4 +64,4 @@ export const runRejectSuite = (reject: Function) => {
       expect(this).toBe(expectedThis);
     }
   });
-};
+}

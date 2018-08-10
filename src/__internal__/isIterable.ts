@@ -1,4 +1,5 @@
 import { isFunction } from "./isFunction";
 
-export const isIterable = <T>(value: any): value is Iterable<T> =>
-  value != null && isFunction(value[Symbol.iterator]);
+export function isIterable<T>(value: any): value is Iterable<T> {
+  return value != null && isFunction(value[Symbol.iterator]);
+}

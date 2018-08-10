@@ -1,7 +1,7 @@
 import { consume } from "../../src/consume";
 import { isEven, isEvenAsync } from "../helpers/isEven";
 
-export const runFilterSuite = (filter: Function) => {
+export function runFilterSuite(filter: Function) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
     await expect(filter([1, 2, 3], isEven)).toBeAsyncIterable();
@@ -64,4 +64,4 @@ export const runFilterSuite = (filter: Function) => {
       expect(this).toBe(expectedThis);
     }
   });
-};
+}

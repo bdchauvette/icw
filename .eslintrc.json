@@ -70,6 +70,7 @@
 
     // Stylistic issues
     "camelcase": "error",
+    "func-style": ["error", "declaration"],
     "max-statements-per-line": ["error", { "max": 1 }],
     "no-lonely-if": "error",
     "no-multi-assign": "error",

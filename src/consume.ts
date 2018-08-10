@@ -1,6 +1,6 @@
-export const consume = async <T>(
+export async function consume<T>(
   iterable: AsyncIterable<T> | Iterable<T>
-): Promise<void> => {
+): Promise<void> {
   // @ts-ignore
   for await (let result of iterable) continue;
-};
+}

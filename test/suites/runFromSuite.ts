@@ -1,4 +1,4 @@
-export const runFromSuite = (from: Function) => {
+export function runFromSuite(from: Function) {
   describe("async iterable input", () => {
     test("returns an async iterable", async () => {
       expect.assertions(1);
@@ -100,4 +100,4 @@ export const runFromSuite = (from: Function) => {
     // eslint-disable-next-line jest/prefer-inline-snapshots
     expect(() => from(input)).toThrowErrorMatchingSnapshot();
   });
-};
+}

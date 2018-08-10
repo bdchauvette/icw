@@ -2,7 +2,7 @@ import { consume } from "../../src/consume";
 import { noop } from "../helpers/noop";
 import { toUpperCase, toUpperCaseAsync } from "../helpers/toUpperCase";
 
-export const runMapSuite = (map: Function) => {
+export function runMapSuite(map: Function) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
     await expect(map([1, 2, 3], noop)).toBeAsyncIterable();
@@ -65,4 +65,4 @@ export const runMapSuite = (map: Function) => {
       expect(this).toBe(expectedThis);
     }
   });
-};
+}

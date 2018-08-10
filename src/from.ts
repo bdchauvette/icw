@@ -6,9 +6,9 @@ import { isPromise } from "./__internal__/isPromise";
 /**
  * Creates an AsyncIterator from an iterable, an Array-like value, or a Promise.
  */
-export const from = <T>(
+export function from<T>(
   input: AsyncIterable<T> | Iterable<T> | ArrayLike<T> | Promise<T>
-): AsyncIterable<T> => {
+): AsyncIterable<T> {
   if (isAsyncIterable(input)) return input;
   if (isIterable(input)) return toDelegatingAsyncIterable(input);
   if (isArrayLike(input)) return toDelegatingAsyncIterable(Array.from(input));
@@ -17,7 +17,7 @@ export const from = <T>(
   throw new Error(
     "Must provide an iterable, an Array-like value, or a Promise."
   );
-};
+}
 
 function toDelegatingAsyncIterable<T>(
   iterable: AsyncIterable<T> | Iterable<T>

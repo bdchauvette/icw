@@ -1,4 +1,4 @@
-export const runWithIndexSuite = (withIndex: Function) => {
+export function runWithIndexSuite(withIndex: Function) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
     await expect(withIndex([])).toBeAsyncIterable();
@@ -21,4 +21,4 @@ export const runWithIndexSuite = (withIndex: Function) => {
       expect(index).toEqual(expectedResults.shift());
     }
   });
-};
+}

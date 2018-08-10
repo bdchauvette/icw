@@ -1,7 +1,7 @@
 import { sum, sumAsync } from "../helpers/sum";
 import { consume } from "../../src/consume";
 
-export const runScanSuite = (scan: Function) => {
+export function runScanSuite(scan: Function) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
     await expect(scan([], sum)).toBeAsyncIterable();
@@ -82,4 +82,4 @@ export const runScanSuite = (scan: Function) => {
     expect(mockCallback.mock.calls[1][2]).toEqual(1);
     expect(mockCallback.mock.calls[2][2]).toEqual(2);
   });
-};
+}

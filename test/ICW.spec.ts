@@ -12,14 +12,6 @@ import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
-const bindMethod = <T>(method: keyof ICW<T>) => (
-  iterable: AsyncIterable<T> | Iterable<T>,
-  ...args: any[]
-): any => {
-  // @ts-ignore
-  return new ICW(iterable)[method](...args);
-};
-
 test("is a class", () => {
   expect.assertions(2);
   expect(ICW).toBeFunction();
@@ -72,3 +64,13 @@ describe.each`
 
   runSuite(bindMethod(method));
 });
+
+function bindMethod<T>(method: keyof ICW<T>) {
+  return function callBoundMethod(
+    iterable: AsyncIterable<T> | Iterable<T>,
+    ...args: any[]
+  ): any {
+    // @ts-ignore
+    return new ICW(iterable)[method](...args);
+  };
+}
