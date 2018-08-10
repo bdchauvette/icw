@@ -1,5 +1,6 @@
 import { drain } from "../../src/drain";
-import { isEven, isEvenAsync } from "../helpers/isEven";
+import { isEven } from "../helpers/isEven";
+import { toAsync } from "../helpers/toAsync";
 
 export function runFilterSuite(filter) {
   test("returns an async iterable", async () => {
@@ -22,7 +23,7 @@ export function runFilterSuite(filter) {
   test.each`
     callbackType | callback
     ${"sync"}    | ${isEven}
-    ${"async"}   | ${isEvenAsync}
+    ${"async"}   | ${toAsync(isEven)}
   `(
     "filters results of input with $callbackType callback",
     async ({ callback }) => {

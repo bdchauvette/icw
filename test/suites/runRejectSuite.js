@@ -1,5 +1,6 @@
 import { drain } from "../../src/drain";
-import { isEven, isEvenAsync } from "../helpers/isEven";
+import { isEven } from "../helpers/isEven";
+import { toAsync } from "../helpers/toAsync";
 
 export function runRejectSuite(reject) {
   test("returns an async iterable", async () => {
@@ -22,7 +23,7 @@ export function runRejectSuite(reject) {
   test.each`
     callbackType | callback
     ${"sync"}    | ${isEven}
-    ${"async"}   | ${isEvenAsync}
+    ${"async"}   | ${toAsync(isEven)}
   `(
     "rejects results of input using $callbackType callback",
     async ({ callback }) => {

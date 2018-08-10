@@ -1,6 +1,7 @@
 import { drain } from "../../src/drain";
 import { noop } from "../helpers/noop";
-import { toUpperCase, toUpperCaseAsync } from "../helpers/toUpperCase";
+import { toAsync } from "../helpers/toAsync";
+import { toUpperCase } from "../helpers/toUpperCase";
 
 export function runMapSuite(map) {
   test("returns an async iterable", async () => {
@@ -23,7 +24,7 @@ export function runMapSuite(map) {
   test.each`
     callbackType | callback
     ${"sync"}    | ${toUpperCase}
-    ${"async"}   | ${toUpperCaseAsync}
+    ${"async"}   | ${toAsync(toUpperCase)}
   `(
     "maps each result of input with $callbackType callback",
     async ({ callback }) => {

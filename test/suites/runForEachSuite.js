@@ -1,5 +1,4 @@
 import { noop } from "../helpers/noop";
-import { drain } from "../../src";
 
 export function runForEachSuite(forEach) {
   test("returns a Promise", async () => {

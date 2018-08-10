@@ -1,4 +1,5 @@
-import { sum, sumAsync } from "../helpers/sum";
+import { toAsync } from "../helpers/toAsync";
+import { sum } from "../helpers/sum";
 import { drain } from "../../src/drain";
 
 export function runScanSuite(scan) {
@@ -22,7 +23,7 @@ export function runScanSuite(scan) {
   test.each`
     callbackType | callback
     ${"sync"}    | ${sum}
-    ${"async"}   | ${sumAsync}
+    ${"async"}   | ${toAsync(sum)}
   `(
     "accumulates values from the source iterable with $callbackType callback",
     async () => {
