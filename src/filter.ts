@@ -1,17 +1,11 @@
-import { AnyIterable } from "./types";
 import { withIndex } from "./withIndex";
-
-export type FilterCallback<T> = (
-  result: T,
-  index?: number
-) => boolean | Promise<boolean>;
 
 /**
  * Yields results from the input iterable that satisfy the provided condition.
  */
 export const filter = <T>(
-  iterable: AnyIterable<T>,
-  shouldInclude: FilterCallback<T>,
+  iterable: AsyncIterable<T> | Iterable<T>,
+  shouldInclude: (result: T, index?: number) => boolean | Promise<boolean>,
   thisArg?: any
 ): AsyncIterable<T> => ({
   async *[Symbol.asyncIterator]() {

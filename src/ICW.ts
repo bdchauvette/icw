@@ -1,21 +1,21 @@
-import { AnyIterable } from "./types";
-
 // Static methods
 import { from } from "./from";
 import { of } from "./of";
 
 // Prototype methods
 import { consume } from "./consume";
-import { filter, FilterCallback } from "./filter";
-import { map, MapCallback } from "./map";
+import { filter } from "./filter";
+import { map } from "./map";
 import { reject } from "./reject";
-import { scan, ScanCallback } from "./scan";
+import { scan } from "./scan";
 import { withIndex } from "./withIndex";
 
 const _iterable = Symbol("@icw/ICW/_iterable");
 
 export class ICW<T> implements AsyncIterable<T> {
-  static from<U>(input: AnyIterable<U> | ArrayLike<U> | Promise<U>): ICW<U> {
+  static from<U>(
+    input: AsyncIterable<U> | Iterable<U> | ArrayLike<U> | Promise<U>
+  ): ICW<U> {
     return new ICW(from(input));
   }
 
@@ -23,9 +23,9 @@ export class ICW<T> implements AsyncIterable<T> {
     return new ICW(of(...items));
   }
 
-  private [_iterable]: AnyIterable<T>;
+  private [_iterable]: AsyncIterable<T> | Iterable<T>;
 
-  constructor(iterable: AnyIterable<T>) {
+  constructor(iterable: AsyncIterable<T> | Iterable<T>) {
     this[_iterable] = iterable;
   }
 
@@ -37,19 +37,31 @@ export class ICW<T> implements AsyncIterable<T> {
     return consume(this);
   }
 
-  filter<TH>(shouldInclude: FilterCallback<T, TH>, thisArg?: TH): ICW<T> {
-    return new ICW(filter<T, TH>(this, shouldInclude, thisArg));
+  filter(
+    shouldInclude: (result: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): ICW<T> {
+    return new ICW(filter(this, shouldInclude, thisArg));
   }
 
-  map<U, TH>(callbackFn: MapCallback<T, U, TH>, thisArg?: TH): ICW<U> {
-    return new ICW(map<T, U, TH>(this, callbackFn, thisArg));
+  map<U>(
+    callbackFn: (result: T, index?: number) => U | Promise<U>,
+    thisArg?: any
+  ): ICW<U> {
+    return new ICW(map(this, callbackFn, thisArg));
   }
 
-  reject<TH>(shouldReject: FilterCallback<T, TH>, thisArg?: TH): ICW<T> {
-    return new ICW(reject<T, TH>(this, shouldReject, thisArg));
+  reject(
+    shouldReject: (result: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): ICW<T> {
+    return new ICW(reject(this, shouldReject, thisArg));
   }
 
-  scan(accumulate: ScanCallback<T>, initialValue?: T): ICW<T> {
+  scan(
+    accumulate: (accumulator: T, result: T, index?: number) => T | Promise<T>,
+    initialValue?: T
+  ): ICW<T> {
     let useFirstResultAsInitialValue = arguments.length < 2;
 
     return useFirstResultAsInitialValue

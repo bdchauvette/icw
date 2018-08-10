@@ -1,5 +1,3 @@
-import { AnyIterable } from "./types";
-import { FilterCallback } from "./filter";
 import { withIndex } from "./withIndex";
 
 /**
@@ -10,8 +8,8 @@ import { withIndex } from "./withIndex";
  * This function is the complement of `filter`.
  */
 export const reject = <T>(
-  iterable: AnyIterable<T>,
-  shouldReject: FilterCallback<T>,
+  iterable: AsyncIterable<T> | Iterable<T>,
+  shouldReject: (result: T, index?: number) => boolean | Promise<boolean>,
   thisArg?: any
 ): AsyncIterable<T> => ({
   async *[Symbol.asyncIterator]() {

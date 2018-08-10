@@ -3,7 +3,7 @@
  * result from the source iterable.
  */
 export const withIndex = <T>(
-  iterable: Iterable<T> | AsyncIterable<T>
+  iterable: AsyncIterable<T> | Iterable<T>
 ): AsyncIterable<[T, number]> => ({
   async *[Symbol.asyncIterator]() {
     let index = 0;

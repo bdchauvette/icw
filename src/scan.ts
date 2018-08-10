@@ -1,15 +1,8 @@
-import { AnyIterable } from "./types";
 import { withIndex } from "./withIndex";
 
-export type ScanCallback<T> = (
-  accumulator: T,
-  currentValue: T,
-  index?: number
-) => T;
-
 export function scan<T>(
-  iterable: AnyIterable<T>,
-  accumulate: ScanCallback<T>,
+  iterable: AsyncIterable<T> | Iterable<T>,
+  accumulate: (accumulator: T, result: T, index?: number) => T | Promise<T>,
   initialValue?: T
 ): AsyncIterable<T> {
   let useFirstResultAsInitialValue = arguments.length < 3;

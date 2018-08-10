@@ -2,13 +2,12 @@ import { isArrayLike } from "./__internal__/isArrayLike";
 import { isAsyncIterable } from "./__internal__/isAsyncIterable";
 import { isIterable } from "./__internal__/isIterable";
 import { isPromise } from "./__internal__/isPromise";
-import { AnyIterable } from "./types";
 
 /**
  * Creates an AsyncIterator from an iterable, an Array-like value, or a Promise.
  */
 export const from = <T>(
-  input: AnyIterable<T> | ArrayLike<T> | Promise<T>
+  input: AsyncIterable<T> | Iterable<T> | ArrayLike<T> | Promise<T>
 ): AsyncIterable<T> => {
   if (isAsyncIterable(input)) return input;
   if (isIterable(input)) return toDelegatingAsyncIterable(input);
@@ -21,7 +20,7 @@ export const from = <T>(
 };
 
 function toDelegatingAsyncIterable<T>(
-  iterable: AnyIterable<T>
+  iterable: AsyncIterable<T> | Iterable<T>
 ): AsyncIterable<T> {
   return {
     async *[Symbol.asyncIterator]() {

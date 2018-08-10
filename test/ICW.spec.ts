@@ -13,7 +13,7 @@ import { runScanSuite } from "./suites/runScanSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
 const bindMethod = <T>(method: keyof ICW<T>) => (
-  iterable: Iterable<T> | AsyncIterable<T>,
+  iterable: AsyncIterable<T> | Iterable<T>,
   ...args: any[]
 ): any => {
   // @ts-ignore
