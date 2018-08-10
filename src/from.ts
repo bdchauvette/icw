@@ -24,7 +24,7 @@ function toDelegatingAsyncIterable<T>(
 ): AsyncIterable<T> {
   return {
     async *[Symbol.asyncIterator]() {
-      return yield* iterable;
+      yield* iterable;
     }
   };
 }

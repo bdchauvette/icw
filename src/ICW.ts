@@ -30,7 +30,7 @@ export class ICW<T> implements AsyncIterable<T> {
   }
 
   async *[Symbol.asyncIterator]() {
-    return yield* this[_iterable];
+    yield* this[_iterable];
   }
 
   consume(): Promise<void> {
