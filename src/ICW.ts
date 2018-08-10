@@ -9,6 +9,7 @@ import { map } from "./map";
 import { reject } from "./reject";
 import { scan } from "./scan";
 import { withIndex } from "./withIndex";
+import { forEach } from "./forEach";
 
 const _iterable = Symbol("@icw/ICW/_iterable");
 
@@ -42,6 +43,13 @@ export class ICW<T> implements AsyncIterable<T> {
     thisArg?: any
   ): ICW<T> {
     return new ICW(filter(this, shouldInclude, thisArg));
+  }
+
+  forEach(
+    callback: (result: T, index?: number) => void | Promise<void>,
+    thisArg?: any
+  ): Promise<void> {
+    return forEach(this, callback, thisArg);
   }
 
   map<U>(

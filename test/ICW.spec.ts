@@ -5,8 +5,10 @@ import { sum } from "./helpers/sum";
 
 import { runFromSuite } from "./suites/runFromSuite";
 import { runOfSuite } from "./suites/runOfSuite";
+
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
+import { runForEachSuite } from "./suites/runForEachSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
@@ -45,6 +47,7 @@ describe.each`
   method         | args        | returnInstance | runSuite
   ${"drain"}     | ${[]}       | ${Promise}     | ${runDrainSuite}
   ${"filter"}    | ${[isEven]} | ${ICW}         | ${runFilterSuite}
+  ${"forEach"}   | ${[noop]}   | ${Promise}     | ${runForEachSuite}
   ${"map"}       | ${[noop]}   | ${ICW}         | ${runMapSuite}
   ${"reject"}    | ${[isEven]} | ${ICW}         | ${runRejectSuite}
   ${"scan"}      | ${[sum]}    | ${ICW}         | ${runScanSuite}
