@@ -6,6 +6,6 @@ export async function forEach<T>(
   thisArg?: any
 ): Promise<void> {
   for await (let [result, index] of withIndex(iterable)) {
-    await callback.call(thisArg, result, index);
+    callback.call(thisArg, result, index);
   }
 }
