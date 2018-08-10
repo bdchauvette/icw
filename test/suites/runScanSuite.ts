@@ -7,6 +7,18 @@ export function runScanSuite(scan: Function) {
     await expect(scan([], sum)).toBeAsyncIterable();
   });
 
+  test("lazily consumes the provided iterable", async () => {
+    expect.assertions(2);
+    let next = jest.fn(() => ({ done: true }));
+    let iterable = { [Symbol.iterator]: () => ({ next }) };
+
+    let scan$ = scan(iterable, sum);
+    expect(next).not.toHaveBeenCalled();
+
+    await drain(scan$);
+    expect(next).toHaveBeenCalled();
+  });
+
   test.each`
     callbackType | callback
     ${"sync"}    | ${sum}

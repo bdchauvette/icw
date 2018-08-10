@@ -8,6 +8,18 @@ export function runMapSuite(map: Function) {
     await expect(map([1, 2, 3], noop)).toBeAsyncIterable();
   });
 
+  test("lazily consumes the provided iterable", async () => {
+    expect.assertions(2);
+    let next = jest.fn(() => ({ done: true }));
+    let iterable = { [Symbol.iterator]: () => ({ next }) };
+
+    let map$ = map(iterable, toUpperCase);
+    expect(next).not.toHaveBeenCalled();
+
+    await drain(map$);
+    expect(next).toHaveBeenCalled();
+  });
+
   test.each`
     callbackType | callback
     ${"sync"}    | ${toUpperCase}

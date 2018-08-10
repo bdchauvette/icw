@@ -1,9 +1,19 @@
 import { noop } from "../helpers/noop";
+import { drain } from "../../src";
 
 export function runForEachSuite(forEach: Function) {
   test("returns a Promise", async () => {
     expect.assertions(1);
     expect(forEach([], noop)).toBeInstanceOf(Promise);
+  });
+
+  test("eagerly consumes the provided iterable", async () => {
+    expect.assertions(1);
+    let next = jest.fn(() => ({ done: true }));
+    let iterable = { [Symbol.iterator]: () => ({ next }) };
+
+    await forEach(iterable, noop);
+    expect(next).toHaveBeenCalled();
   });
 
   test("runs the provided iterable to completion", async () => {

@@ -4,6 +4,15 @@ export function runDrainSuite(drain: Function) {
     expect(drain([])).toBeInstanceOf(Promise);
   });
 
+  test("eagerly consumes the provided iterable", async () => {
+    expect.assertions(1);
+    let next = jest.fn(() => ({ done: true }));
+    let iterable = { [Symbol.iterator]: () => ({ next }) };
+
+    await drain(iterable);
+    expect(next).toHaveBeenCalled();
+  });
+
   test("runs the provided iterable to completion", async () => {
     expect.assertions(2);
     let tick = jest.fn();

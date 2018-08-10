@@ -7,6 +7,18 @@ export function runFilterSuite(filter: Function) {
     await expect(filter([1, 2, 3], isEven)).toBeAsyncIterable();
   });
 
+  test("lazily consumes the provided iterable", async () => {
+    expect.assertions(2);
+    let next = jest.fn(() => ({ done: true }));
+    let iterable = { [Symbol.iterator]: () => ({ next }) };
+
+    let filter$ = filter(iterable, isEven);
+    expect(next).not.toHaveBeenCalled();
+
+    await drain(filter$);
+    expect(next).toHaveBeenCalled();
+  });
+
   test.each`
     callbackType | callback
     ${"sync"}    | ${isEven}
