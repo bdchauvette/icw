@@ -55,7 +55,7 @@ export function runRejectSuite(reject: Function) {
     }
   });
 
-  test("calls callback with the `this`-context provided by the second argument", async () => {
+  test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
     await drain(reject([1], mockCallback, expectedThis));

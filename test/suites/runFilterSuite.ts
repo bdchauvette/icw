@@ -55,7 +55,7 @@ export function runFilterSuite(filter: Function) {
     }
   });
 
-  test("calls callback with the `this`-context provided by the second argument", async () => {
+  test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
     await drain(filter([1], mockCallback, expectedThis));

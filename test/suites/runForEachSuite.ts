@@ -62,7 +62,7 @@ export function runForEachSuite(forEach: Function) {
     });
   });
 
-  test("calls callback with the `this`-context provided by the second argument", async () => {
+  test("calls callback with the `this`-context provided `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
     await forEach(
