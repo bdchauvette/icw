@@ -1,4 +1,4 @@
-export function runFromSuite(from: Function) {
+export function runFromSuite(from) {
   describe("async iterable input", () => {
     test("returns an async iterable", async () => {
       expect.assertions(1);

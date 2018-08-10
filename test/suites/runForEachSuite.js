@@ -1,7 +1,7 @@
 import { noop } from "../helpers/noop";
 import { drain } from "../../src";
 
-export function runForEachSuite(forEach: Function) {
+export function runForEachSuite(forEach) {
   test("returns a Promise", async () => {
     expect.assertions(1);
     expect(forEach([], noop)).toBeInstanceOf(Promise);
@@ -50,7 +50,7 @@ export function runForEachSuite(forEach: Function) {
     let input = ["foo", "bar", "baz"];
     let expectedArgs = ["foo", "bar", "baz"];
 
-    await forEach(input, (result: string) => {
+    await forEach(input, result => {
       expect(result).toEqual(expectedArgs.shift());
     });
   });
@@ -60,14 +60,14 @@ export function runForEachSuite(forEach: Function) {
 
     let expectedIndexes = [0, 1, 2];
 
-    await forEach(["foo", "bar", "baz"], (_: any, index: number) => {
+    await forEach(["foo", "bar", "baz"], (_, index) => {
       expect(index).toEqual(expectedIndexes.shift());
     });
   });
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await forEach([1], function(this: undefined) {
+    await forEach([1], function() {
       expect(this).toBeUndefined();
     });
   });
@@ -77,7 +77,7 @@ export function runForEachSuite(forEach: Function) {
     let expectedThis = {};
     await forEach(
       [1],
-      function(this: typeof expectedThis) {
+      function() {
         expect(this).toBe(expectedThis);
       },
       expectedThis
@@ -85,10 +85,7 @@ export function runForEachSuite(forEach: Function) {
   });
 }
 
-function createConsumableIterable(
-  maxIterations: number,
-  tick: jest.Mock<any>
-): Iterable<void> {
+function createConsumableIterable(maxIterations, tick) {
   return {
     [Symbol.iterator]() {
       let iteration = 0;
@@ -105,10 +102,7 @@ function createConsumableIterable(
   };
 }
 
-function createConsumableAsyncIterable(
-  maxIterations: number,
-  tick: jest.Mock<any>
-): AsyncIterable<void> {
+function createConsumableAsyncIterable(maxIterations, tick) {
   return {
     [Symbol.asyncIterator]() {
       let iteration = 0;

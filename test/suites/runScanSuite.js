@@ -1,7 +1,7 @@
 import { sum, sumAsync } from "../helpers/sum";
 import { drain } from "../../src/drain";
 
-export function runScanSuite(scan: Function) {
+export function runScanSuite(scan) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
     await expect(scan([], sum)).toBeAsyncIterable();

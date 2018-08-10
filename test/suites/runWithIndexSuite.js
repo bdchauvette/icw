@@ -1,15 +1,15 @@
 import { drain } from "../../src";
 
-export function runWithIndexSuite(withIndex: Function) {
+export function runWithIndexSuite(withIndex) {
   test("lazily consumes the provided iterable", async () => {
     expect.assertions(2);
     let next = jest.fn(() => ({ done: true }));
     let iterable = { [Symbol.iterator]: () => ({ next }) };
 
-    let withIndex$ = withIndex(iterable);
+    let withIndex$ = withIndex(iterable)[Symbol.asyncIterator]();
     expect(next).not.toHaveBeenCalled();
 
-    await drain(withIndex$);
+    await withIndex$.next();
     expect(next).toHaveBeenCalled();
   });
 

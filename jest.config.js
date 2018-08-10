@@ -2,10 +2,10 @@ const config = {
   globalSetup: "./test/hooks/globalSetup.js",
   setupTestFrameworkScriptFile: "./test/hooks/setupTestFramework.js",
 
-  testMatch: ["<rootDir>/test/*.spec.ts"],
+  testMatch: ["<rootDir>/test/*.spec.js"],
   moduleFileExtensions: ["ts", "js"],
 
-  transform: { "^.+\\.ts$": "ts-jest" },
+  transform: { "^.+\\.(ts|js)$": "ts-jest" },
   globals: { "ts-jest": { tsConfigFile: "tsconfig.test.json" } },
 
   testEnvironment: process.env.JEST_ENV,

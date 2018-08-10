@@ -1,10 +1,10 @@
 import { drain } from "../../src/drain";
 import { isEven, isEvenAsync } from "../helpers/isEven";
 
-export function runFilterSuite(filter: Function) {
+export function runRejectSuite(reject) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
-    await expect(filter([1, 2, 3], isEven)).toBeAsyncIterable();
+    await expect(reject([1, 2, 3], isEven)).toBeAsyncIterable();
   });
 
   test("lazily consumes the provided iterable", async () => {
@@ -12,10 +12,10 @@ export function runFilterSuite(filter: Function) {
     let next = jest.fn(() => ({ done: true }));
     let iterable = { [Symbol.iterator]: () => ({ next }) };
 
-    let filter$ = filter(iterable, isEven);
+    let reject$ = reject(iterable, isEven);
     expect(next).not.toHaveBeenCalled();
 
-    await drain(filter$);
+    await drain(reject$);
     expect(next).toHaveBeenCalled();
   });
 
@@ -24,13 +24,13 @@ export function runFilterSuite(filter: Function) {
     ${"sync"}    | ${isEven}
     ${"async"}   | ${isEvenAsync}
   `(
-    "filters results of input with $callbackType callback",
+    "rejects results of input using $callbackType callback",
     async ({ callback }) => {
-      expect.assertions(2);
+      expect.assertions(3);
       let input = [1, 2, 3, 4, 5];
-      let expectedResults = [2, 4];
+      let expectedResults = [1, 3, 5];
 
-      for await (let result of filter(input, callback)) {
+      for await (let result of reject(input, callback)) {
         expect(result).toEqual(expectedResults.shift());
       }
     }
@@ -40,7 +40,7 @@ export function runFilterSuite(filter: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn(isEven);
-    await drain(filter([1, 2, 3], mockCallback));
+    await drain(reject([1, 2, 3], mockCallback));
 
     expect(mockCallback.mock.calls[0][0]).toEqual(1);
     expect(mockCallback.mock.calls[1][0]).toEqual(2);
@@ -51,7 +51,7 @@ export function runFilterSuite(filter: Function) {
     expect.assertions(3);
 
     let mockCallback = jest.fn(isEven);
-    await drain(filter([1, 2, 3], mockCallback));
+    await drain(reject([1, 2, 3], mockCallback));
 
     expect(mockCallback.mock.calls[0][1]).toEqual(0);
     expect(mockCallback.mock.calls[1][1]).toEqual(1);
@@ -60,9 +60,9 @@ export function runFilterSuite(filter: Function) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(filter([1], mockCallback));
+    await drain(reject([1], mockCallback));
 
-    function mockCallback(this: undefined) {
+    function mockCallback() {
       expect(this).toBeUndefined();
     }
   });
@@ -70,9 +70,9 @@ export function runFilterSuite(filter: Function) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(filter([1], mockCallback, expectedThis));
+    await drain(reject([1], mockCallback, expectedThis));
 
-    function mockCallback(this: typeof expectedThis) {
+    function mockCallback() {
       expect(this).toBe(expectedThis);
     }
   });

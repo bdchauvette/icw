@@ -30,15 +30,14 @@
   },
 
   "rules": {
-    // Typescript compat
-    "no-undef": "off",
-    "no-unused-vars": "off",
-    "no-use-before-define": "off",
 
-    // Possible errors
+   // Possible errors
     "no-inner-declarations": "off",
     "no-prototype-builtins": "error",
     "no-template-curly-in-string": "error",
+    "no-undef": "error",
+    "no-unused-vars": "error",
+    "no-use-before-define": ["error", { "functions": false }],
 
     // Best practices
     "eqeqeq": ["error", "always", { "null": "never" }],
@@ -121,6 +120,15 @@
   },
 
   "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        // Typescript compat
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "no-use-before-define": "off"
+      }
+    },
     {
       "files": ["test/**/*.ts"],
       "rules": {

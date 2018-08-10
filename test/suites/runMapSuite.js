@@ -1,10 +1,11 @@
 import { drain } from "../../src/drain";
-import { isEven, isEvenAsync } from "../helpers/isEven";
+import { noop } from "../helpers/noop";
+import { toUpperCase, toUpperCaseAsync } from "../helpers/toUpperCase";
 
-export function runRejectSuite(reject: Function) {
+export function runMapSuite(map) {
   test("returns an async iterable", async () => {
     expect.assertions(1);
-    await expect(reject([1, 2, 3], isEven)).toBeAsyncIterable();
+    await expect(map([1, 2, 3], noop)).toBeAsyncIterable();
   });
 
   test("lazily consumes the provided iterable", async () => {
@@ -12,25 +13,25 @@ export function runRejectSuite(reject: Function) {
     let next = jest.fn(() => ({ done: true }));
     let iterable = { [Symbol.iterator]: () => ({ next }) };
 
-    let reject$ = reject(iterable, isEven);
+    let map$ = map(iterable, toUpperCase);
     expect(next).not.toHaveBeenCalled();
 
-    await drain(reject$);
+    await drain(map$);
     expect(next).toHaveBeenCalled();
   });
 
   test.each`
     callbackType | callback
-    ${"sync"}    | ${isEven}
-    ${"async"}   | ${isEvenAsync}
+    ${"sync"}    | ${toUpperCase}
+    ${"async"}   | ${toUpperCaseAsync}
   `(
-    "rejects results of input using $callbackType callback",
+    "maps each result of input with $callbackType callback",
     async ({ callback }) => {
       expect.assertions(3);
-      let input = [1, 2, 3, 4, 5];
-      let expectedResults = [1, 3, 5];
+      let input = ["foo", "bar", "baz"];
+      let expectedResults = await Promise.all(input.map(callback));
 
-      for await (let result of reject(input, callback)) {
+      for await (let result of map(input, callback)) {
         expect(result).toEqual(expectedResults.shift());
       }
     }
@@ -39,19 +40,19 @@ export function runRejectSuite(reject: Function) {
   test("provides current result as first argument to callback", async () => {
     expect.assertions(3);
 
-    let mockCallback = jest.fn(isEven);
-    await drain(reject([1, 2, 3], mockCallback));
+    let mockCallback = jest.fn();
+    await drain(map(["foo", "bar", "baz"], mockCallback));
 
-    expect(mockCallback.mock.calls[0][0]).toEqual(1);
-    expect(mockCallback.mock.calls[1][0]).toEqual(2);
-    expect(mockCallback.mock.calls[2][0]).toEqual(3);
+    expect(mockCallback.mock.calls[0][0]).toEqual("foo");
+    expect(mockCallback.mock.calls[1][0]).toEqual("bar");
+    expect(mockCallback.mock.calls[2][0]).toEqual("baz");
   });
 
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let mockCallback = jest.fn(isEven);
-    await drain(reject([1, 2, 3], mockCallback));
+    let mockCallback = jest.fn();
+    await drain(map(["foo", "bar", "baz"], mockCallback));
 
     expect(mockCallback.mock.calls[0][1]).toEqual(0);
     expect(mockCallback.mock.calls[1][1]).toEqual(1);
@@ -60,9 +61,9 @@ export function runRejectSuite(reject: Function) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(reject([1], mockCallback));
+    await drain(map([123], mockCallback));
 
-    function mockCallback(this: undefined) {
+    function mockCallback() {
       expect(this).toBeUndefined();
     }
   });
@@ -70,9 +71,9 @@ export function runRejectSuite(reject: Function) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(reject([1], mockCallback, expectedThis));
+    await drain(map([123], mockCallback, expectedThis));
 
-    function mockCallback(this: typeof expectedThis) {
+    function mockCallback() {
       expect(this).toBe(expectedThis);
     }
   });

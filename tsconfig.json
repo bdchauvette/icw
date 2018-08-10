@@ -1,8 +1,11 @@
 {
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/**/*.js"],
 
   "compilerOptions": {
     "lib": ["dom", "esnext"],
+
+    // Needed for tests
+    "allowJs": true,
 
     // Emit
     "target": "esnext",

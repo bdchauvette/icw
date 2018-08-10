@@ -32,15 +32,15 @@ describe.each`
 `("static method $method", ({ method, args, runSuite }) => {
   test("is a function", () => {
     expect.assertions(1);
-    expect((ICW as any)[method]).toBeFunction();
+    expect(ICW[method]).toBeFunction();
   });
 
   test("returns an ICW instance", () => {
     expect.assertions(1);
-    expect((ICW as any)[method](...args)).toBeInstanceOf(ICW);
+    expect(ICW[method](...args)).toBeInstanceOf(ICW);
   });
 
-  runSuite((ICW as any)[method]);
+  runSuite(ICW[method]);
 });
 
 describe.each`
@@ -56,23 +56,20 @@ describe.each`
   // eslint-disable-next-line jest/no-identical-title
   test("is a function", () => {
     expect.assertions(1);
-    expect((ICW.prototype as any)[method]).toBeFunction();
+    expect(ICW.prototype[method]).toBeFunction();
   });
 
   test(`returns a ${returnInstance.name}`, () => {
     expect.assertions(1);
-    let icw: any = new ICW([1, 2, 3]);
+    let icw = new ICW([1, 2, 3]);
     expect(icw[method](...args)).toBeInstanceOf(returnInstance);
   });
 
   runSuite(bindMethod(method));
 });
 
-function bindMethod<T>(method: keyof ICW<T>) {
-  return function callBoundMethod(
-    iterable: AsyncIterable<T> | Iterable<T>,
-    ...args: any[]
-  ): any {
+function bindMethod(method) {
+  return function callBoundMethod(iterable, ...args) {
     // @ts-ignore
     return new ICW(iterable)[method](...args);
   };

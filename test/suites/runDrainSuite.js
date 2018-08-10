@@ -1,4 +1,4 @@
-export function runDrainSuite(drain: Function) {
+export function runDrainSuite(drain) {
   test("returns a Promise", async () => {
     expect.assertions(1);
     expect(drain([])).toBeInstanceOf(Promise);
@@ -36,10 +36,7 @@ export function runDrainSuite(drain: Function) {
   });
 }
 
-function createConsumableIterable(
-  maxIterations: number,
-  tick: jest.Mock<any>
-): Iterable<void> {
+function createConsumableIterable(maxIterations, tick) {
   return {
     [Symbol.iterator]() {
       let iteration = 0;
@@ -56,10 +53,7 @@ function createConsumableIterable(
   };
 }
 
-function createConsumableAsyncIterable(
-  maxIterations: number,
-  tick: jest.Mock<any>
-): AsyncIterable<void> {
+function createConsumableAsyncIterable(maxIterations, tick) {
   return {
     [Symbol.asyncIterator]() {
       let iteration = 0;
