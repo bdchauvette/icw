@@ -1,6 +1,5 @@
 export async function drain<T>(
   iterable: AsyncIterable<T> | Iterable<T>
 ): Promise<void> {
-  // @ts-ignore
-  for await (let result of iterable) continue;
+  for await (let _ of iterable) continue;
 }
