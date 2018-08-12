@@ -1,4 +1,4 @@
 {
   "*.{js,ts}": "eslint",
-  "*.{json,md,yml}": "prettier"
+  "*.{json,md,yml}": "prettier --list-different"
 }
