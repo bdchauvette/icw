@@ -6,41 +6,51 @@ export function runForEachSuite(forEach) {
     expect(forEach([], noop)).toBeInstanceOf(Promise);
   });
 
-  test("eagerly consumes the provided iterable", async () => {
-    expect.assertions(1);
-    let next = jest.fn(() => ({ done: true }));
-    let iterable = { [Symbol.iterator]: () => ({ next }) };
+  test.each`
+    iterableType | iteratorSymbol          | iterator
+    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
+    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+  `(
+    "eagerly consumes the provided $iterableType iterable",
+    async ({ iteratorSymbol, iterator }) => {
+      expect.assertions(1);
+      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-    await forEach(iterable, noop);
-    expect(next).toHaveBeenCalled();
-  });
+      await forEach(iterable, noop);
+      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+    }
+  );
 
   test("runs the provided iterable to completion", async () => {
-    expect.assertions(2);
-    let tick = jest.fn();
+    expect.assertions(1);
 
-    let iterations = 3;
-    let result = await forEach(
-      createConsumableIterable(iterations, tick),
+    let iteratorDidFinish = false;
+
+    await forEach(
+      (function*() {
+        yield* [1, 2, 3];
+        iteratorDidFinish = true;
+      })(),
       noop
     );
 
-    expect(result).toBeUndefined();
-    expect(tick).toHaveBeenCalledTimes(iterations);
+    expect(iteratorDidFinish).toBeTruthy();
   });
 
   test("runs the provided async iterable to completion", async () => {
-    expect.assertions(2);
-    let tick = jest.fn();
+    expect.assertions(1);
 
-    let iterations = 3;
-    let result = await forEach(
-      createConsumableAsyncIterable(iterations, tick),
+    let iteratorDidFinish = false;
+
+    await forEach(
+      (async function*() {
+        yield* [1, 2, 3];
+        iteratorDidFinish = true;
+      })(),
       noop
     );
 
-    expect(result).toBeUndefined();
-    expect(tick).toHaveBeenCalledTimes(iterations);
+    expect(iteratorDidFinish).toBeTruthy();
   });
 
   test("provides current result as first argument to callback", async () => {
@@ -82,38 +92,4 @@ export function runForEachSuite(forEach) {
       expectedThis
     );
   });
-}
-
-function createConsumableIterable(maxIterations, tick) {
-  return {
-    [Symbol.iterator]() {
-      let iteration = 0;
-      return {
-        next() {
-          iteration += 1;
-          let result = { value: undefined, done: iteration >= maxIterations };
-
-          tick();
-          return result;
-        }
-      };
-    }
-  };
-}
-
-function createConsumableAsyncIterable(maxIterations, tick) {
-  return {
-    [Symbol.asyncIterator]() {
-      let iteration = 0;
-      return {
-        async next() {
-          iteration += 1;
-          let result = { value: undefined, done: iteration >= maxIterations };
-
-          tick();
-          return result;
-        }
-      };
-    }
-  };
 }

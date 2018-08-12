@@ -9,17 +9,23 @@ export function runMapSuite(map) {
     await expect(map([1, 2, 3], noop)).toBeAsyncIterable();
   });
 
-  test("lazily consumes the provided iterable", async () => {
-    expect.assertions(2);
-    let next = jest.fn(() => ({ done: true }));
-    let iterable = { [Symbol.iterator]: () => ({ next }) };
+  test.each`
+    iterableType | iteratorSymbol          | iterator
+    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
+    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+  `(
+    "lazily consumes the provided $iterableType iterable",
+    async ({ iteratorSymbol, iterator }) => {
+      expect.assertions(2);
+      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-    let map$ = map(iterable, toUpperCase);
-    expect(next).not.toHaveBeenCalled();
+      let map$ = map(iterable, toUpperCase)[Symbol.asyncIterator]();
+      expect(iterable[iteratorSymbol]).not.toHaveBeenCalled();
 
-    await drain(map$);
-    expect(next).toHaveBeenCalled();
-  });
+      await map$.next();
+      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+    }
+  );
 
   test.each`
     callbackType | callback

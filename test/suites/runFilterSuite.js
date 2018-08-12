@@ -8,17 +8,23 @@ export function runFilterSuite(filter) {
     await expect(filter([1, 2, 3], isEven)).toBeAsyncIterable();
   });
 
-  test("lazily consumes the provided iterable", async () => {
-    expect.assertions(2);
-    let next = jest.fn(() => ({ done: true }));
-    let iterable = { [Symbol.iterator]: () => ({ next }) };
+  test.each`
+    iterableType | iteratorSymbol          | iterator
+    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
+    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+  `(
+    "lazily consumes the provided $iterableType iterable",
+    async ({ iteratorSymbol, iterator }) => {
+      expect.assertions(2);
+      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-    let filter$ = filter(iterable, isEven);
-    expect(next).not.toHaveBeenCalled();
+      let filter$ = filter(iterable, isEven)[Symbol.asyncIterator]();
+      expect(iterable[iteratorSymbol]).not.toHaveBeenCalled();
 
-    await drain(filter$);
-    expect(next).toHaveBeenCalled();
-  });
+      await filter$.next();
+      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+    }
+  );
 
   test.each`
     callbackType | callback
