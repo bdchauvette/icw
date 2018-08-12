@@ -9,4 +9,5 @@ export { forEach } from "./forEach";
 export { map } from "./map";
 export { reject } from "./reject";
 export { scan } from "./scan";
+export { tap } from "./tap";
 export { withIndex } from "./withIndex";

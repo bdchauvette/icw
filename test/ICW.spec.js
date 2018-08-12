@@ -12,6 +12,7 @@ import { runForEachSuite } from "./suites/runForEachSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
+import { runTapSuite } from "./suites/runTapSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
 test("is a class", () => {
@@ -51,6 +52,7 @@ describe.each`
   ${"map"}       | ${[noop]}   | ${ICW}         | ${runMapSuite}
   ${"reject"}    | ${[isEven]} | ${ICW}         | ${runRejectSuite}
   ${"scan"}      | ${[sum]}    | ${ICW}         | ${runScanSuite}
+  ${"tap"}       | ${[noop]}   | ${ICW}         | ${runTapSuite}
   ${"withIndex"} | ${[]}       | ${ICW}         | ${runWithIndexSuite}
 `("prototype method $method", ({ method, args, returnInstance, runSuite }) => {
   // eslint-disable-next-line jest/no-identical-title
