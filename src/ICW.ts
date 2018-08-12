@@ -5,12 +5,12 @@ import { of } from "./of";
 // Prototype methods
 import { drain } from "./drain";
 import { filter } from "./filter";
+import { forEach } from "./forEach";
 import { map } from "./map";
 import { reject } from "./reject";
 import { scan } from "./scan";
 import { tap } from "./tap";
 import { withIndex } from "./withIndex";
-import { forEach } from "./forEach";
 
 const _iterable = Symbol("@icw/ICW/_iterable");
 
