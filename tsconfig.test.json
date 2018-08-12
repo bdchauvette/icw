@@ -3,6 +3,6 @@
   "compilerOptions": {
     // Make compiled code compatible with Jest
     "target": "es2015",
-    "module": "commonjs",
+    "module": "commonjs"
   }
 }

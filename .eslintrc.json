@@ -30,8 +30,7 @@
   },
 
   "rules": {
-
-   // Possible errors
+    // Possible errors
     "no-inner-declarations": "off",
     "no-prototype-builtins": "error",
     "no-template-curly-in-string": "error",
