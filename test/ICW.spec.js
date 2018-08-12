@@ -12,6 +12,8 @@ import { runForEachSuite } from "./suites/runForEachSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
+import { runTakeSuite } from "./suites/runTakeSuite";
+import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
@@ -45,15 +47,17 @@ describe.each`
 });
 
 describe.each`
-  method         | args        | returnInstance | runSuite
-  ${"drain"}     | ${[]}       | ${Promise}     | ${runDrainSuite}
-  ${"filter"}    | ${[isEven]} | ${ICW}         | ${runFilterSuite}
-  ${"forEach"}   | ${[noop]}   | ${Promise}     | ${runForEachSuite}
-  ${"map"}       | ${[noop]}   | ${ICW}         | ${runMapSuite}
-  ${"reject"}    | ${[isEven]} | ${ICW}         | ${runRejectSuite}
-  ${"scan"}      | ${[sum]}    | ${ICW}         | ${runScanSuite}
-  ${"tap"}       | ${[noop]}   | ${ICW}         | ${runTapSuite}
-  ${"withIndex"} | ${[]}       | ${ICW}         | ${runWithIndexSuite}
+  method         | args         | returnInstance | runSuite
+  ${"drain"}     | ${[]}        | ${Promise}     | ${runDrainSuite}
+  ${"filter"}    | ${[isEven]}  | ${ICW}         | ${runFilterSuite}
+  ${"forEach"}   | ${[noop]}    | ${Promise}     | ${runForEachSuite}
+  ${"map"}       | ${[noop]}    | ${ICW}         | ${runMapSuite}
+  ${"reject"}    | ${[isEven]}  | ${ICW}         | ${runRejectSuite}
+  ${"scan"}      | ${[sum]}     | ${ICW}         | ${runScanSuite}
+  ${"take"}      | ${[1]}       | ${ICW}         | ${runTakeSuite}
+  ${"takeWhile"} | ${[Boolean]} | ${ICW}         | ${runTakeWhileSuite}
+  ${"tap"}       | ${[noop]}    | ${ICW}         | ${runTapSuite}
+  ${"withIndex"} | ${[]}        | ${ICW}         | ${runWithIndexSuite}
 `("prototype method $method", ({ method, args, returnInstance, runSuite }) => {
   // eslint-disable-next-line jest/no-identical-title
   test("is a function", () => {

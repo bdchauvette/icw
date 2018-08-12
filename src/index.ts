@@ -9,5 +9,7 @@ export { forEach } from "./forEach";
 export { map } from "./map";
 export { reject } from "./reject";
 export { scan } from "./scan";
+export { take } from "./take";
+export { takeWhile } from "./takeWhile";
 export { tap } from "./tap";
 export { withIndex } from "./withIndex";

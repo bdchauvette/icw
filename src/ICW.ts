@@ -9,6 +9,8 @@ import { forEach } from "./forEach";
 import { map } from "./map";
 import { reject } from "./reject";
 import { scan } from "./scan";
+import { take } from "./take";
+import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
 import { withIndex } from "./withIndex";
 
@@ -76,6 +78,17 @@ export class ICW<T> implements AsyncIterable<T> {
     return useFirstResultAsInitialValue
       ? new ICW(scan(this, accumulate))
       : new ICW(scan(this, accumulate, initialValue));
+  }
+
+  take(numResults: number): ICW<T> {
+    return new ICW(take(this, numResults));
+  }
+
+  takeWhile(
+    shouldTake: (result: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ) {
+    return new ICW(takeWhile(this, shouldTake, thisArg));
   }
 
   tap(
