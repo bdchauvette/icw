@@ -13,7 +13,7 @@ export function reject<T>(
   thisArg?: any
 ): AsyncIterable<T> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       for await (let [result, index] of withIndex(iterable)) {
         let resultIsRejected = await shouldReject.call(thisArg, result, index);
         if (!resultIsRejected) yield result;

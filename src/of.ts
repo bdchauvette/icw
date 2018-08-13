@@ -3,7 +3,7 @@
  */
 export function of<T>(...values: T[]): AsyncIterable<T> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       yield* values;
     }
   };

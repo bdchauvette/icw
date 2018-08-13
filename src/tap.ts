@@ -6,7 +6,7 @@ export function tap<T>(
   thisArg?: any
 ): AsyncIterable<T> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       for await (let [result, index] of withIndex(iterable)) {
         callback.call(thisArg, result, index);
         yield result;

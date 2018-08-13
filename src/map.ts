@@ -9,7 +9,7 @@ export function map<T, U>(
   thisArg?: any
 ): AsyncIterable<U> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<U> {
       for await (let [result, index] of withIndex(iterable)) {
         yield callbackFn.call(thisArg, result, index, iterable);
       }

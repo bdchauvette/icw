@@ -6,7 +6,7 @@ export function skipWhile<T>(
   thisArg?: any
 ): AsyncIterable<T> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       let doneSkipping = false;
 
       for await (let [result, index] of withIndex(iterable)) {

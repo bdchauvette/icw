@@ -6,7 +6,7 @@ export function withIndex<T>(
   iterable: AsyncIterable<T> | Iterable<T>
 ): AsyncIterable<[T, number]> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<[T, number]> {
       let index = 0;
       for await (let result of iterable) {
         yield [result, index];

@@ -23,7 +23,7 @@ function toDelegatingAsyncIterable<T>(
   iterable: AsyncIterable<T> | Iterable<T>
 ): AsyncIterable<T> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       yield* iterable;
     }
   };
@@ -31,7 +31,7 @@ function toDelegatingAsyncIterable<T>(
 
 function fromPromise<T>(input: Promise<T>): AsyncIterable<T> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       yield input;
     }
   };

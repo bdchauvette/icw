@@ -63,13 +63,12 @@ describe.each`
   ${"tap"}       | ${[noop]}    | ${ICW}         | ${runTapSuite}
   ${"withIndex"} | ${[]}        | ${ICW}         | ${runWithIndexSuite}
 `("prototype method $method", ({ method, args, returnInstance, runSuite }) => {
-  // eslint-disable-next-line jest/no-identical-title
   test("is a function", () => {
     expect.assertions(1);
     expect(ICW.prototype[method]).toBeFunction();
   });
 
-  test(`returns a ${returnInstance.name}`, () => {
+  test(`returns a ${returnInstance.name} instance`, () => {
     expect.assertions(1);
     let icw = new ICW([1, 2, 3]);
     expect(icw[method](...args)).toBeInstanceOf(returnInstance);
@@ -80,7 +79,6 @@ describe.each`
 
 function bindMethod(method) {
   return function callBoundMethod(iterable, ...args) {
-    // @ts-ignore
     return new ICW(iterable)[method](...args);
   };
 }

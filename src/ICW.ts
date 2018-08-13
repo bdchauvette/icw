@@ -35,7 +35,7 @@ export class ICW<T> implements AsyncIterable<T> {
     this[_iterable] = iterable;
   }
 
-  async *[Symbol.asyncIterator]() {
+  async *[Symbol.asyncIterator](): AsyncIterator<T> {
     yield* this[_iterable];
   }
 
@@ -100,7 +100,7 @@ export class ICW<T> implements AsyncIterable<T> {
   takeWhile(
     shouldTake: (result: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
-  ) {
+  ): ICW<T> {
     return new ICW(takeWhile(this, shouldTake, thisArg));
   }
 

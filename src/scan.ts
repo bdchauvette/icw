@@ -8,7 +8,7 @@ export function scan<T>(
   let useFirstResultAsInitialValue = arguments.length < 3;
 
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       let accumulator = initialValue;
 
       for await (let [result, index] of withIndex(iterable)) {

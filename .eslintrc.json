@@ -107,15 +107,7 @@
     "node/no-unsupported-features/es-builtins": "error",
 
     // eslint-plugin-prefer-let
-    "prefer-let/prefer-let": "error",
-
-    // eslint-plugin-typescript
-    "typescript/class-name-casing": "error",
-    "typescript/no-angle-bracket-type-assertion": "error",
-    "typescript/no-inferrable-types": "error",
-    "typescript/no-parameter-properties": "error",
-    "typescript/no-triple-slash-reference": "error",
-    "typescript/no-var-requires": "error"
+    "prefer-let/prefer-let": "error"
   },
 
   "overrides": [
@@ -125,7 +117,16 @@
         // Typescript compat
         "no-undef": "off",
         "no-unused-vars": "off",
-        "no-use-before-define": "off"
+        "no-use-before-define": "off",
+
+        // eslint-plugin-typescript
+        "typescript/class-name-casing": "error",
+        "typescript/explicit-function-return-type": "error",
+        "typescript/no-angle-bracket-type-assertion": "error",
+        "typescript/no-inferrable-types": "error",
+        "typescript/no-parameter-properties": "error",
+        "typescript/no-triple-slash-reference": "error",
+        "typescript/no-var-requires": "error"
       }
     },
     {

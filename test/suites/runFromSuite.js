@@ -97,7 +97,6 @@ export function runFromSuite(from) {
     ${undefined}                            | ${undefined}
   `("throws an error when input is $inputType", ({ input }) => {
     expect.assertions(1);
-    // eslint-disable-next-line jest/prefer-inline-snapshots
     expect(() => from(input)).toThrowErrorMatchingSnapshot();
   });
 }

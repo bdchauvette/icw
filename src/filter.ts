@@ -9,7 +9,7 @@ export function filter<T>(
   thisArg?: any
 ): AsyncIterable<T> {
   return {
-    async *[Symbol.asyncIterator]() {
+    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
       for await (let [result, index] of withIndex(iterable)) {
         let resultIsOk = await shouldInclude.call(thisArg, result, index);
         if (resultIsOk) yield result;
