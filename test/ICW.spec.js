@@ -12,6 +12,8 @@ import { runForEachSuite } from "./suites/runForEachSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
+import { runSkipSuite } from "./suites/runSkipSuite";
+import { runSkipWhileSuite } from "./suites/runSkipWhileSuite";
 import { runTakeSuite } from "./suites/runTakeSuite";
 import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
@@ -54,6 +56,8 @@ describe.each`
   ${"map"}       | ${[noop]}    | ${ICW}         | ${runMapSuite}
   ${"reject"}    | ${[isEven]}  | ${ICW}         | ${runRejectSuite}
   ${"scan"}      | ${[sum]}     | ${ICW}         | ${runScanSuite}
+  ${"skip"}      | ${[1]}       | ${ICW}         | ${runSkipSuite}
+  ${"skipWhile"} | ${[Boolean]} | ${ICW}         | ${runSkipWhileSuite}
   ${"take"}      | ${[1]}       | ${ICW}         | ${runTakeSuite}
   ${"takeWhile"} | ${[Boolean]} | ${ICW}         | ${runTakeWhileSuite}
   ${"tap"}       | ${[noop]}    | ${ICW}         | ${runTapSuite}

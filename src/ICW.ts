@@ -9,6 +9,8 @@ import { forEach } from "./forEach";
 import { map } from "./map";
 import { reject } from "./reject";
 import { scan } from "./scan";
+import { skip } from "./skip";
+import { skipWhile } from "./skipWhile";
 import { take } from "./take";
 import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
@@ -78,6 +80,17 @@ export class ICW<T> implements AsyncIterable<T> {
     return useFirstResultAsInitialValue
       ? new ICW(scan(this, accumulate))
       : new ICW(scan(this, accumulate, initialValue));
+  }
+
+  skip(numResults: number): ICW<T> {
+    return new ICW(skip(this, numResults));
+  }
+
+  skipWhile(
+    shouldSkip: (result: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): ICW<T> {
+    return new ICW(skipWhile(this, shouldSkip, thisArg));
   }
 
   take(numResults: number): ICW<T> {
