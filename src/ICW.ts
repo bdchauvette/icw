@@ -3,6 +3,7 @@ import { from } from "./from";
 import { of } from "./of";
 
 // Prototype methods
+import { collect } from "./collect";
 import { drain } from "./drain";
 import { filter } from "./filter";
 import { forEach } from "./forEach";
@@ -37,6 +38,10 @@ export class ICW<T> implements AsyncIterable<T> {
 
   async *[Symbol.asyncIterator](): AsyncIterator<T> {
     yield* this[_iterable];
+  }
+
+  collect(): ICW<T[]> {
+    return new ICW(collect(this));
   }
 
   drain(): Promise<void> {

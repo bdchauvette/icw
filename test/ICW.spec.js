@@ -6,6 +6,7 @@ import { sum } from "./helpers/sum";
 import { runFromSuite } from "./suites/runFromSuite";
 import { runOfSuite } from "./suites/runOfSuite";
 
+import { runCollectSuite } from "./suites/runCollectSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
@@ -50,6 +51,7 @@ describe.each`
 
 describe.each`
   method         | args         | returnInstance | runSuite
+  ${"collect"}   | ${[]}        | ${ICW}         | ${runCollectSuite}
   ${"drain"}     | ${[]}        | ${Promise}     | ${runDrainSuite}
   ${"filter"}    | ${[isEven]}  | ${ICW}         | ${runFilterSuite}
   ${"forEach"}   | ${[noop]}    | ${Promise}     | ${runForEachSuite}

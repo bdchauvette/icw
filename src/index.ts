@@ -3,6 +3,7 @@ export { ICW } from "./ICW";
 export { from } from "./from";
 export { of } from "./of";
 
+export { collect } from "./collect";
 export { drain } from "./drain";
 export { filter } from "./filter";
 export { forEach } from "./forEach";
