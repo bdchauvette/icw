@@ -14,5 +14,7 @@ export { skip } from "./skip";
 export { skipWhile } from "./skipWhile";
 export { take } from "./take";
 export { takeWhile } from "./takeWhile";
+export { toArray } from "./toArray";
+export { toPromise } from "./toPromise";
 export { tap } from "./tap";
 export { withIndex } from "./withIndex";

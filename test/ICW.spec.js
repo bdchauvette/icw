@@ -18,6 +18,8 @@ import { runSkipWhileSuite } from "./suites/runSkipWhileSuite";
 import { runTakeSuite } from "./suites/runTakeSuite";
 import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
+import { runToArraySuite } from "./suites/runToArraySuite";
+import { runToPromiseSuite } from "./suites/runToPromiseSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
 test("is a class", () => {
@@ -51,9 +53,11 @@ describe.each`
 
 // Promise-returning prototype methods
 describe.each`
-  method       | args      | runSuite
-  ${"drain"}   | ${[]}     | ${runDrainSuite}
-  ${"forEach"} | ${[noop]} | ${runForEachSuite}
+  method         | args      | runSuite
+  ${"drain"}     | ${[]}     | ${runDrainSuite}
+  ${"forEach"}   | ${[noop]} | ${runForEachSuite}
+  ${"toArray"}   | ${[]}     | ${runToArraySuite}
+  ${"toPromise"} | ${[]}     | ${runToPromiseSuite}
 `("prototype method $method", ({ method, args, runSuite }) => {
   test("is a function", () => {
     expect.assertions(1);

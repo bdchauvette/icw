@@ -15,6 +15,8 @@ import { skipWhile } from "./skipWhile";
 import { take } from "./take";
 import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
+import { toArray } from "./toArray";
+import { toPromise } from "./toPromise";
 import { withIndex } from "./withIndex";
 
 const _iterable = Symbol("@icw/ICW/_iterable");
@@ -114,6 +116,14 @@ export class ICW<T> implements AsyncIterable<T> {
     thisArg?: any
   ): ICW<T> {
     return new ICW(tap(this, callback, thisArg));
+  }
+
+  toArray(): Promise<T[]> {
+    return toArray(this);
+  }
+
+  toPromise(): Promise<T> {
+    return toPromise(this);
   }
 
   withIndex(): ICW<[T, number]> {
