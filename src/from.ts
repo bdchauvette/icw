@@ -9,8 +9,7 @@ import { isPromise } from "./__internal__/isPromise";
 export function from<T>(
   input: AsyncIterable<T> | Iterable<T> | ArrayLike<T> | Promise<T>
 ): AsyncIterable<T> {
-  if (isAsyncIterable(input)) return input;
-  if (isIterable(input)) return delegateTo(input);
+  if (isAsyncIterable(input) || isIterable(input)) return delegateTo(input);
   if (isArrayLike(input)) return delegateTo(Array.from(input));
   if (isPromise(input)) return fromPromise(input);
 
