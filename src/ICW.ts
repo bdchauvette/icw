@@ -38,7 +38,7 @@ export class ICW<T> implements AsyncIterable<T> {
     this[_iterable] = iterable;
   }
 
-  async *[Symbol.asyncIterator](): AsyncIterator<T> {
+  async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
     yield* this[_iterable];
   }
 
@@ -122,7 +122,7 @@ export class ICW<T> implements AsyncIterable<T> {
     return toArray(this);
   }
 
-  toPromise(): Promise<T> {
+  toPromise(): Promise<T | undefined> {
     return toPromise(this);
   }
 

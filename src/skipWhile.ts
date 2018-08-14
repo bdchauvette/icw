@@ -4,7 +4,7 @@ export async function* skipWhile<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
   shouldSkip: (result: T, index?: number) => boolean | Promise<boolean>,
   thisArg?: any
-): AsyncIterable<T> {
+): AsyncIterableIterator<T> {
   let doneSkipping = false;
 
   for await (let [result, index] of withIndex(iterable)) {

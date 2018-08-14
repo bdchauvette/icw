@@ -1,6 +1,3 @@
-/**
- * Creates an AsyncIterator that yields each argument.
- */
-export async function* of<T>(...values: T[]): AsyncIterable<T> {
+export async function* of<T>(...values: T[]): AsyncIterableIterator<T> {
   yield* values;
 }

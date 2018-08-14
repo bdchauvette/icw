@@ -4,7 +4,7 @@ export async function* scan<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
   accumulate: (accumulator: T, result: T, index?: number) => T | Promise<T>,
   initialValue?: T
-): AsyncIterable<T> {
+): AsyncIterableIterator<T> {
   let useFirstResultAsInitialValue = arguments.length < 3;
   let accumulator = initialValue;
 
