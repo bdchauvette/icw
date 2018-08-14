@@ -10,8 +10,8 @@ export function from<T>(
   input: AsyncIterable<T> | Iterable<T> | ArrayLike<T> | Promise<T>
 ): AsyncIterable<T> {
   if (isAsyncIterable(input)) return input;
-  if (isIterable(input)) return toDelegatingAsyncIterable(input);
-  if (isArrayLike(input)) return toDelegatingAsyncIterable(Array.from(input));
+  if (isIterable(input)) return delegateTo(input);
+  if (isArrayLike(input)) return delegateTo(Array.from(input));
   if (isPromise(input)) return fromPromise(input);
 
   throw new Error(
@@ -19,20 +19,12 @@ export function from<T>(
   );
 }
 
-function toDelegatingAsyncIterable<T>(
+async function* delegateTo<T>(
   iterable: AsyncIterable<T> | Iterable<T>
-): AsyncIterable<T> {
-  return {
-    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
-      yield* iterable;
-    }
-  };
+): AsyncIterableIterator<T> {
+  yield* iterable;
 }
 
-function fromPromise<T>(input: Promise<T>): AsyncIterable<T> {
-  return {
-    async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
-      yield input;
-    }
-  };
+async function* fromPromise<T>(input: Promise<T>): AsyncIterableIterator<T> {
+  yield input;
 }
