@@ -1,8 +1,11 @@
-import { takeWhile } from "./takeWhile";
-
-export function take<T>(
+export async function* take<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
-  numResults: number
+  numToTake: number
 ): AsyncIterableIterator<T> {
-  return takeWhile(iterable, (_, index): boolean => index! < numResults);
+  let numTaken = 0;
+  for await (let result of iterable) {
+    numTaken += 1;
+    if (numTaken > numToTake) return;
+    yield result;
+  }
 }

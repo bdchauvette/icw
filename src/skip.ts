@@ -1,8 +1,10 @@
-import { skipWhile } from "./skipWhile";
-
-export function skip<T>(
+export async function* skip<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
-  numResults: number
+  numToSkip: number
 ): AsyncIterableIterator<T> {
-  return skipWhile(iterable, (_, index): boolean => index! < numResults);
+  let numSkipped = 0;
+  for await (let result of iterable) {
+    if (numSkipped < numToSkip) numSkipped += 1;
+    else yield result;
+  }
 }
