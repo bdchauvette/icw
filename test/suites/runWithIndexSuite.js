@@ -5,20 +5,22 @@ export function runWithIndexSuite(withIndex) {
   });
 
   test.each`
-    iterableType | iteratorSymbol          | iterator
-    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
-    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+    iterableType | createIterableIterator
+    ${"sync"}    | ${function*() {}}
+    ${"async"}   | ${async function*() {}}
   `(
     "lazily consumes the provided $iterableType iterable",
-    async ({ iteratorSymbol, iterator }) => {
+    async ({ createIterableIterator }) => {
       expect.assertions(2);
-      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-      let withIndex$ = withIndex(iterable)[Symbol.asyncIterator]();
-      expect(iterable[iteratorSymbol]).not.toHaveBeenCalled();
+      let iterableIterator = createIterableIterator();
+      let next = jest.spyOn(iterableIterator, "next");
+
+      let withIndex$ = withIndex(iterableIterator)[Symbol.asyncIterator]();
+      expect(next).not.toHaveBeenCalled();
 
       await withIndex$.next();
-      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+      expect(next).toHaveBeenCalled();
     }
   );
 

@@ -5,17 +5,19 @@ export function runDrainSuite(drain) {
   });
 
   test.each`
-    iterableType | iteratorSymbol          | iterator
-    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
-    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+    iterableType | createIterableIterator
+    ${"sync"}    | ${function*() {}}
+    ${"async"}   | ${async function*() {}}
   `(
     "eagerly consumes the provided $iterableType iterable",
-    async ({ iteratorSymbol, iterator }) => {
+    async ({ createIterableIterator }) => {
       expect.assertions(1);
-      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-      await drain(iterable);
-      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+      let iterableIterator = createIterableIterator();
+      let next = jest.spyOn(iterableIterator, "next");
+
+      await drain(iterableIterator);
+      expect(next).toHaveBeenCalled();
     }
   );
 

@@ -9,20 +9,22 @@ export function runScanSuite(scan) {
   });
 
   test.each`
-    iterableType | iteratorSymbol          | iterator
-    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
-    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+    iterableType | createIterableIterator
+    ${"sync"}    | ${function*() {}}
+    ${"async"}   | ${async function*() {}}
   `(
     "lazily consumes the provided $iterableType iterable",
-    async ({ iteratorSymbol, iterator }) => {
+    async ({ createIterableIterator }) => {
       expect.assertions(2);
-      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-      let scan$ = scan(iterable, sum)[Symbol.asyncIterator]();
-      expect(iterable[iteratorSymbol]).not.toHaveBeenCalled();
+      let iterableIterator = createIterableIterator();
+      let next = jest.spyOn(iterableIterator, "next");
 
-      await scan$.next();
-      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+      let sum$ = scan(iterableIterator, sum)[Symbol.asyncIterator]();
+      expect(next).not.toHaveBeenCalled();
+
+      await sum$.next();
+      expect(next).toHaveBeenCalled();
     }
   );
 

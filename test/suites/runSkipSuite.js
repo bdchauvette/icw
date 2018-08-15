@@ -7,20 +7,22 @@ export function runSkipSuite(skip) {
   });
 
   test.each`
-    iterableType | iteratorSymbol          | iterator
-    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
-    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+    iterableType | createIterableIterator
+    ${"sync"}    | ${function*() {}}
+    ${"async"}   | ${async function*() {}}
   `(
     "lazily consumes the provided $iterableType iterable",
-    async ({ iteratorSymbol, iterator }) => {
+    async ({ createIterableIterator }) => {
       expect.assertions(2);
-      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-      let skip$ = skip(iterable, Boolean)[Symbol.asyncIterator]();
-      expect(iterable[iteratorSymbol]).not.toHaveBeenCalled();
+      let iterableIterator = createIterableIterator();
+      let next = jest.spyOn(iterableIterator, "next");
+
+      let skip$ = skip(iterableIterator, 1)[Symbol.asyncIterator]();
+      expect(next).not.toHaveBeenCalled();
 
       await skip$.next();
-      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+      expect(next).toHaveBeenCalled();
     }
   );
 

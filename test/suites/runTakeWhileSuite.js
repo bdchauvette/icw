@@ -8,20 +8,24 @@ export function runTakeWhileSuite(takeWhile) {
   });
 
   test.each`
-    iterableType | iteratorSymbol          | iterator
-    ${"sync"}    | ${Symbol.iterator}      | ${function*() {}}
-    ${"async"}   | ${Symbol.asyncIterator} | ${async function*() {}}
+    iterableType | createIterableIterator
+    ${"sync"}    | ${function*() {}}
+    ${"async"}   | ${async function*() {}}
   `(
     "lazily consumes the provided $iterableType iterable",
-    async ({ iteratorSymbol, iterator }) => {
+    async ({ createIterableIterator }) => {
       expect.assertions(2);
-      let iterable = { [iteratorSymbol]: jest.fn(iterator) };
 
-      let filter$ = takeWhile(iterable, Boolean)[Symbol.asyncIterator]();
-      expect(iterable[iteratorSymbol]).not.toHaveBeenCalled();
+      let iterableIterator = createIterableIterator();
+      let next = jest.spyOn(iterableIterator, "next");
 
-      await filter$.next();
-      expect(iterable[iteratorSymbol]).toHaveBeenCalled();
+      let takeWhile$ = takeWhile(iterableIterator, Boolean)[
+        Symbol.asyncIterator
+      ]();
+      expect(next).not.toHaveBeenCalled();
+
+      await takeWhile$.next();
+      expect(next).toHaveBeenCalled();
     }
   );
 
