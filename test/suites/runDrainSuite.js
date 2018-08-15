@@ -1,9 +1,4 @@
 export function runDrainSuite(drain) {
-  test("returns a Promise", async () => {
-    expect.assertions(1);
-    expect(drain([])).toBeInstanceOf(Promise);
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

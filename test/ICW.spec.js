@@ -1,7 +1,4 @@
 import { ICW } from "../src";
-import { isEven } from "./helpers/isEven";
-import { noop } from "./helpers/noop";
-import { sum } from "./helpers/sum";
 
 import { runFromSuite } from "./suites/runFromSuite";
 import { runOfSuite } from "./suites/runOfSuite";
@@ -22,85 +19,32 @@ import { runToArraySuite } from "./suites/runToArraySuite";
 import { runToPromiseSuite } from "./suites/runToPromiseSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
-test("is a class", () => {
-  expect.assertions(2);
-  expect(ICW).toBeFunction();
-  expect(String(ICW)).toMatch(/^class/);
-});
-
-test("is an async iterable", async () => {
-  expect.assertions(1);
-  await expect(new ICW([])).toBeAsyncIterable();
-});
-
 describe.each`
-  method    | args        | runSuite
-  ${"of"}   | ${[]}       | ${runOfSuite}
-  ${"from"} | ${[isEven]} | ${runFromSuite}
-`("static method $method", ({ method, args, runSuite }) => {
-  test("is a function", () => {
-    expect.assertions(1);
-    expect(ICW[method]).toBeFunction();
-  });
-
-  test("returns an ICW instance", () => {
-    expect.assertions(1);
-    expect(ICW[method](...args)).toBeInstanceOf(ICW);
-  });
-
+  method    | runSuite
+  ${"of"}   | ${runOfSuite}
+  ${"from"} | ${runFromSuite}
+`("static method $method", ({ method, runSuite }) => {
   runSuite(ICW[method]);
 });
 
-// Promise-returning prototype methods
 describe.each`
-  method         | args      | runSuite
-  ${"drain"}     | ${[]}     | ${runDrainSuite}
-  ${"forEach"}   | ${[noop]} | ${runForEachSuite}
-  ${"toArray"}   | ${[]}     | ${runToArraySuite}
-  ${"toPromise"} | ${[]}     | ${runToPromiseSuite}
-`("prototype method $method", ({ method, args, runSuite }) => {
-  test("is a function", () => {
-    expect.assertions(1);
-    expect(ICW.prototype[method]).toBeFunction();
-  });
-
-  test("returns a Promise", () => {
-    expect.assertions(1);
-    let icw = new ICW([1, 2, 3]);
-    expect(icw[method](...args)).toBeInstanceOf(Promise);
-  });
-
-  runSuite(bindMethod(method));
-});
-
-// Chainable prototype methods
-describe.each`
-  method         | args         | runSuite
-  ${"collect"}   | ${[]}        | ${runCollectSuite}
-  ${"filter"}    | ${[isEven]}  | ${runFilterSuite}
-  ${"map"}       | ${[noop]}    | ${runMapSuite}
-  ${"reject"}    | ${[isEven]}  | ${runRejectSuite}
-  ${"scan"}      | ${[sum]}     | ${runScanSuite}
-  ${"skip"}      | ${[1]}       | ${runSkipSuite}
-  ${"skipWhile"} | ${[Boolean]} | ${runSkipWhileSuite}
-  ${"take"}      | ${[1]}       | ${runTakeSuite}
-  ${"takeWhile"} | ${[Boolean]} | ${runTakeWhileSuite}
-  ${"tap"}       | ${[noop]}    | ${runTapSuite}
-  ${"withIndex"} | ${[]}        | ${runWithIndexSuite}
-`("prototype method $method", ({ method, args, runSuite }) => {
-  test("is a function", () => {
-    expect.assertions(1);
-    expect(ICW.prototype[method]).toBeFunction();
-  });
-
-  test("returns a new ICW instance", () => {
-    expect.assertions(2);
-    let icw = new ICW([1, 2, 3]);
-    let returnValue = icw[method](...args);
-    expect(returnValue).toBeInstanceOf(ICW);
-    expect(returnValue).not.toBe(icw);
-  });
-
+  method         | runSuite
+  ${"collect"}   | ${runCollectSuite}
+  ${"drain"}     | ${runDrainSuite}
+  ${"filter"}    | ${runFilterSuite}
+  ${"forEach"}   | ${runForEachSuite}
+  ${"map"}       | ${runMapSuite}
+  ${"reject"}    | ${runRejectSuite}
+  ${"scan"}      | ${runScanSuite}
+  ${"skip"}      | ${runSkipSuite}
+  ${"skipWhile"} | ${runSkipWhileSuite}
+  ${"take"}      | ${runTakeSuite}
+  ${"takeWhile"} | ${runTakeWhileSuite}
+  ${"tap"}       | ${runTapSuite}
+  ${"toArray"}   | ${runToArraySuite}
+  ${"toPromise"} | ${runToPromiseSuite}
+  ${"withIndex"} | ${runWithIndexSuite}
+`("prototype method $method", ({ method, runSuite }) => {
   runSuite(bindMethod(method));
 });
 

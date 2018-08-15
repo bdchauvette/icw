@@ -3,11 +3,6 @@ import { isEven } from "../helpers/isEven";
 import { toAsync } from "../helpers/toAsync";
 
 export function runRejectSuite(reject) {
-  test("returns an async iterable", async () => {
-    expect.assertions(1);
-    await expect(reject([1, 2, 3], isEven)).toBeAsyncIterable();
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

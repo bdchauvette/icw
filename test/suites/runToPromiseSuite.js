@@ -1,11 +1,6 @@
 import { from } from "../../src";
 
 export function runToPromiseSuite(toPromise) {
-  test("returns a Promise", async () => {
-    expect.assertions(1);
-    expect(toPromise([])).toBeInstanceOf(Promise);
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

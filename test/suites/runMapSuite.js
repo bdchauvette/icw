@@ -1,14 +1,8 @@
 import { drain } from "../../src/drain";
-import { noop } from "../helpers/noop";
 import { toAsync } from "../helpers/toAsync";
 import { toUpperCase } from "../helpers/toUpperCase";
 
 export function runMapSuite(map) {
-  test("returns an async iterable", async () => {
-    expect.assertions(1);
-    await expect(map([1, 2, 3], noop)).toBeAsyncIterable();
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

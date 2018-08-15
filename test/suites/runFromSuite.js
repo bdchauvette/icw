@@ -1,17 +1,5 @@
 export function runFromSuite(from) {
   describe("async iterable input", () => {
-    test("returns an async iterable", async () => {
-      expect.assertions(1);
-
-      let input = {
-        async *[Symbol.asyncIterator]() {
-          yield true;
-        }
-      };
-
-      await expect(from(input)).toBeAsyncIterable();
-    });
-
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
@@ -32,11 +20,6 @@ export function runFromSuite(from) {
   });
 
   describe("iterable input", () => {
-    test("converts to an async iterable", async () => {
-      expect.assertions(1);
-      await expect(from([1, 2, 3])).toBeAsyncIterable();
-    });
-
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
@@ -51,11 +34,6 @@ export function runFromSuite(from) {
 
   // eslint-disable-next-line jest/lowercase-name
   describe("Array-like input", () => {
-    test("converts to an async iterable", async () => {
-      expect.assertions(1);
-      await expect(from({ length: 0 })).toBeAsyncIterable();
-    });
-
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
@@ -70,11 +48,6 @@ export function runFromSuite(from) {
 
   // eslint-disable-next-line jest/lowercase-name
   describe("Promise input", () => {
-    test("converts to an async iterable", async () => {
-      expect.assertions(1);
-      await expect(from(Promise.resolve())).toBeAsyncIterable();
-    });
-
     test("yields the resolved value of the promise", async () => {
       expect.assertions(1);
 

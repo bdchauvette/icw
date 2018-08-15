@@ -1,11 +1,6 @@
 import { forEach, from } from "../../src";
 
 export function runTakeSuite(take) {
-  test("returns an async iterable", async () => {
-    expect.assertions(1);
-    await expect(take([1, 2, 3], Boolean)).toBeAsyncIterable();
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

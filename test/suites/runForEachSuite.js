@@ -1,11 +1,6 @@
 import { noop } from "../helpers/noop";
 
 export function runForEachSuite(forEach) {
-  test("returns a Promise", async () => {
-    expect.assertions(1);
-    expect(forEach([], noop)).toBeInstanceOf(Promise);
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

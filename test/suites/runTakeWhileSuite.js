@@ -2,11 +2,6 @@ import { toAsync } from "../helpers/toAsync";
 import { drain, forEach } from "../../src";
 
 export function runTakeWhileSuite(takeWhile) {
-  test("returns an async iterable", async () => {
-    expect.assertions(1);
-    await expect(takeWhile([1, 2, 3], Boolean)).toBeAsyncIterable();
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

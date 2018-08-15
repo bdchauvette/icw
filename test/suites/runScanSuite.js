@@ -3,11 +3,6 @@ import { sum } from "../helpers/sum";
 import { drain } from "../../src/drain";
 
 export function runScanSuite(scan) {
-  test("returns an async iterable", async () => {
-    expect.assertions(1);
-    await expect(scan([], sum)).toBeAsyncIterable();
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

@@ -1,11 +1,6 @@
 import { from } from "../../src";
 
 export function runCollectSuite(collect) {
-  test("returns an async iterable", async () => {
-    expect.assertions(1);
-    await expect(collect([])).toBeAsyncIterable();
-  });
-
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

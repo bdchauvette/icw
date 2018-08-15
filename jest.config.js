@@ -1,6 +1,5 @@
 const config = {
   globalSetup: "./test/hooks/globalSetup.js",
-  setupTestFrameworkScriptFile: "./test/hooks/setupTestFramework.js",
 
   testMatch: ["<rootDir>/test/*.spec.js"],
   moduleFileExtensions: ["ts", "js"],
