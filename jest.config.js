@@ -8,7 +8,7 @@ const config = {
   transform: { "^.+\\.(ts|js)$": "ts-jest" },
   globals: { "ts-jest": { tsConfigFile: "tsconfig.test.json" } },
 
-  testEnvironment: process.env.JEST_ENV,
+  testEnvironment: "node",
   testURL: "http://localhost",
   restoreMocks: true,
 
