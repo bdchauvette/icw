@@ -78,7 +78,6 @@
     "no-unneeded-ternary": "error",
     "operator-assignment": "error",
     "prefer-object-spread": "error",
-    "quotes": "error",
 
     // ES2015
     "no-useless-computed-key": "error",
