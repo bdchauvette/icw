@@ -1,5 +1,5 @@
 const config = {
-  globalSetup: "./test/hooks/globalSetup.js",
+  globalSetup: "./test/__hooks__/globalSetup.js",
 
   testMatch: ["<rootDir>/test/*.spec.js"],
   moduleFileExtensions: ["ts", "js"],
