@@ -1,3 +1,7 @@
+import { isAsyncIterable } from "./__internal__/isAsyncIterable";
+import { isIterable } from "./__internal__/isIterable";
+import { isFunction } from "./__internal__/isFunction";
+
 // Static methods
 import { from } from "./from";
 import { of } from "./of";
@@ -19,9 +23,9 @@ import { toArray } from "./toArray";
 import { toPromise } from "./toPromise";
 import { withIndex } from "./withIndex";
 
-const _iterable = Symbol("@icw/ICW/_iterable");
+const _iterator = Symbol("@icw/ICW/_iterable");
 
-export class ICW<T> implements AsyncIterable<T> {
+export class ICW<T> implements AsyncIterableIterator<T> {
   static from<U>(
     input: AsyncIterable<U> | Iterable<U> | ArrayLike<U> | Promise<U>
   ): ICW<U> {
@@ -32,14 +36,38 @@ export class ICW<T> implements AsyncIterable<T> {
     return new ICW(of(...items));
   }
 
-  private [_iterable]: AsyncIterable<T> | Iterable<T>;
+  private [_iterator]: AsyncIterator<T> | Iterator<T>;
 
   constructor(iterable: AsyncIterable<T> | Iterable<T>) {
-    this[_iterable] = iterable;
+    if (isAsyncIterable(iterable)) {
+      this[_iterator] = iterable[Symbol.asyncIterator]();
+    } else if (isIterable(iterable)) {
+      this[_iterator] = iterable[Symbol.iterator]();
+    } else {
+      throw new Error("First argument must implement the Iterable protocol");
+    }
   }
 
-  async *[Symbol.asyncIterator](): AsyncIterableIterator<T> {
-    yield* this[_iterable];
+  [Symbol.asyncIterator](): AsyncIterableIterator<T> {
+    return this;
+  }
+
+  async next(value?: any): Promise<IteratorResult<T>> {
+    return this[_iterator].next(value);
+  }
+
+  async return(value?: any): Promise<IteratorResult<T>> {
+    return isFunction(this[_iterator].return)
+      ? this[_iterator].return!(value)
+      : (({ done: true, value: undefined } as any) as IteratorResult<T>);
+  }
+
+  async throw(error?: any): Promise<IteratorResult<T>> {
+    if (isFunction(this[_iterator].throw)) {
+      return this[_iterator].throw!(error);
+    }
+
+    throw error;
   }
 
   collect(): ICW<T[]> {
