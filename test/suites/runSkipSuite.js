@@ -1,6 +1,11 @@
 import { forEach, from } from "../../src";
 
 export function runSkipSuite(skip) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(skip([], 1)).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

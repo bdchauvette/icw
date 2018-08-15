@@ -2,6 +2,11 @@ import { toAsync } from "../helpers/toAsync";
 import { drain, forEach } from "../../src";
 
 export function runSkipWhileSuite(skipWhile) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(skipWhile([], Boolean)).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

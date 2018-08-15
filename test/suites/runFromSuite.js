@@ -1,5 +1,10 @@
 export function runFromSuite(from) {
   describe("async iterable input", () => {
+    test("returns same async iterator", () => {
+      expect.assertions(1);
+      expect(from((async function*() {})())).toReturnSameAsyncIterator();
+    });
+
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
@@ -20,6 +25,11 @@ export function runFromSuite(from) {
   });
 
   describe("iterable input", () => {
+    test("returns same async iterator", () => {
+      expect.assertions(1);
+      expect(from([])).toReturnSameAsyncIterator();
+    });
+
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
@@ -34,6 +44,11 @@ export function runFromSuite(from) {
 
   // eslint-disable-next-line jest/lowercase-name
   describe("Array-like input", () => {
+    test("returns same async iterator", () => {
+      expect.assertions(1);
+      expect(from({ length: 0 })).toReturnSameAsyncIterator();
+    });
+
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
@@ -48,6 +63,11 @@ export function runFromSuite(from) {
 
   // eslint-disable-next-line jest/lowercase-name
   describe("Promise input", () => {
+    test("returns same async iterator", () => {
+      expect.assertions(1);
+      expect(from(Promise.resolve())).toReturnSameAsyncIterator();
+    });
+
     test("yields the resolved value of the promise", async () => {
       expect.assertions(1);
 

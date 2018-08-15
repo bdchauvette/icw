@@ -1,6 +1,11 @@
 import { forEach, from } from "../../src";
 
 export function runTakeSuite(take) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(take([], 1)).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

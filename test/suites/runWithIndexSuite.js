@@ -1,4 +1,9 @@
 export function runWithIndexSuite(withIndex) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(withIndex([])).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

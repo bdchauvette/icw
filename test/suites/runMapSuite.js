@@ -3,6 +3,11 @@ import { toAsync } from "../helpers/toAsync";
 import { toUpperCase } from "../helpers/toUpperCase";
 
 export function runMapSuite(map) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(map("", toUpperCase)).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

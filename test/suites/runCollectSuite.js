@@ -1,6 +1,11 @@
 import { from } from "../../src";
 
 export function runCollectSuite(collect) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(collect([])).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

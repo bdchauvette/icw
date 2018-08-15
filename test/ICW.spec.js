@@ -19,6 +19,11 @@ import { runToArraySuite } from "./suites/runToArraySuite";
 import { runToPromiseSuite } from "./suites/runToPromiseSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
+test("returns same async iterator", () => {
+  expect.assertions(1);
+  expect(new ICW([])).toReturnSameAsyncIterator();
+});
+
 describe.each`
   method    | runSuite
   ${"of"}   | ${runOfSuite}

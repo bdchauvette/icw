@@ -2,6 +2,11 @@ import { noop } from "../helpers/noop";
 import { drain, forEach, from } from "../../src";
 
 export function runTapSuite(tap) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(tap([], noop)).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}

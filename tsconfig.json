@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "test/**/*.js"],
+  "include": ["src/**/*", "test/**/*"],
 
   "compilerOptions": {
     "lib": ["dom", "esnext"],

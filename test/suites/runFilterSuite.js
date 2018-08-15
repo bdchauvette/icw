@@ -3,6 +3,11 @@ import { isEven } from "../helpers/isEven";
 import { toAsync } from "../helpers/toAsync";
 
 export function runFilterSuite(filter) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(filter([], isEven)).toReturnSameAsyncIterator();
+  });
+
   test.each`
     iterableType | createIterableIterator
     ${"sync"}    | ${function*() {}}
