@@ -1,5 +1,4 @@
 {
   "*.{js,ts}": "eslint",
-  "src/**/*": "cross-env CI=true jest --reporters jest-silent-reporter --bail --findRelatedTests",
   "*.{json,md,yml}": "prettier --list-different"
 }
