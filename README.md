@@ -71,10 +71,9 @@ why they're not very idiomatic in JavaScript:
 
 ### Performance
 
-Performance is not currently a priority for this project. In the words of
-[Johnson & Kernighan (1983)][1983-08 johnson and kernighan], 'the strategy is
-definitely: first make it work, then make it right, and, finally, make it
-fast.'
+Performance, in terms of operations per second, is not currently a priority
+for this project. In the words of [Johnson & Kernighan (1983)][1983-08 johnson and kernighan], 'the strategy is definitely: first make it work, then
+make it right, and, finally, make it fast.'
 
 Moreover, because `icw` is asynchronous at its core, it will never approach
 the peformance of a bare `for` loop, `Array#forEach`, or any library that
