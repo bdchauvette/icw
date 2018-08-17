@@ -1,16 +1,26 @@
-/* eslint-disable no-console, typescript/no-var-requires */
-const fsCallbacks = require("fs");
-const path = require("path");
+const fs = require("fs").promises;
+const { basename, resolve } = require("path");
+const pkg = require("../package.json");
 
-const fs = fsCallbacks.promises;
+const ROOT_DIR = resolve(__dirname, "..");
+const SRC_DIR = resolve(ROOT_DIR, "src");
 
-const ROOT_DIR = path.resolve(__dirname, "..");
-const SRC_DIR = path.resolve(ROOT_DIR, "src");
+clean();
 
-(async () => {
-  await Promise.all([removeBuildArtifacts(), removeTestArtifacts()]);
-  console.log("Done!");
-})();
+let deletedFileCount = 0;
+let deletedDirCount = 0;
+
+async function clean() {
+  await Promise.all([
+    removeBuildArtifacts(),
+    removeTestArtifacts(),
+    removeTempFiles()
+  ]);
+
+  console.log(
+    `Deleted ${deletedFileCount} files and ${deletedDirCount} directories`
+  );
+}
 
 async function removeBuildArtifacts() {
   let srcBasenames = (await fs.readdir(SRC_DIR))
@@ -19,7 +29,7 @@ async function removeBuildArtifacts() {
 
   let rootBasenames = new Map(
     (await fs.readdir(ROOT_DIR))
-      .map(filename => path.resolve(ROOT_DIR, filename))
+      .map(filename => resolve(ROOT_DIR, filename))
       .map(filepath => [filepath, stripExtension(filepath)])
   );
 
@@ -27,40 +37,37 @@ async function removeBuildArtifacts() {
     .filter(([, basename]) => srcBasenames.includes(basename))
     .map(([fullpath]) => fullpath);
 
-  return rmrf(buildArtifacts);
+  return rmrf(...buildArtifacts);
+}
+
+function stripExtension(filename) {
+  return basename(filename).replace(/\..*$/, "");
 }
 
 async function removeTestArtifacts() {
   let testArtifacts = ["../coverage", "../.stryker-tmp"].map(filename =>
-    path.resolve(__dirname, filename)
+    resolve(__dirname, filename)
   );
 
-  return rmrf(testArtifacts);
+  return rmrf(...testArtifacts);
 }
 
-async function rmrf(filepaths) {
+async function removeTempFiles() {
+  let tempFiles = ["../tmp", `../icw-icw-${pkg.version}.tgz`].map(filename =>
+    resolve(__dirname, filename)
+  );
+
+  return rmrf(...tempFiles);
+}
+
+async function rmrf(...filepaths) {
   return Promise.all(filepaths.map(rm));
-}
-
-async function rmdir(dir) {
-  let dirContents = (await fs.readdir(dir)).map(filepath =>
-    path.resolve(dir, filepath)
-  );
-
-  await rmrf(dirContents);
-
-  try {
-    await fs.rmdir(dir);
-    console.log(`Removed directory: ${dir}`);
-  } catch (err) {
-    console.error(err);
-  }
 }
 
 async function rm(filepath) {
   try {
     await fs.unlink(filepath);
-    console.log(`Removed: ${filepath}`);
+    deletedFileCount += 1;
   } catch (err) {
     if (err.code === "EISDIR") return rmdir(filepath);
     if (err.code === "ENOENT") return;
@@ -68,6 +75,14 @@ async function rm(filepath) {
   }
 }
 
-function stripExtension(filename) {
-  return path.basename(filename).replace(/\..*$/, "");
+async function rmdir(dir) {
+  try {
+    let relativeFilepaths = await fs.readdir(dir);
+    let filepaths = relativeFilepaths.map(filepath => resolve(dir, filepath));
+    await rmrf(...filepaths);
+    await fs.rmdir(dir);
+    deletedDirCount += 1;
+  } catch (err) {
+    console.error(err);
+  }
 }

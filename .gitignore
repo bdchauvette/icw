@@ -1,8 +1,10 @@
 node_modules
 
-# Build artifacts
+# Build & publishing artifacts
 __internal__
 cjs
+tmp
+/icw-icw-?.?.?.tgz
 /*.js
 /*.d.ts
 /*.map

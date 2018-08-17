@@ -111,6 +111,13 @@
 
   "overrides": [
     {
+      "files": ["scripts/**/*"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+
+    {
       "files": ["**/*.ts"],
       "rules": {
         // Typescript compat
@@ -128,6 +135,7 @@
         "typescript/no-var-requires": "error"
       }
     },
+
     {
       "files": ["test/**/*.ts"],
       "rules": {
