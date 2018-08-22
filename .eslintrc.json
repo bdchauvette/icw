@@ -137,7 +137,7 @@
     },
 
     {
-      "files": ["test/**/*.ts"],
+      "files": ["test/**/*.js"],
       "rules": {
         "jest/consistent-test-it": [
           "error",
