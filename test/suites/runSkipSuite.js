@@ -1,44 +1,35 @@
-import { forEach, from } from "../../src";
+import { of } from "../../src";
 
 export function runSkipSuite(skip) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(skip([], 1)).toReturnSameAsyncIterator();
+    expect(skip(of(), 1)).toReturnSameAsyncIterator();
   });
 
-  test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(2);
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(skip(of(), 1)).toBeCloseableAsyncIterator();
+  });
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => skip(_, 1)).toLazilyConsumeWrappedAsyncIterable();
+  });
 
-      let skip$ = skip(iterableIterator, 1)[Symbol.asyncIterator]();
-      expect(next).not.toHaveBeenCalled();
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => skip(_, 1)).toLazilyConsumeWrappedIterable();
+  });
 
-      await skip$.next();
-      expect(next).toHaveBeenCalled();
+  test("yields results from the provided iterable after `skipCount` results have been skipped", async () => {
+    expect.assertions(3);
+
+    let input = of(1, 2, 3, 4, 5);
+    let skipCount = 2;
+    let expectedResults = [3, 4, 5];
+
+    for await (let result of skip(input, skipCount)) {
+      expect(result).toEqual(expectedResults.shift());
     }
-  );
-
-  test.each`
-    iterableType | input                                        | numResults | expectedResults
-    ${"sync"}    | ${["a", "b", "c", "d", "e", "f", "g"]}       | ${3}       | ${["d", "e", "f", "g"]}
-    ${"async"}   | ${from(["a", "b", "c", "d", "e", "f", "g"])} | ${3}       | ${["d", "e", "f", "g"]}
-  `(
-    "yields results from the provided $iterableType iterable after `numResults` have been yielded",
-    async ({ input, numResults, expectedResults }) => {
-      expect.assertions(1);
-      let actualResults = [];
-      await forEach(skip(input, numResults), result =>
-        actualResults.push(result)
-      );
-      expect(actualResults).toEqual(expectedResults);
-    }
-  );
+  });
 }

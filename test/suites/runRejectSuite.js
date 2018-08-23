@@ -1,77 +1,89 @@
-import { drain } from "../../src/drain";
-import { isEven } from "../helpers/isEven";
-import { toAsync } from "../helpers/toAsync";
+import { drain, of } from "../../src";
+import { isTruthy } from "../helpers/isTruthy";
+import { isTruthySync } from "../helpers/isTruthySync";
 
 export function runRejectSuite(reject) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(reject([], isEven)).toReturnSameAsyncIterator();
+    expect(reject(of(), isTruthy)).toReturnSameAsyncIterator();
+  });
+
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(reject(of(), isTruthy)).toBeCloseableAsyncIterator();
+  });
+
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ =>
+      reject(_, isTruthy)
+    ).toLazilyConsumeWrappedAsyncIterable();
+  });
+
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => reject(_, isTruthy)).toLazilyConsumeWrappedIterable();
   });
 
   test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
+    callbackType | callback
+    ${"async"}   | ${isTruthy}
+    ${"sync"}    | ${isTruthySync}
   `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
+    "rejects values when using $callbackType callback",
+    async ({ callback }) => {
       expect.assertions(2);
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
+      let iterable = of(true, false, true, false);
+      let expectedResults = [false, false];
 
-      let reject$ = reject(iterableIterator, isEven)[Symbol.asyncIterator]();
-      expect(next).not.toHaveBeenCalled();
-
-      await reject$.next();
-      expect(next).toHaveBeenCalled();
-    }
-  );
-
-  test.each`
-    callbackType | callback
-    ${"sync"}    | ${isEven}
-    ${"async"}   | ${toAsync(isEven)}
-  `(
-    "rejects results of input using $callbackType callback",
-    async ({ callback }) => {
-      expect.assertions(3);
-      let input = [1, 2, 3, 4, 5];
-      let expectedResults = [1, 3, 5];
-
-      for await (let result of reject(input, callback)) {
+      for await (let result of reject(iterable, callback)) {
         expect(result).toEqual(expectedResults.shift());
       }
     }
   );
 
+  test("provides two arguments to callback", async () => {
+    expect.assertions(1);
+
+    await drain(
+      reject(of(true), (...args) => {
+        expect(args).toHaveLength(2);
+      })
+    );
+  });
+
   test("provides current result as first argument to callback", async () => {
     expect.assertions(3);
 
-    let mockCallback = jest.fn(isEven);
-    await drain(reject([1, 2, 3], mockCallback));
+    let iterable = of(true, false, true);
+    let expectedResults = [true, false, true];
 
-    expect(mockCallback.mock.calls[0][0]).toEqual(1);
-    expect(mockCallback.mock.calls[1][0]).toEqual(2);
-    expect(mockCallback.mock.calls[2][0]).toEqual(3);
+    await drain(
+      reject(iterable, result => {
+        expect(result).toEqual(expectedResults.shift());
+      })
+    );
   });
 
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let mockCallback = jest.fn(isEven);
-    await drain(reject([1, 2, 3], mockCallback));
+    let iterable = of(true, false, true);
+    let expectedIndexes = [0, 1, 2];
 
-    expect(mockCallback.mock.calls[0][1]).toEqual(0);
-    expect(mockCallback.mock.calls[1][1]).toEqual(1);
-    expect(mockCallback.mock.calls[2][1]).toEqual(2);
+    await drain(
+      reject(iterable, (_, index) => {
+        expect(index).toEqual(expectedIndexes.shift());
+      })
+    );
   });
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(reject([1], mockCallback));
+    await drain(reject(of("foo"), testCallback));
 
-    function mockCallback() {
+    function testCallback() {
       expect(this).toBeUndefined();
     }
   });
@@ -79,9 +91,9 @@ export function runRejectSuite(reject) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(reject([1], mockCallback, expectedThis));
+    await drain(reject(of("foo"), testCallback, expectedThis));
 
-    function mockCallback() {
+    function testCallback() {
       expect(this).toBe(expectedThis);
     }
   });

@@ -1,106 +1,127 @@
-import { toAsync } from "../helpers/toAsync";
+import { drain, of } from "../../src";
 import { sum } from "../helpers/sum";
-import { drain } from "../../src/drain";
+import { sumSync } from "../helpers/sumSync";
 
 export function runScanSuite(scan) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(scan([], sum)).toReturnSameAsyncIterator();
+    expect(scan(of(), sum)).toReturnSameAsyncIterator();
   });
 
-  test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(2);
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(scan(of(), sum)).toBeCloseableAsyncIterator();
+  });
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => scan(_, sum)).toLazilyConsumeWrappedAsyncIterable();
+  });
 
-      let sum$ = scan(iterableIterator, sum)[Symbol.asyncIterator]();
-      expect(next).not.toHaveBeenCalled();
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => scan(_, sum)).toLazilyConsumeWrappedIterable();
+  });
 
-      await sum$.next();
-      expect(next).toHaveBeenCalled();
-    }
-  );
-
-  test.each`
+  let eachCallbackType = test.each`
     callbackType | callback
-    ${"sync"}    | ${sum}
-    ${"async"}   | ${toAsync(sum)}
-  `(
-    "accumulates values from the source iterable with $callbackType callback",
-    async () => {
+    ${"async"}   | ${sum}
+    ${"sync"}    | ${sumSync}
+  `;
+
+  eachCallbackType(
+    "accumulates values from the input with $callbackType callback (implicit initial value)",
+    async ({ callback }) => {
       expect.assertions(3);
 
-      let input = [1, 2, 3];
+      let input = of(1, 2, 3);
       let expectedResults = [2, 4, 7];
 
-      for await (let result of scan(input, sum)) {
+      for await (let result of scan(input, callback)) {
         expect(result).toEqual(expectedResults.shift());
       }
     }
   );
 
-  test("uses provided initial value as first accumulator value", async () => {
+  eachCallbackType(
+    "accumulates values from the input with $callbackType callback (explicit initial value)",
+    async ({ callback }) => {
+      expect.assertions(3);
+
+      let input = of(1, 2, 3);
+      let expectedResults = [1, 3, 6];
+
+      for await (let result of scan(input, callback, 0)) {
+        expect(result).toEqual(expectedResults.shift());
+      }
+    }
+  );
+
+  test("provides three arguments to callback", async () => {
     expect.assertions(1);
-    let sumSpy = jest.fn();
-    let firstResult = Symbol("first result");
-    let initialValue = Symbol("initial value");
-    await drain(scan([firstResult], sumSpy, initialValue));
-    expect(sumSpy.mock.calls[0][0]).toBe(initialValue);
+
+    await drain(
+      scan(of(true), (...args) => {
+        expect(args).toHaveLength(3);
+      })
+    );
   });
 
   test("uses first result as initial accumulator accumulator value if no initial value is provided", async () => {
     expect.assertions(1);
-    let sumSpy = jest.fn();
+
     let firstResult = Symbol("first result");
-    await drain(scan([firstResult], sumSpy));
-    expect(sumSpy.mock.calls[0][0]).toBe(firstResult);
+    await drain(scan(of(firstResult), testCallback));
+
+    function testCallback(accumulator) {
+      expect(accumulator).toBe(firstResult);
+    }
   });
 
-  test("uses `undefined` as initial accumulator value if it is explicitly provided", async () => {
+  test("uses provided initial value as first accumulator value", async () => {
     expect.assertions(1);
-    let sumSpy = jest.fn();
-    let firstResult = Symbol("first result");
-    await drain(scan([firstResult], sumSpy, undefined));
-    expect(sumSpy.mock.calls[0][0]).toBeUndefined();
+
+    let initialValue = Symbol("initial value");
+    await drain(scan(of("foo"), testCallback, initialValue));
+
+    function testCallback(accumulator) {
+      expect(accumulator).toBe(initialValue);
+    }
   });
 
-  test("provides accumulator as first argument to callback", async () => {
-    expect.assertions(3);
+  test("uses `undefined` as initial accumulator value if `undefined` is explicitly provided", async () => {
+    expect.assertions(1);
 
-    let mockCallback = jest.fn(sum);
-    await drain(scan([1, 2, 3], mockCallback));
+    await drain(scan(of("foo"), testCallback, undefined));
 
-    expect(mockCallback.mock.calls[0][0]).toEqual(1);
-    expect(mockCallback.mock.calls[1][0]).toEqual(2);
-    expect(mockCallback.mock.calls[2][0]).toEqual(4);
+    function testCallback(accumulator) {
+      expect(accumulator).toBeUndefined();
+    }
   });
 
   test("provides current result as second argument to callback", async () => {
     expect.assertions(3);
 
-    let mockCallback = jest.fn(sum);
-    await drain(scan([1, 2, 3], mockCallback));
+    let input = of("foo", "bar", "baz");
+    let expectedResults = ["foo", "bar", "baz"];
 
-    expect(mockCallback.mock.calls[0][1]).toEqual(1);
-    expect(mockCallback.mock.calls[1][1]).toEqual(2);
-    expect(mockCallback.mock.calls[2][1]).toEqual(3);
+    await drain(
+      scan(input, (_, result) => {
+        expect(result).toEqual(expectedResults.shift());
+      })
+    );
   });
 
   test("provides current index as third argument to callback", async () => {
     expect.assertions(3);
 
-    let mockCallback = jest.fn(sum);
-    await drain(scan([1, 2, 3], mockCallback));
+    let input = of("foo", "bar", "baz");
+    let expectedIndexes = [0, 1, 2];
 
-    expect(mockCallback.mock.calls[0][2]).toEqual(0);
-    expect(mockCallback.mock.calls[1][2]).toEqual(1);
-    expect(mockCallback.mock.calls[2][2]).toEqual(2);
+    await drain(
+      scan(input, (_, __, result) => {
+        expect(result).toEqual(expectedIndexes.shift());
+      })
+    );
   });
 }

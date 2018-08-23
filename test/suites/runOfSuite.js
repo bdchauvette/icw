@@ -1,7 +1,12 @@
 export function runOfSuite(of) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(of(1, 2, 3)).toReturnSameAsyncIterator();
+    expect(of()).toReturnSameAsyncIterator();
+  });
+
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(of()).toBeCloseableAsyncIterator();
   });
 
   test("yields each argument", async () => {

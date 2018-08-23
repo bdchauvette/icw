@@ -1,59 +1,63 @@
-import { toAsync } from "../helpers/toAsync";
-import { drain, forEach } from "../../src";
+import { drain, of } from "../../src";
+import { isTruthy } from "../helpers/isTruthy";
+import { isTruthySync } from "../helpers/isTruthySync";
 
 export function runSkipWhileSuite(skipWhile) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(skipWhile([], Boolean)).toReturnSameAsyncIterator();
+    expect(skipWhile(of(), isTruthy)).toReturnSameAsyncIterator();
+  });
+
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(skipWhile(of(), isTruthy)).toBeCloseableAsyncIterator();
+  });
+
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ =>
+      skipWhile(_, isTruthy)
+    ).toLazilyConsumeWrappedAsyncIterable();
+  });
+
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => skipWhile(_, isTruthy)).toLazilyConsumeWrappedIterable();
   });
 
   test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(2);
-
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
-
-      let skipWhile$ = skipWhile(iterableIterator, Boolean)[
-        Symbol.asyncIterator
-      ]();
-      expect(next).not.toHaveBeenCalled();
-
-      await skipWhile$.next();
-      expect(next).toHaveBeenCalled();
-    }
-  );
-
-  test.each`
     callbackType | callback
-    ${"sync"}    | ${Boolean}
-    ${"async"}   | ${toAsync(Boolean)}
+    ${"async"}   | ${isTruthy}
+    ${"sync"}    | ${isTruthySync}
   `(
-    "skips results until the provided $callbackType condition is falsy for the first time",
+    "skips results until the provided condition is falsy for the first time",
     async ({ callback }) => {
-      expect.assertions(1);
-      let input = [true, true, true, true, false, false, true];
+      expect.assertions(3);
+
+      let input = of(true, true, false, false, true);
       let expectedResults = [false, false, true];
-      let actualResults = [];
 
-      await forEach(skipWhile(input, callback), result =>
-        actualResults.push(result)
-      );
-
-      expect(actualResults).toEqual(expectedResults);
+      for await (let result of skipWhile(input, callback)) {
+        expect(result).toEqual(expectedResults.shift());
+      }
     }
   );
+
+  test("provides two arguments to callback", async () => {
+    expect.assertions(1);
+
+    await drain(
+      skipWhile(of(true), (...args) => {
+        expect(args).toHaveLength(2);
+      })
+    );
+  });
 
   test("provides current result as first argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
-    let expectedResults = [...input];
+    let input = of("foo", "bar", "baz");
+    let expectedResults = ["foo", "bar", "baz"];
 
     await drain(
       skipWhile(input, result => {
@@ -66,7 +70,7 @@ export function runSkipWhileSuite(skipWhile) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
+    let input = of("foo", "bar", "baz");
     let expectedIndexes = [0, 1, 2];
 
     await drain(

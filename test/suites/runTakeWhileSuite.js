@@ -1,59 +1,63 @@
-import { toAsync } from "../helpers/toAsync";
-import { drain, forEach } from "../../src";
+import { drain, of } from "../../src";
+import { isTruthy } from "../helpers/isTruthy";
+import { isTruthySync } from "../helpers/isTruthySync";
 
 export function runTakeWhileSuite(takeWhile) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(takeWhile([], Boolean)).toReturnSameAsyncIterator();
+    expect(takeWhile(of(), isTruthy)).toReturnSameAsyncIterator();
+  });
+
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(takeWhile(of(), isTruthy)).toBeCloseableAsyncIterator();
+  });
+
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ =>
+      takeWhile(_, isTruthy)
+    ).toLazilyConsumeWrappedAsyncIterable();
+  });
+
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => takeWhile(_, isTruthy)).toLazilyConsumeWrappedIterable();
   });
 
   test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
+    callbackType | callback
+    ${"async"}   | ${isTruthy}
+    ${"sync"}    | ${isTruthySync}
   `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
+    "takes results until the provided $callbackType condition is falsy for the first time",
+    async ({ callback }) => {
       expect.assertions(2);
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
+      let input = [true, true, false, false, true];
+      let expectedResults = [true, true];
 
-      let takeWhile$ = takeWhile(iterableIterator, Boolean)[
-        Symbol.asyncIterator
-      ]();
-      expect(next).not.toHaveBeenCalled();
-
-      await takeWhile$.next();
-      expect(next).toHaveBeenCalled();
+      for await (let result of takeWhile(input, callback)) {
+        expect(result).toEqual(expectedResults.shift());
+      }
     }
   );
 
-  test.each`
-    callbackType | callback
-    ${"sync"}    | ${Boolean}
-    ${"async"}   | ${toAsync(Boolean)}
-  `(
-    "yields results until the provided $callbackType condition is falsy",
-    async ({ callback }) => {
-      expect.assertions(1);
-      let input = [true, true, true, true, false, false, true];
-      let expectedResults = [true, true, true, true];
-      let actualResults = [];
+  test("provides two arguments to callback", async () => {
+    expect.assertions(1);
 
-      await forEach(takeWhile(input, callback), result =>
-        actualResults.push(result)
-      );
-
-      expect(actualResults).toEqual(expectedResults);
-    }
-  );
+    await drain(
+      takeWhile(of(true), (...args) => {
+        expect(args).toHaveLength(2);
+      })
+    );
+  });
 
   test("provides current result as first argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
-    let expectedResults = [...input];
+    let input = of("foo", "bar", "baz");
+    let expectedResults = ["foo", "bar", "baz"];
 
     await drain(
       takeWhile(input, result => {
@@ -66,7 +70,7 @@ export function runTakeWhileSuite(takeWhile) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
+    let input = of("foo", "bar", "baz");
     let expectedIndexes = [0, 1, 2];
 
     await drain(
@@ -79,7 +83,7 @@ export function runTakeWhileSuite(takeWhile) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(takeWhile([1], mockCallback));
+    await drain(takeWhile(of(true), mockCallback));
 
     function mockCallback() {
       expect(this).toBeUndefined();
@@ -89,7 +93,7 @@ export function runTakeWhileSuite(takeWhile) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(takeWhile([1], mockCallback, expectedThis));
+    await drain(takeWhile(of(true), mockCallback, expectedThis));
 
     function mockCallback() {
       expect(this).toBe(expectedThis);

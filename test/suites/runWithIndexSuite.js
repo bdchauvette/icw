@@ -1,44 +1,45 @@
+import { of } from "../../src";
+
 export function runWithIndexSuite(withIndex) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(withIndex([])).toReturnSameAsyncIterator();
+    expect(withIndex(of())).toReturnSameAsyncIterator();
   });
 
-  test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(2);
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(withIndex(of())).toBeCloseableAsyncIterator();
+  });
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => withIndex(_)).toLazilyConsumeWrappedAsyncIterable();
+  });
 
-      let withIndex$ = withIndex(iterableIterator)[Symbol.asyncIterator]();
-      expect(next).not.toHaveBeenCalled();
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => withIndex(_)).toLazilyConsumeWrappedIterable();
+  });
 
-      await withIndex$.next();
-      expect(next).toHaveBeenCalled();
-    }
-  );
-
-  test("returns result as first element in tuple", async () => {
+  test("returns result from iterable as first element in tuple", async () => {
     expect.assertions(3);
-    let input = ["foo", "bar", "baz"];
-    let expectedResults = [...input];
+
+    let input = of("foo", "bar", "baz");
+    let expectedResults = ["foo", "bar", "baz"];
+
     for await (let [result] of withIndex(input)) {
       expect(result).toEqual(expectedResults.shift());
     }
   });
 
-  test("returns index as second element in tuple", async () => {
+  test("returns index from iterable as second element in tuple", async () => {
     expect.assertions(3);
-    let input = ["foo", "bar", "baz"];
-    let expectedResults = [0, 1, 2];
+
+    let input = of("foo", "bar", "baz");
+    let expectedIndexes = [0, 1, 2];
+
     for await (let [, index] of withIndex(input)) {
-      expect(index).toEqual(expectedResults.shift());
+      expect(index).toEqual(expectedIndexes.shift());
     }
   });
 }

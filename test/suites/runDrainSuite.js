@@ -1,48 +1,23 @@
+import { of } from "../../src";
+
 export function runDrainSuite(drain) {
-  test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "eagerly consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(1);
+  test("eagerly consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => drain(_)).toEagerlyConsumeWrappedAsyncIterable();
+  });
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
-
-      await drain(iterableIterator);
-      expect(next).toHaveBeenCalled();
-    }
-  );
+  test("eagerly consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => drain(_)).toEagerlyConsumeWrappedIterable();
+  });
 
   test("runs the provided iterable to completion", async () => {
     expect.assertions(1);
 
-    let iteratorDidFinish = false;
+    let iterator = of(1, 2, 3);
+    let next = jest.spyOn(iterator, "next");
 
-    await drain(
-      (function*() {
-        yield* [1, 2, 3];
-        iteratorDidFinish = true;
-      })()
-    );
-
-    expect(iteratorDidFinish).toBeTruthy();
-  });
-
-  test("runs the provided async iterable to completion", async () => {
-    expect.assertions(1);
-
-    let iteratorDidFinish = false;
-
-    await drain(
-      (async function*() {
-        yield* [1, 2, 3];
-        iteratorDidFinish = true;
-      })()
-    );
-
-    expect(iteratorDidFinish).toBeTruthy();
+    await drain(iterator);
+    expect(next).toHaveBeenCalledTimes(4);
   });
 }

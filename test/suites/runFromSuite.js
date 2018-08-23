@@ -1,21 +1,21 @@
+import { of } from "../../src";
+
 export function runFromSuite(from) {
   describe("async iterable input", () => {
     test("returns same async iterator", () => {
       expect.assertions(1);
-      expect(from((async function*() {})())).toReturnSameAsyncIterator();
+      expect(from(of())).toReturnSameAsyncIterator();
+    });
+
+    test("returns a closeable iterator", async () => {
+      expect.assertions(1);
+      await expect(from(of())).toBeCloseableAsyncIterator();
     });
 
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
-      let input = {
-        async *[Symbol.asyncIterator]() {
-          yield 1;
-          yield 2;
-          yield 3;
-        }
-      };
-
+      let input = of(1, 2, 3);
       let expectedResults = [1, 2, 3];
 
       for await (let result of from(input)) {
@@ -28,6 +28,11 @@ export function runFromSuite(from) {
     test("returns same async iterator", () => {
       expect.assertions(1);
       expect(from([])).toReturnSameAsyncIterator();
+    });
+
+    test("returns a closeable iterator", async () => {
+      expect.assertions(1);
+      await expect(from([])).toBeCloseableAsyncIterator();
     });
 
     test("yields each item from the input", async () => {
@@ -49,6 +54,11 @@ export function runFromSuite(from) {
       expect(from({ length: 0 })).toReturnSameAsyncIterator();
     });
 
+    test("returns a closeable iterator", async () => {
+      expect.assertions(1);
+      await expect(from({ length: 0 })).toBeCloseableAsyncIterator();
+    });
+
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
@@ -66,6 +76,11 @@ export function runFromSuite(from) {
     test("returns same async iterator", () => {
       expect.assertions(1);
       expect(from(Promise.resolve())).toReturnSameAsyncIterator();
+    });
+
+    test("returns a closeable iterator", async () => {
+      expect.assertions(1);
+      await expect(from(Promise.resolve())).toBeCloseableAsyncIterator();
     });
 
     test("yields the resolved value of the promise", async () => {
@@ -90,6 +105,7 @@ export function runFromSuite(from) {
     ${undefined}                            | ${undefined}
   `("throws an error when input is $inputType", ({ input }) => {
     expect.assertions(1);
+    // eslint-disable-next-line jest/prefer-inline-snapshots
     expect(() => from(input)).toThrowErrorMatchingSnapshot();
   });
 }

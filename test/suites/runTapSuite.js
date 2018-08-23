@@ -1,49 +1,44 @@
+import { drain, forEach, of } from "../../src";
 import { noop } from "../helpers/noop";
-import { drain, forEach, from } from "../../src";
+import { noopSync } from "../helpers/noopSync";
 
 export function runTapSuite(tap) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(tap([], noop)).toReturnSameAsyncIterator();
+    expect(tap(of(), noop)).toReturnSameAsyncIterator();
+  });
+
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(tap(of(), noop)).toBeCloseableAsyncIterator();
+  });
+
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => tap(_, noop)).toLazilyConsumeWrappedAsyncIterable();
+  });
+
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => tap(_, noop)).toLazilyConsumeWrappedIterable();
   });
 
   test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
+    callbackType | callback
+    ${"async"}   | ${noop}
+    ${"sync"}    | ${noopSync}
   `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(2);
+    "calls $callbackType callback once for each result of input",
+    async ({ callback }) => {
+      expect.assertions(1);
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
+      let input = of(1, 2, 3);
+      let mockCallback = jest.fn(callback);
 
-      let tap$ = tap(iterableIterator, noop)[Symbol.asyncIterator]();
-      expect(next).not.toHaveBeenCalled();
-
-      await tap$.next();
-      expect(next).toHaveBeenCalled();
+      await forEach(input, mockCallback);
+      expect(mockCallback).toHaveBeenCalledTimes(3);
     }
   );
-
-  test("yields each result from the provided iterable", async () => {
-    expect.assertions(3);
-    let input = ["foo", "bar", "baz"];
-    let tap$ = tap(input, noop);
-    await forEach(tap$, (result, index) => {
-      expect(result).toEqual(input[index]);
-    });
-  });
-
-  test("yields each result from the provided async iterable", async () => {
-    expect.assertions(3);
-    let input = ["foo", "bar", "baz"];
-    let tap$ = tap(from(input), noop);
-    await forEach(tap$, (result, index) => {
-      expect(result).toEqual(input[index]);
-    });
-  });
 
   test("calls callback before yielding the result", async () => {
     expect.assertions(3);
@@ -58,11 +53,21 @@ export function runTapSuite(tap) {
     });
   });
 
+  test("provides two arguments to callback", async () => {
+    expect.assertions(1);
+
+    await drain(
+      tap(of(true), (...args) => {
+        expect(args).toHaveLength(2);
+      })
+    );
+  });
+
   test("provides current result as first argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
-    let expectedArgs = [...input];
+    let input = of("foo", "bar", "baz");
+    let expectedArgs = ["foo", "bar", "baz"];
 
     await drain(
       tap(input, result => {
@@ -74,7 +79,7 @@ export function runTapSuite(tap) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
+    let input = of("foo", "bar", "baz");
     let expectedIndexes = [0, 1, 2];
 
     await drain(
@@ -86,7 +91,7 @@ export function runTapSuite(tap) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(tap([1], callback));
+    await drain(tap(of(1), callback));
 
     function callback() {
       expect(this).toBeUndefined();
@@ -96,7 +101,7 @@ export function runTapSuite(tap) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(tap([1], callback, expectedThis));
+    await drain(tap(of(1), callback, expectedThis));
 
     function callback() {
       expect(this).toBe(expectedThis);

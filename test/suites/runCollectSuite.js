@@ -1,56 +1,37 @@
-import { from } from "../../src";
+import { of } from "../../src";
 
 export function runCollectSuite(collect) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(collect([])).toReturnSameAsyncIterator();
+    expect(collect(of())).toReturnSameAsyncIterator();
   });
 
-  test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "lazily consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(2);
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(collect(of())).toBeCloseableAsyncIterator();
+  });
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => collect(_)).toLazilyConsumeWrappedAsyncIterable();
+  });
 
-      let collect$ = collect(iterableIterator)[Symbol.asyncIterator]();
-      expect(next).not.toHaveBeenCalled();
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => collect(_)).toLazilyConsumeWrappedIterable();
+  });
 
-      await collect$.next();
-      expect(next).toHaveBeenCalled();
+  test("yields all elements of iterable as a single array", async () => {
+    expect.assertions(1);
+    for await (let result of collect(of(1, 2, 3))) {
+      expect(result).toEqual([1, 2, 3]);
     }
-  );
+  });
 
-  test.each`
-    iterableType | iterable           | expectedValue
-    ${"sync"}    | ${[1, 2, 3]}       | ${[1, 2, 3]}
-    ${"async"}   | ${from([1, 2, 3])} | ${[1, 2, 3]}
-  `(
-    "yields all elements of $iterableType iterable as a single array",
-    async ({ iterable, expectedValue }) => {
-      expect.assertions(1);
-      for await (let result of collect(iterable)) {
-        expect(result).toEqual(expectedValue);
-      }
+  test("yields an empty array if iterable yields no values", async () => {
+    expect.assertions(1);
+    for await (let result of collect(of())) {
+      expect(result).toEqual([]);
     }
-  );
-
-  test.each`
-    iterableType | iterable
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "yields an empty array if $iterableType iterator yields no values",
-    async ({ iterable }) => {
-      expect.assertions(1);
-      for await (let result of collect(iterable())) {
-        expect(result).toEqual([]);
-      }
-    }
-  );
+  });
 }

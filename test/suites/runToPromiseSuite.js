@@ -1,44 +1,37 @@
-import { from } from "../../src";
+import { of } from "../../src";
 
 export function runToPromiseSuite(toPromise) {
-  test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "eagerly consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(1);
+  test("eagerly consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => toPromise(_)).toEagerlyConsumeWrappedAsyncIterable();
+  });
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
-
-      await toPromise(iterableIterator);
-      expect(next).toHaveBeenCalled();
-    }
-  );
+  test("eagerly consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => toPromise(_)).toEagerlyConsumeWrappedIterable();
+  });
 
   test.each`
-    iterableType | iterable           | expectedValue
-    ${"sync"}    | ${[1, 2, 3]}       | ${1}
-    ${"async"}   | ${from([1, 2, 3])} | ${1}
+    iterableType | input          | expectedValue
+    ${"async"}   | ${of(1, 2, 3)} | ${1}
+    ${"sync"}    | ${[1, 2, 3]}   | ${1}
   `(
     "resolves to the first value from $iterableType iterator",
-    async ({ iterable, expectedValue }) => {
+    async ({ input, expectedValue }) => {
       expect.assertions(1);
-      expect(await toPromise(iterable)).toEqual(expectedValue);
+      expect(await toPromise(input)).toEqual(expectedValue);
     }
   );
 
   test.each`
-    iterableType | iterable
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
+    iterableType | input
+    ${"async"}   | ${of()}
+    ${"sync"}    | ${[]}
   `(
     "resolves to `undefined` if $iterableType iterable yields no values",
-    async ({ iterable }) => {
+    async ({ input }) => {
       expect.assertions(1);
-      expect(await toPromise(iterable())).toBeUndefined();
+      expect(await toPromise(input)).toBeUndefined();
     }
   );
 }

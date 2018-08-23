@@ -1,44 +1,37 @@
-import { from } from "../../src";
+import { of } from "../../src";
 
 export function runToArraySuite(toArray) {
-  test.each`
-    iterableType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "eagerly consumes the provided $iterableType iterable",
-    async ({ createIterableIterator }) => {
-      expect.assertions(1);
+  test("eagerly consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => toArray(_)).toEagerlyConsumeWrappedAsyncIterable();
+  });
 
-      let iterableIterator = createIterableIterator();
-      let next = jest.spyOn(iterableIterator, "next");
-
-      await toArray(iterableIterator);
-      expect(next).toHaveBeenCalled();
-    }
-  );
+  test("eagerly consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    await expect(_ => toArray(_)).toEagerlyConsumeWrappedIterable();
+  });
 
   test.each`
-    iterableType | iterable           | expectedValue
-    ${"sync"}    | ${[1, 2, 3]}       | ${[1, 2, 3]}
-    ${"async"}   | ${from([1, 2, 3])} | ${[1, 2, 3]}
+    iterableType | input          | expectedValue
+    ${"async"}   | ${of(1, 2, 3)} | ${[1, 2, 3]}
+    ${"sync"}    | ${[1, 2, 3]}   | ${[1, 2, 3]}
   `(
     "resolves to an array containing the values from $iterableType iterator",
-    async ({ iterable, expectedValue }) => {
+    async ({ input, expectedValue }) => {
       expect.assertions(1);
-      expect(await toArray(iterable)).toEqual(expectedValue);
+      expect(await toArray(input)).toEqual(expectedValue);
     }
   );
 
   test.each`
-    iterableType | iterable
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
+    iterableType | input
+    ${"async"}   | ${of()}
+    ${"sync"}    | ${[]}
   `(
     "resolves to an empty array if $iterableType iterator yields no values",
-    async ({ iterable }) => {
+    async ({ input }) => {
       expect.assertions(1);
-      expect(await toArray(iterable())).toEqual([]);
+      expect(await toArray(input)).toEqual([]);
     }
   );
 }

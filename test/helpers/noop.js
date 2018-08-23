@@ -1,1 +1,1 @@
-export function noop() {}
+export async function noop() {}
