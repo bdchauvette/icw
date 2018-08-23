@@ -6,6 +6,6 @@ export async function* map<T, U>(
   thisArg?: any
 ): AsyncIterableIterator<U> {
   for await (let [result, index] of withIndex(iterable)) {
-    yield callbackFn.call(thisArg, result, index, iterable);
+    yield callbackFn.call(thisArg, result, index);
   }
 }
