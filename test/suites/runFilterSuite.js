@@ -35,7 +35,7 @@ export function runFilterSuite(filter) {
     let expectedResults = [true, true];
 
     for await (let result of filter(iterable, callback)) {
-      expect(result).toEqual(expectedResults.shift());
+      expect(result).toStrictEqual(expectedResults.shift());
     }
   });
 
@@ -57,7 +57,7 @@ export function runFilterSuite(filter) {
 
     await drain(
       filter(iterable, result => {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       })
     );
   });
@@ -70,7 +70,7 @@ export function runFilterSuite(filter) {
 
     await drain(
       filter(iterable, (_, index) => {
-        expect(index).toEqual(expectedIndexes.shift());
+        expect(index).toStrictEqual(expectedIndexes.shift());
       })
     );
   });

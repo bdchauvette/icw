@@ -19,7 +19,7 @@ export function runFromSuite(from) {
       let expectedResults = [1, 2, 3];
 
       for await (let result of from(input)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     });
   });
@@ -42,7 +42,7 @@ export function runFromSuite(from) {
       let expectedResults = [...input];
 
       for await (let result of from(input)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     });
   });
@@ -66,7 +66,7 @@ export function runFromSuite(from) {
       let expectedResults = ["foo", "bar", "baz"];
 
       for await (let result of from(input)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     });
   });
@@ -87,7 +87,7 @@ export function runFromSuite(from) {
       expect.assertions(1);
 
       for await (let result of from(Promise.resolve("foo"))) {
-        expect(result).toEqual("foo");
+        expect(result).toStrictEqual("foo");
       }
     });
   });
@@ -105,7 +105,6 @@ export function runFromSuite(from) {
     ${undefined}                            | ${undefined}
   `("throws an error when input is $inputType", ({ input }) => {
     expect.assertions(1);
-    // eslint-disable-next-line jest/prefer-inline-snapshots
     expect(() => from(input)).toThrowErrorMatchingSnapshot();
   });
 }

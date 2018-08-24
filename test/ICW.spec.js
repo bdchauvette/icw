@@ -117,7 +117,7 @@ describe('prototype method "return"', () => {
 
       let icw = new ICW(iterable);
       let result = await icw.return("foo");
-      expect(result).toEqual({ done: true, value: undefined });
+      expect(result).toStrictEqual({ done: true, value: undefined });
     }
   );
 
@@ -132,7 +132,7 @@ describe('prototype method "return"', () => {
 
     let icw = new ICW(iterable);
     let result = await icw.return("foo");
-    expect(result).toEqual({ done: true, value: undefined });
+    expect(result).toStrictEqual({ done: true, value: undefined });
   });
 });
 

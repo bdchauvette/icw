@@ -13,7 +13,7 @@ test("fails when received value eagerly consumes wrapped async iterable", async 
 
   await expect(
     expect(_ => eagerWrapper(_)).toLazilyConsumeWrappedAsyncIterable()
-  ).rejects.toThrowErrorMatchingSnapshot(); // eslint-disable-line jest/prefer-inline-snapshots
+  ).rejects.toThrowErrorMatchingSnapshot();
 
   function eagerWrapper(iterable) {
     let iterator = iterable[Symbol.asyncIterator]();
@@ -27,7 +27,7 @@ test("fails when received value does not consume wrapped async iterable", async 
 
   await expect(
     expect(_ => noopWrapper(_)).toLazilyConsumeWrappedAsyncIterable()
-  ).rejects.toThrowErrorMatchingSnapshot(); // eslint-disable-line jest/prefer-inline-snapshots
+  ).rejects.toThrowErrorMatchingSnapshot();
 
   async function* noopWrapper() {}
 });

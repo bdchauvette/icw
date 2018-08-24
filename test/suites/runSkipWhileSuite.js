@@ -38,7 +38,7 @@ export function runSkipWhileSuite(skipWhile) {
       let expectedResults = [false, false, true];
 
       for await (let result of skipWhile(input, callback)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     }
   );
@@ -61,7 +61,7 @@ export function runSkipWhileSuite(skipWhile) {
 
     await drain(
       skipWhile(input, result => {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
         return true;
       })
     );
@@ -75,7 +75,7 @@ export function runSkipWhileSuite(skipWhile) {
 
     await drain(
       skipWhile(input, (_, index) => {
-        expect(index).toEqual(expectedIndexes.shift());
+        expect(index).toStrictEqual(expectedIndexes.shift());
         return true;
       })
     );

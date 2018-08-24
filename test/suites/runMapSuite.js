@@ -35,7 +35,7 @@ export function runMapSuite(map) {
     let expectedResults = ["FOO", "BAR", "BAZ"];
 
     for await (let result of map(input, callback)) {
-      expect(result).toEqual(expectedResults.shift());
+      expect(result).toStrictEqual(expectedResults.shift());
     }
   });
 
@@ -57,7 +57,7 @@ export function runMapSuite(map) {
 
     await drain(
       map(input, result => {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       })
     );
   });
@@ -70,7 +70,7 @@ export function runMapSuite(map) {
 
     await drain(
       map(input, (_, index) => {
-        expect(index).toEqual(expectedIndexes.shift());
+        expect(index).toStrictEqual(expectedIndexes.shift());
       })
     );
   });

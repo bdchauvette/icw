@@ -71,7 +71,7 @@ export function runTapSuite(tap) {
 
     await drain(
       tap(input, result => {
-        expect(result).toEqual(expectedArgs.shift());
+        expect(result).toStrictEqual(expectedArgs.shift());
       })
     );
   });
@@ -84,7 +84,7 @@ export function runTapSuite(tap) {
 
     await drain(
       tap(input, (_, index) => {
-        expect(index).toEqual(expectedIndexes.shift());
+        expect(index).toStrictEqual(expectedIndexes.shift());
       })
     );
   });

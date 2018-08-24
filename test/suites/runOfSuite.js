@@ -16,7 +16,7 @@ export function runOfSuite(of) {
     let expectedResults = [...args];
 
     for await (let result of of(...args)) {
-      expect(result).toEqual(expectedResults.shift());
+      expect(result).toStrictEqual(expectedResults.shift());
     }
   });
 }

@@ -52,7 +52,7 @@ export function runForEachSuite(forEach) {
     let expectedArgs = [...input];
 
     await forEach(input, result => {
-      expect(result).toEqual(expectedArgs.shift());
+      expect(result).toStrictEqual(expectedArgs.shift());
     });
   });
 
@@ -63,7 +63,7 @@ export function runForEachSuite(forEach) {
     let expectedIndexes = [0, 1, 2];
 
     await forEach(input, (_, index) => {
-      expect(index).toEqual(expectedIndexes.shift());
+      expect(index).toStrictEqual(expectedIndexes.shift());
     });
   });
 

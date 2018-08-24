@@ -19,7 +19,7 @@ export function runToArraySuite(toArray) {
     "resolves to an array containing the values from $iterableType iterator",
     async ({ input, expectedValue }) => {
       expect.assertions(1);
-      expect(await toArray(input)).toEqual(expectedValue);
+      expect(await toArray(input)).toStrictEqual(expectedValue);
     }
   );
 
@@ -31,7 +31,7 @@ export function runToArraySuite(toArray) {
     "resolves to an empty array if $iterableType iterator yields no values",
     async ({ input }) => {
       expect.assertions(1);
-      expect(await toArray(input)).toEqual([]);
+      expect(await toArray(input)).toStrictEqual([]);
     }
   );
 }

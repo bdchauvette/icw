@@ -14,7 +14,7 @@ test("fails when received value does not consume wrapped iterable", async () => 
 
   await expect(
     expect(_ => noopWrapper(_)).toEagerlyConsumeWrappedIterable()
-  ).rejects.toThrowErrorMatchingSnapshot(); // eslint-disable-line jest/prefer-inline-snapshots
+  ).rejects.toThrowErrorMatchingSnapshot();
 
   function noopWrapper() {}
 });

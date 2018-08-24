@@ -29,7 +29,7 @@ export function runSkipSuite(skip) {
     let expectedResults = [3, 4, 5];
 
     for await (let result of skip(input, skipCount)) {
-      expect(result).toEqual(expectedResults.shift());
+      expect(result).toStrictEqual(expectedResults.shift());
     }
   });
 }

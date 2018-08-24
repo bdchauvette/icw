@@ -19,7 +19,7 @@ export function runToPromiseSuite(toPromise) {
     "resolves to the first value from $iterableType iterator",
     async ({ input, expectedValue }) => {
       expect.assertions(1);
-      expect(await toPromise(input)).toEqual(expectedValue);
+      expect(await toPromise(input)).toStrictEqual(expectedValue);
     }
   );
 

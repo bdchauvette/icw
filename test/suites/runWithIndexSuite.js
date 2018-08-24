@@ -28,7 +28,7 @@ export function runWithIndexSuite(withIndex) {
     let expectedResults = ["foo", "bar", "baz"];
 
     for await (let [result] of withIndex(input)) {
-      expect(result).toEqual(expectedResults.shift());
+      expect(result).toStrictEqual(expectedResults.shift());
     }
   });
 
@@ -39,7 +39,7 @@ export function runWithIndexSuite(withIndex) {
     let expectedIndexes = [0, 1, 2];
 
     for await (let [, index] of withIndex(input)) {
-      expect(index).toEqual(expectedIndexes.shift());
+      expect(index).toStrictEqual(expectedIndexes.shift());
     }
   });
 }

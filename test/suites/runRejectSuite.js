@@ -38,7 +38,7 @@ export function runRejectSuite(reject) {
       let expectedResults = [false, false];
 
       for await (let result of reject(iterable, callback)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     }
   );
@@ -61,7 +61,7 @@ export function runRejectSuite(reject) {
 
     await drain(
       reject(iterable, result => {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       })
     );
   });
@@ -74,7 +74,7 @@ export function runRejectSuite(reject) {
 
     await drain(
       reject(iterable, (_, index) => {
-        expect(index).toEqual(expectedIndexes.shift());
+        expect(index).toStrictEqual(expectedIndexes.shift());
       })
     );
   });

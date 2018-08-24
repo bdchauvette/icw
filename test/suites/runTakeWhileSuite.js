@@ -38,7 +38,7 @@ export function runTakeWhileSuite(takeWhile) {
       let expectedResults = [true, true];
 
       for await (let result of takeWhile(input, callback)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     }
   );
@@ -61,7 +61,7 @@ export function runTakeWhileSuite(takeWhile) {
 
     await drain(
       takeWhile(input, result => {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
         return true;
       })
     );
@@ -75,7 +75,7 @@ export function runTakeWhileSuite(takeWhile) {
 
     await drain(
       takeWhile(input, (_, index) => {
-        expect(index).toEqual(expectedIndexes.shift());
+        expect(index).toStrictEqual(expectedIndexes.shift());
         return true;
       })
     );

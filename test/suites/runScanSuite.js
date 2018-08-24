@@ -38,7 +38,7 @@ export function runScanSuite(scan) {
       let expectedResults = [2, 4, 7];
 
       for await (let result of scan(input, callback)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     }
   );
@@ -52,7 +52,7 @@ export function runScanSuite(scan) {
       let expectedResults = [1, 3, 6];
 
       for await (let result of scan(input, callback, 0)) {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       }
     }
   );
@@ -107,7 +107,7 @@ export function runScanSuite(scan) {
 
     await drain(
       scan(input, (_, result) => {
-        expect(result).toEqual(expectedResults.shift());
+        expect(result).toStrictEqual(expectedResults.shift());
       })
     );
   });
@@ -120,7 +120,7 @@ export function runScanSuite(scan) {
 
     await drain(
       scan(input, (_, __, result) => {
-        expect(result).toEqual(expectedIndexes.shift());
+        expect(result).toStrictEqual(expectedIndexes.shift());
       })
     );
   });

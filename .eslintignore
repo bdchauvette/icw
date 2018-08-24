@@ -1,7 +1,9 @@
 .vscode
 assets
+scratchpad*
 
 # Generated files
 coverage
 cjs
 lib
+*.d.ts

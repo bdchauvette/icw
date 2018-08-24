@@ -143,6 +143,7 @@
           "error",
           { "fn": "test", "withinDescribe": "test" }
         ],
+        "jest/expect-expect": "error",
         "jest/lowercase-name": "error",
         "jest/no-hooks": "error",
         "jest/no-disabled-tests": "error",
@@ -150,11 +151,12 @@
         "jest/no-identical-title": "error",
         "jest/no-jasmine-globals": "error",
         "jest/no-jest-import": "error",
+        "jest/no-test-return-statement": "error",
         "jest/prefer-expect-assertions": "error",
         "jest/prefer-to-be-null": "error",
         "jest/prefer-to-be-undefined": "error",
         "jest/prefer-to-have-length": "error",
-        "jest/prefer-inline-snapshots": "error",
+        "jest/prefer-strict-equal": "error",
         "jest/valid-describe": "error",
         "jest/valid-expect": "error"
       }

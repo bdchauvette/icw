@@ -29,7 +29,7 @@ export function runTakeSuite(take) {
     let expectedResults = [1, 2];
 
     for await (let result of take(input, takeResults)) {
-      expect(result).toEqual(expectedResults.shift());
+      expect(result).toStrictEqual(expectedResults.shift());
     }
   });
 }
