@@ -1,9 +1,19 @@
 .vscode
 assets
+tmp
 scratchpad*
 
-# Generated files
-coverage
+# Build artifacts
+__internal__
 cjs
 lib
 *.d.ts
+/*.js
+
+# Files that look like build artifacts, but really aren't
+!*.config.js
+!*.conf.js
+
+
+# Test artifacts
+coverage
