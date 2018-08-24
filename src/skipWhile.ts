@@ -2,15 +2,15 @@ import { withIndex } from "./withIndex";
 
 export async function* skipWhile<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
-  shouldSkip: (result: T, index?: number) => boolean | Promise<boolean>,
+  shouldSkip: (value: T, index?: number) => boolean | Promise<boolean>,
   thisArg?: any
 ): AsyncIterableIterator<T> {
   let doneSkipping = false;
 
-  for await (let [result, index] of withIndex(iterable)) {
+  for await (let [value, index] of withIndex(iterable)) {
     doneSkipping =
-      doneSkipping || !(await shouldSkip.call(thisArg, result, index));
+      doneSkipping || !(await shouldSkip.call(thisArg, value, index));
 
-    if (doneSkipping) yield result;
+    if (doneSkipping) yield value;
   }
 }

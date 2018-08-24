@@ -30,15 +30,15 @@ export function runSkipWhileSuite(skipWhile) {
     ${"async"}   | ${isTruthy}
     ${"sync"}    | ${isTruthySync}
   `(
-    "skips results until the provided condition is falsy for the first time",
+    "skips values until the provided condition is falsy for the first time",
     async ({ callback }) => {
       expect.assertions(3);
 
       let input = of(true, true, false, false, true);
-      let expectedResults = [false, false, true];
+      let expectedValues = [false, false, true];
 
-      for await (let result of skipWhile(input, callback)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of skipWhile(input, callback)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     }
   );
@@ -53,15 +53,15 @@ export function runSkipWhileSuite(skipWhile) {
     );
   });
 
-  test("provides current result as first argument to callback", async () => {
+  test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
     let input = of("foo", "bar", "baz");
-    let expectedResults = ["foo", "bar", "baz"];
+    let expectedValues = ["foo", "bar", "baz"];
 
     await drain(
-      skipWhile(input, result => {
-        expect(result).toStrictEqual(expectedResults.shift());
+      skipWhile(input, value => {
+        expect(value).toStrictEqual(expectedValues.shift());
         return true;
       })
     );
@@ -83,9 +83,9 @@ export function runSkipWhileSuite(skipWhile) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(skipWhile([1], mockCallback));
+    await drain(skipWhile(of(1), testCallback));
 
-    function mockCallback() {
+    function testCallback() {
       expect(this).toBeUndefined();
     }
   });
@@ -93,9 +93,9 @@ export function runSkipWhileSuite(skipWhile) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(skipWhile([1], mockCallback, expectedThis));
+    await drain(skipWhile(of(1), testCallback, expectedThis));
 
-    function mockCallback() {
+    function testCallback() {
       expect(this).toBe(expectedThis);
     }
   });

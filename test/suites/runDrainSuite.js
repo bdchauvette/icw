@@ -14,10 +14,10 @@ export function runDrainSuite(drain) {
   test("runs the provided iterable to completion", async () => {
     expect.assertions(1);
 
-    let iterator = of(1, 2, 3);
-    let next = jest.spyOn(iterator, "next");
+    let input = of(1, 2, 3);
+    let next = jest.spyOn(input, "next");
 
-    await drain(iterator);
+    await drain(input);
     expect(next).toHaveBeenCalledTimes(4);
   });
 }

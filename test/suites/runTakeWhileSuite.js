@@ -30,15 +30,15 @@ export function runTakeWhileSuite(takeWhile) {
     ${"async"}   | ${isTruthy}
     ${"sync"}    | ${isTruthySync}
   `(
-    "takes results until the provided $callbackType condition is falsy for the first time",
+    "takes values until the provided $callbackType condition is falsy for the first time",
     async ({ callback }) => {
       expect.assertions(2);
 
       let input = [true, true, false, false, true];
-      let expectedResults = [true, true];
+      let expectedValues = [true, true];
 
-      for await (let result of takeWhile(input, callback)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of takeWhile(input, callback)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     }
   );
@@ -53,15 +53,15 @@ export function runTakeWhileSuite(takeWhile) {
     );
   });
 
-  test("provides current result as first argument to callback", async () => {
+  test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
     let input = of("foo", "bar", "baz");
-    let expectedResults = ["foo", "bar", "baz"];
+    let expectedValue = ["foo", "bar", "baz"];
 
     await drain(
-      takeWhile(input, result => {
-        expect(result).toStrictEqual(expectedResults.shift());
+      takeWhile(input, value => {
+        expect(value).toStrictEqual(expectedValue.shift());
         return true;
       })
     );
@@ -83,9 +83,9 @@ export function runTakeWhileSuite(takeWhile) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(takeWhile(of(true), mockCallback));
+    await drain(takeWhile(of(true), testCallback));
 
-    function mockCallback() {
+    function testCallback() {
       expect(this).toBeUndefined();
     }
   });
@@ -93,9 +93,9 @@ export function runTakeWhileSuite(takeWhile) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(takeWhile(of(true), mockCallback, expectedThis));
+    await drain(takeWhile(of(true), testCallback, expectedThis));
 
-    function mockCallback() {
+    function testCallback() {
       expect(this).toBe(expectedThis);
     }
   });

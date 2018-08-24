@@ -28,7 +28,7 @@ export function runTapSuite(tap) {
     ${"async"}   | ${noop}
     ${"sync"}    | ${noopSync}
   `(
-    "calls $callbackType callback once for each result of input",
+    "calls $callbackType callback once for each value of input",
     async ({ callback }) => {
       expect.assertions(1);
 
@@ -40,13 +40,13 @@ export function runTapSuite(tap) {
     }
   );
 
-  test("calls callback before yielding the result", async () => {
+  test("calls callback before yielding the value", async () => {
     expect.assertions(3);
     let callback = jest.fn();
     let tap$ = tap(["foo", "bar", "baz"], callback);
 
     await forEach(tap$, (_, index) => {
-      // If the result were yielded _before_ calling the callback, then the
+      // If the value were yielded _before_ calling the callback, then the
       // call count would be equal to the index, because the generator would
       // suspend before calling the function.
       expect(callback).toHaveBeenCalledTimes(index + 1);
@@ -63,15 +63,15 @@ export function runTapSuite(tap) {
     );
   });
 
-  test("provides current result as first argument to callback", async () => {
+  test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
     let input = of("foo", "bar", "baz");
     let expectedArgs = ["foo", "bar", "baz"];
 
     await drain(
-      tap(input, result => {
-        expect(result).toStrictEqual(expectedArgs.shift());
+      tap(input, value => {
+        expect(value).toStrictEqual(expectedArgs.shift());
       })
     );
   });
@@ -91,9 +91,9 @@ export function runTapSuite(tap) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(tap(of(1), callback));
+    await drain(tap(of(1), testCallback));
 
-    function callback() {
+    function testCallback() {
       expect(this).toBeUndefined();
     }
   });
@@ -101,9 +101,9 @@ export function runTapSuite(tap) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(tap(of(1), callback, expectedThis));
+    await drain(tap(of(1), testCallback, expectedThis));
 
-    function callback() {
+    function testCallback() {
       expect(this).toBe(expectedThis);
     }
   });

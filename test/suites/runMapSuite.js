@@ -28,14 +28,14 @@ export function runMapSuite(map) {
     callbackType | callback
     ${"async"}   | ${toUpperCase}
     ${"sync"}    | ${toUpperCaseSync}
-  `("maps each result with $callbackType callback", async ({ callback }) => {
+  `("maps each value with $callbackType callback", async ({ callback }) => {
     expect.assertions(3);
 
     let input = of("foo", "bar", "baz");
-    let expectedResults = ["FOO", "BAR", "BAZ"];
+    let expectedValues = ["FOO", "BAR", "BAZ"];
 
-    for await (let result of map(input, callback)) {
-      expect(result).toStrictEqual(expectedResults.shift());
+    for await (let value of map(input, callback)) {
+      expect(value).toStrictEqual(expectedValues.shift());
     }
   });
 
@@ -49,15 +49,15 @@ export function runMapSuite(map) {
     );
   });
 
-  test("provides current result as first argument to callback", async () => {
+  test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
     let input = of("foo", "bar", "baz");
-    let expectedResults = ["foo", "bar", "baz"];
+    let expectedValues = ["foo", "bar", "baz"];
 
     await drain(
-      map(input, result => {
-        expect(result).toStrictEqual(expectedResults.shift());
+      map(input, value => {
+        expect(value).toStrictEqual(expectedValues.shift());
       })
     );
   });

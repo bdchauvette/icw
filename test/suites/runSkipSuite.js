@@ -21,15 +21,15 @@ export function runSkipSuite(skip) {
     await expect(_ => skip(_, 1)).toLazilyConsumeWrappedIterable();
   });
 
-  test("yields results from the provided iterable after `skipCount` results have been skipped", async () => {
+  test("yields values from the input after `numToSkip` values have been skipped", async () => {
     expect.assertions(3);
 
     let input = of(1, 2, 3, 4, 5);
-    let skipCount = 2;
-    let expectedResults = [3, 4, 5];
+    let numToSkip = 2;
+    let expectedValues = [3, 4, 5];
 
-    for await (let result of skip(input, skipCount)) {
-      expect(result).toStrictEqual(expectedResults.shift());
+    for await (let value of skip(input, numToSkip)) {
+      expect(value).toStrictEqual(expectedValues.shift());
     }
   });
 }

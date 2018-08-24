@@ -21,14 +21,14 @@ export function runWithIndexSuite(withIndex) {
     await expect(_ => withIndex(_)).toLazilyConsumeWrappedIterable();
   });
 
-  test("returns result from iterable as first element in tuple", async () => {
+  test("returns value from iterable as first element in tuple", async () => {
     expect.assertions(3);
 
     let input = of("foo", "bar", "baz");
-    let expectedResults = ["foo", "bar", "baz"];
+    let expectedValues = ["foo", "bar", "baz"];
 
-    for await (let [result] of withIndex(input)) {
-      expect(result).toStrictEqual(expectedResults.shift());
+    for await (let [value] of withIndex(input)) {
+      expect(value).toStrictEqual(expectedValues.shift());
     }
   });
 

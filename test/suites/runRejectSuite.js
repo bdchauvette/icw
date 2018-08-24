@@ -34,11 +34,11 @@ export function runRejectSuite(reject) {
     async ({ callback }) => {
       expect.assertions(2);
 
-      let iterable = of(true, false, true, false);
-      let expectedResults = [false, false];
+      let input = of(true, false, true, false);
+      let expectedValues = [false, false];
 
-      for await (let result of reject(iterable, callback)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of reject(input, callback)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     }
   );
@@ -53,15 +53,15 @@ export function runRejectSuite(reject) {
     );
   });
 
-  test("provides current result as first argument to callback", async () => {
+  test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
-    let iterable = of(true, false, true);
-    let expectedResults = [true, false, true];
+    let input = of(true, false, true);
+    let expectedValues = [true, false, true];
 
     await drain(
-      reject(iterable, result => {
-        expect(result).toStrictEqual(expectedResults.shift());
+      reject(input, value => {
+        expect(value).toStrictEqual(expectedValues.shift());
       })
     );
   });
@@ -69,11 +69,11 @@ export function runRejectSuite(reject) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let iterable = of(true, false, true);
+    let input = of(true, false, true);
     let expectedIndexes = [0, 1, 2];
 
     await drain(
-      reject(iterable, (_, index) => {
+      reject(input, (_, index) => {
         expect(index).toStrictEqual(expectedIndexes.shift());
       })
     );

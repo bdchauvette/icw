@@ -2,12 +2,12 @@ import { withIndex } from "./withIndex";
 
 export async function* takeWhile<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
-  shouldTake: (result: T, index?: number) => boolean | Promise<boolean>,
+  shouldTake: (value: T, index?: number) => boolean | Promise<boolean>,
   thisArg?: any
 ): AsyncIterableIterator<T> {
-  for await (let [result, index] of withIndex(iterable)) {
-    let resultShouldBeTaken = await shouldTake.call(thisArg, result, index);
-    if (resultShouldBeTaken) yield result;
-    else break;
+  for await (let [value, index] of withIndex(iterable)) {
+    let valueIsOK = await shouldTake.call(thisArg, value, index);
+    if (valueIsOK) yield value;
+    else return;
   }
 }

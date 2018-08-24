@@ -224,7 +224,7 @@ If your function accepts a callback, you should:
 
   ```javascript
   test("calls callback with three arguments", () => {});
-  test("provides iterable as first argument to callback", () => {});
+  test("provides value as first argument to callback", () => {});
   test("provides index as second argument to callback", () => {});
   test("provides thisArg as third argument to callback", () => {});
   ```

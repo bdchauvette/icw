@@ -21,15 +21,15 @@ export function runTakeSuite(take) {
     await expect(_ => take(_, 1)).toLazilyConsumeWrappedIterable();
   });
 
-  test("yields results from the provided $iterableType iterable until `takeCount` results have been yielded", async () => {
+  test("yields values from the provided input until `numToTake` values have been yielded", async () => {
     expect.assertions(2);
 
     let input = of(1, 2, 3, 4, 5);
-    let takeResults = 2;
-    let expectedResults = [1, 2];
+    let numToTake = 2;
+    let expectedValues = [1, 2];
 
-    for await (let result of take(input, takeResults)) {
-      expect(result).toStrictEqual(expectedResults.shift());
+    for await (let value of take(input, numToTake)) {
+      expect(value).toStrictEqual(expectedValues.shift());
     }
   });
 }

@@ -31,11 +31,11 @@ export function runFilterSuite(filter) {
     ${"sync"}    | ${isTruthySync}
   `("works with $callbackType callback", async ({ callback }) => {
     expect.assertions(2);
-    let iterable = of(true, false, true, false);
-    let expectedResults = [true, true];
+    let input = of(true, false, true, false);
+    let expectedValues = [true, true];
 
-    for await (let result of filter(iterable, callback)) {
-      expect(result).toStrictEqual(expectedResults.shift());
+    for await (let value of filter(input, callback)) {
+      expect(value).toStrictEqual(expectedValues.shift());
     }
   });
 
@@ -49,15 +49,15 @@ export function runFilterSuite(filter) {
     );
   });
 
-  test("provides current result as first argument to callback", async () => {
+  test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
-    let iterable = of(true, false, true);
-    let expectedResults = [true, false, true];
+    let input = of(true, false, true);
+    let expectedValues = [true, false, true];
 
     await drain(
-      filter(iterable, result => {
-        expect(result).toStrictEqual(expectedResults.shift());
+      filter(input, value => {
+        expect(value).toStrictEqual(expectedValues.shift());
       })
     );
   });
@@ -65,11 +65,11 @@ export function runFilterSuite(filter) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let iterable = of(true, false, true);
+    let input = of(true, false, true);
     let expectedIndexes = [0, 1, 2];
 
     await drain(
-      filter(iterable, (_, index) => {
+      filter(input, (_, index) => {
         expect(index).toStrictEqual(expectedIndexes.shift());
       })
     );

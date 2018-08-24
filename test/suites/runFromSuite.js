@@ -12,14 +12,14 @@ export function runFromSuite(from) {
       await expect(from(of())).toBeCloseableAsyncIterator();
     });
 
-    test("yields each item from the input", async () => {
+    test("yields each value from the input", async () => {
       expect.assertions(3);
 
-      let input = of(1, 2, 3);
-      let expectedResults = [1, 2, 3];
+      let input = of("foo", "bar", "baz");
+      let expectedValues = ["foo", "bar", "baz"];
 
-      for await (let result of from(input)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of from(input)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     });
   });
@@ -38,11 +38,11 @@ export function runFromSuite(from) {
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
-      let input = [1, 2, 3];
-      let expectedResults = [...input];
+      let input = ["foo", "bar", "baz"];
+      let expectedValues = [...input];
 
-      for await (let result of from(input)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of from(input)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     });
   });
@@ -63,10 +63,10 @@ export function runFromSuite(from) {
       expect.assertions(3);
 
       let input = { length: 3, 0: "foo", 1: "bar", 2: "baz" };
-      let expectedResults = ["foo", "bar", "baz"];
+      let expectedValues = ["foo", "bar", "baz"];
 
-      for await (let result of from(input)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of from(input)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     });
   });
@@ -86,8 +86,8 @@ export function runFromSuite(from) {
     test("yields the resolved value of the promise", async () => {
       expect.assertions(1);
 
-      for await (let result of from(Promise.resolve("foo"))) {
-        expect(result).toStrictEqual("foo");
+      for await (let value of from(Promise.resolve("foo"))) {
+        expect(value).toStrictEqual("foo");
       }
     });
   });

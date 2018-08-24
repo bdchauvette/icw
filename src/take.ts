@@ -3,9 +3,9 @@ export async function* take<T>(
   numToTake: number
 ): AsyncIterableIterator<T> {
   let numTaken = 0;
-  for await (let result of iterable) {
+  for await (let value of iterable) {
     numTaken += 1;
     if (numTaken > numToTake) return;
-    yield result;
+    yield value;
   }
 }

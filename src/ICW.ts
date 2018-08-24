@@ -79,68 +79,68 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   filter(
-    shouldInclude: (result: T, index?: number) => boolean | Promise<boolean>,
+    shouldInclude: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
   ): ICW<T> {
     return new ICW(filter(this, shouldInclude, thisArg));
   }
 
   forEach(
-    callback: (result: T, index?: number) => void | Promise<void>,
+    callback: (value: T, index?: number) => void | Promise<void>,
     thisArg?: any
   ): Promise<void> {
     return forEach(this, callback, thisArg);
   }
 
   map<U>(
-    callbackFn: (result: T, index?: number) => U | Promise<U>,
+    callbackFn: (value: T, index?: number) => U | Promise<U>,
     thisArg?: any
   ): ICW<U> {
     return new ICW(map(this, callbackFn, thisArg));
   }
 
   reject(
-    shouldReject: (result: T, index?: number) => boolean | Promise<boolean>,
+    shouldReject: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
   ): ICW<T> {
     return new ICW(reject(this, shouldReject, thisArg));
   }
 
   scan(
-    accumulate: (accumulator: T, result: T, index?: number) => T | Promise<T>,
+    accumulate: (accumulator: T, value: T, index?: number) => T | Promise<T>,
     initialValue?: T
   ): ICW<T> {
-    let useFirstResultAsInitialValue = arguments.length < 2;
+    let firstValueIsInitialAccumulator = arguments.length < 2;
 
-    return useFirstResultAsInitialValue
+    return firstValueIsInitialAccumulator
       ? new ICW(scan(this, accumulate))
       : new ICW(scan(this, accumulate, initialValue));
   }
 
-  skip(numResults: number): ICW<T> {
-    return new ICW(skip(this, numResults));
+  skip(numToSkip: number): ICW<T> {
+    return new ICW(skip(this, numToSkip));
   }
 
   skipWhile(
-    shouldSkip: (result: T, index?: number) => boolean | Promise<boolean>,
+    shouldSkip: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
   ): ICW<T> {
     return new ICW(skipWhile(this, shouldSkip, thisArg));
   }
 
-  take(numResults: number): ICW<T> {
-    return new ICW(take(this, numResults));
+  take(numToTake: number): ICW<T> {
+    return new ICW(take(this, numToTake));
   }
 
   takeWhile(
-    shouldTake: (result: T, index?: number) => boolean | Promise<boolean>,
+    shouldTake: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
   ): ICW<T> {
     return new ICW(takeWhile(this, shouldTake, thisArg));
   }
 
   tap(
-    callback: (result: T, index?: number) => void | Promise<void>,
+    callback: (value: T, index?: number) => void | Promise<void>,
     thisArg?: any
   ): ICW<T> {
     return new ICW(tap(this, callback, thisArg));

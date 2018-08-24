@@ -16,10 +16,10 @@ export function runForEachSuite(forEach) {
   test("runs the provided iterable to completion", async () => {
     expect.assertions(1);
 
-    let iterator = of(1, 2, 3);
-    let next = jest.spyOn(iterator, "next");
+    let input = of(1, 2, 3);
+    let next = jest.spyOn(input, "next");
 
-    await forEach(iterator, noop);
+    await forEach(input, noop);
     expect(next).toHaveBeenCalledTimes(4);
   });
 
@@ -28,7 +28,7 @@ export function runForEachSuite(forEach) {
     ${"async"}   | ${noop}
     ${"sync"}    | ${noopSync}
   `(
-    "calls $callbackType callback once for each result of input",
+    "calls $callbackType callback once for each value of input",
     async ({ callback }) => {
       expect.assertions(1);
       let mockCallback = jest.fn(callback);
@@ -45,14 +45,14 @@ export function runForEachSuite(forEach) {
     });
   });
 
-  test("provides current result as first argument to callback", async () => {
+  test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
-    let expectedArgs = [...input];
+    let input = of("foo", "bar", "baz");
+    let expectedValues = ["foo", "bar", "baz"];
 
-    await forEach(input, result => {
-      expect(result).toStrictEqual(expectedArgs.shift());
+    await forEach(input, value => {
+      expect(value).toStrictEqual(expectedValues.shift());
     });
   });
 

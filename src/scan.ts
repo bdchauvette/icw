@@ -2,16 +2,18 @@ import { withIndex } from "./withIndex";
 
 export async function* scan<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
-  accumulate: (accumulator: T, result: T, index?: number) => T | Promise<T>,
+  accumulate: (accumulator: T, value: T, index?: number) => T | Promise<T>,
   initialValue?: T
 ): AsyncIterableIterator<T> {
-  let useFirstResultAsInitialValue = arguments.length < 3;
+  let firstValueIsInitialAccumulator = arguments.length < 3;
   let accumulator = initialValue;
 
-  for await (let [result, index] of withIndex(iterable)) {
+  for await (let [value, index] of withIndex(iterable)) {
     accumulator = await accumulate(
-      index === 0 && useFirstResultAsInitialValue ? result : (accumulator as T),
-      result,
+      index === 0 && firstValueIsInitialAccumulator
+        ? value
+        : (accumulator as T),
+      value,
       index
     );
 

@@ -35,10 +35,10 @@ export function runScanSuite(scan) {
       expect.assertions(3);
 
       let input = of(1, 2, 3);
-      let expectedResults = [2, 4, 7];
+      let expectedValues = [2, 4, 7];
 
-      for await (let result of scan(input, callback)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of scan(input, callback)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     }
   );
@@ -49,10 +49,10 @@ export function runScanSuite(scan) {
       expect.assertions(3);
 
       let input = of(1, 2, 3);
-      let expectedResults = [1, 3, 6];
+      let expectedValues = [1, 3, 6];
 
-      for await (let result of scan(input, callback, 0)) {
-        expect(result).toStrictEqual(expectedResults.shift());
+      for await (let value of scan(input, callback, 0)) {
+        expect(value).toStrictEqual(expectedValues.shift());
       }
     }
   );
@@ -67,14 +67,14 @@ export function runScanSuite(scan) {
     );
   });
 
-  test("uses first result as initial accumulator accumulator value if no initial value is provided", async () => {
+  test("uses first value as initial accumulator value if no initial value is provided", async () => {
     expect.assertions(1);
 
-    let firstResult = Symbol("first result");
-    await drain(scan(of(firstResult), testCallback));
+    let firstValue = Symbol("first value");
+    await drain(scan(of(firstValue), testCallback));
 
     function testCallback(accumulator) {
-      expect(accumulator).toBe(firstResult);
+      expect(accumulator).toBe(firstValue);
     }
   });
 
@@ -99,15 +99,15 @@ export function runScanSuite(scan) {
     }
   });
 
-  test("provides current result as second argument to callback", async () => {
+  test("provides current value as second argument to callback", async () => {
     expect.assertions(3);
 
     let input = of("foo", "bar", "baz");
-    let expectedResults = ["foo", "bar", "baz"];
+    let expectedValues = ["foo", "bar", "baz"];
 
     await drain(
-      scan(input, (_, result) => {
-        expect(result).toStrictEqual(expectedResults.shift());
+      scan(input, (_, value) => {
+        expect(value).toStrictEqual(expectedValues.shift());
       })
     );
   });
@@ -119,8 +119,8 @@ export function runScanSuite(scan) {
     let expectedIndexes = [0, 1, 2];
 
     await drain(
-      scan(input, (_, __, result) => {
-        expect(result).toStrictEqual(expectedIndexes.shift());
+      scan(input, (_, __, value) => {
+        expect(value).toStrictEqual(expectedIndexes.shift());
       })
     );
   });

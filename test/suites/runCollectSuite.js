@@ -23,15 +23,15 @@ export function runCollectSuite(collect) {
 
   test("yields all elements of iterable as a single array", async () => {
     expect.assertions(1);
-    for await (let result of collect(of(1, 2, 3))) {
-      expect(result).toStrictEqual([1, 2, 3]);
+    for await (let value of collect(of(1, 2, 3))) {
+      expect(value).toStrictEqual([1, 2, 3]);
     }
   });
 
   test("yields an empty array if iterable yields no values", async () => {
     expect.assertions(1);
-    for await (let result of collect(of())) {
-      expect(result).toStrictEqual([]);
+    for await (let value of collect(of())) {
+      expect(value).toStrictEqual([]);
     }
   });
 }

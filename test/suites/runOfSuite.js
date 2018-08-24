@@ -13,10 +13,10 @@ export function runOfSuite(of) {
     expect.assertions(3);
 
     let args = ["foo", "bar", "baz"];
-    let expectedResults = [...args];
+    let expectedValues = [...args];
 
-    for await (let result of of(...args)) {
-      expect(result).toStrictEqual(expectedResults.shift());
+    for await (let value of of(...args)) {
+      expect(value).toStrictEqual(expectedValues.shift());
     }
   });
 }
