@@ -45,7 +45,7 @@ function stripExtension(filename) {
 }
 
 async function removeTestArtifacts() {
-  let testArtifacts = ["../coverage", "../.stryker-tmp"].map(filename =>
+  let testArtifacts = ["../coverage"].map(filename =>
     resolve(__dirname, filename)
   );
 

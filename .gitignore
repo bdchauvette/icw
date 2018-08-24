@@ -15,7 +15,6 @@ tmp
 
 # Test artifacts
 coverage
-.stryker-tmp
 
 # Editor config and noodling around
 .vscode
