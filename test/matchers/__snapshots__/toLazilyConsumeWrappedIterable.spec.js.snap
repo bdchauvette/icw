@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fails when received value does not consume wrapped iterable 1`] = `"expected wrapper to consume wrapped iterable"`;
+
+exports[`fails when received value eagerly consumes wrapped iterable 1`] = `"expected wrapper not to eagerly consume wrapped iterable"`;
