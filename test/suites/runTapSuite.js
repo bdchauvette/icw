@@ -43,7 +43,7 @@ export function runTapSuite(tap) {
   test("calls callback before yielding the value", async () => {
     expect.assertions(3);
     let callback = jest.fn();
-    let tap$ = tap(["foo", "bar", "baz"], callback);
+    let tap$ = tap(of("foo", "bar", "baz"), callback);
 
     await forEach(tap$, (_, index) => {
       // If the value were yielded _before_ calling the callback, then the

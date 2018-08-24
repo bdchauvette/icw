@@ -59,7 +59,7 @@ export function runForEachSuite(forEach) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let input = ["foo", "bar", "baz"];
+    let input = of("foo", "bar", "baz");
     let expectedIndexes = [0, 1, 2];
 
     await forEach(input, (_, index) => {
@@ -69,7 +69,7 @@ export function runForEachSuite(forEach) {
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await forEach(["foo"], testCallback);
+    await forEach(of(1), testCallback);
 
     function testCallback() {
       expect(this).toBeUndefined();
@@ -79,7 +79,7 @@ export function runForEachSuite(forEach) {
   test("calls callback with the `this`-context provided `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await forEach(["foo"], testCallback, expectedThis);
+    await forEach(of(1), testCallback, expectedThis);
 
     function testCallback() {
       expect(this).toBe(expectedThis);

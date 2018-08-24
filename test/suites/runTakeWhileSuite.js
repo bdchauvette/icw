@@ -34,7 +34,7 @@ export function runTakeWhileSuite(takeWhile) {
     async ({ callback }) => {
       expect.assertions(2);
 
-      let input = [true, true, false, false, true];
+      let input = of(true, true, false, false, true);
       let expectedValues = [true, true];
 
       for await (let value of takeWhile(input, callback)) {
