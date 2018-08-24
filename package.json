@@ -50,11 +50,6 @@
     "typescript": "3.0.1",
     "typescript-eslint-parser": "18.0.0"
   },
-  "buildDependencies": [
-    "npm-run-all",
-    "rimraf",
-    "typescript"
-  ],
   "scripts": {
     "clean": "node scripts/clean",
     "prebuild": "npm run clean",
