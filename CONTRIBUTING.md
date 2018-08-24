@@ -86,31 +86,17 @@ good, clear documentation is an underappreciated art. From the bottom of my
 heart, thank you so much for helping to improve the docs, and make it easier
 for everyone else to learn how to use `icw` :heart:
 
+The only firm rule for documentation is that it should follow standard
+American English spelling. Everything else can be workshopped in a PR.
+
 If your PR is exclusively about documentation, feel free to open it without
 first filing an issue. I think that if the documentation is wrong,
 inadequate, or confusing enough to make you want to open a PR, then we should
-fast track it and try to get it merged as quickly as possible. Discussions
-and workshopping the copy can be done in the PR itself.
+fast track it and try to get it fixed as quickly as possible.
 
-However, if you do find the docs wrong or confusing, but do not feel
-comfortable opening a PR to fix it, I definitely encourage you to open an
-issue pointing out what needs to be fixed, and we'll do our best to get it
-fixed.
-
-The only firm rule for documentation is that it should follow standard
-American English spelling. This isn't because American English is better than
-any other variety, it's just that I happen to be American, and I would like
-the docs to be as consistent as possible throughout.
-
-**You do not need to be fluent in English to help contribute to the
-documentation.** Indeed, I think that coming at the docs with a different
-perspective can really help point out parts that are confusing for non-fluent
-speakers, allowing us to make them make them better for everyone.
-
-Please note that I personally consider the PR process to be akin to
-workshopping a piece of literature. If changes are requested, it's not from a
-place of hostility or adversity, but from a desire to make `icw` the best
-library it can be.
+**If you find the docs wrong or confusing, but do not feel
+comfortable opening a PR to fix it**, please open an issue pointing out what
+needs to be fixed, and we'll do our best to get it fixed.
 
 ### Translating
 
@@ -135,19 +121,21 @@ gist that illustrates the problem.
 > If you would like to add a new feature to `icw`, **please open an issue
 > first**.
 
-I won't reject PRs that don't have issues, but it will save us all some time
-if we can discuss the feature and its proposed implementation before you
-write any code.
+A feature PR without an issue won't be rejected outright, but there is a
+higher chance that the new feature will be rejected because it doesn't fit
+the goals of the project. It will save everyone some time and effort if we
+can discuss the feature and its proposed implementation before you write any
+code.
 
 That being said, the process that I generally use when adding a new (function|method|combinator|operator|_whatever_) is:
 
 1. Create a new file for your function at the root level of the `src` folder,
    e.g. `src/myNewFunction.ts`
 
-1. Use a _named_ export to export your function from the file ([see style section](#style))
+1. Create your new function as a _named_ export, and using a `function` keyword ([see style section](#style))
 
-1. Add a new method to the class in [the `ICW.js` file][] that imports and wraps the
-   standalone function from step 1
+1. Add a new method to the class in [the `ICW.js` file][] that imports and
+   wraps the standalone function from step 1
 
 1. Write tests ([see next section](#tests))
 
@@ -156,10 +144,13 @@ In general, new iterable functions should:
 - return something that implements the `AsyncIterableIterator` interface / protocol
 - return iterators that always return the same iterator (i.e. [not fresh iterators][])
 - return [closeable iterators][]
+- lazily consume to provided iterable
 
-However, if you're writing a sink-style function, e.g. `toArray` or
-`toPromise`, your function should probably just be `async` (or at least
-return a `Promise`).
+However, if you're writing a sink function, e.g. `toArray` or `toPromise`,
+your function should probably:
+
+- be `async` (or at least return a `Promise`).
+- eagerly consume the provided iterable
 
 [the `icw.js` file]: https://github.com/icwjs/icw/blob/master/src/ICW.ts
 [not fresh iterators]: http://exploringjs.com/es6/ch_iteration.html#_iterables-that-return-fresh-iterators-versus-those-that-always-return-the-same-iterator
@@ -183,51 +174,62 @@ list of available CLI options.
 #### Writing Tests
 
 Because the `ICW` class is more or less a thin wrapper around the standalone
-functions, the tests are structured somewhat unusually.
+functions, the tests are structured somewhat unusually compared to other
+projects.
 
-The bulk of the tests are written inside files that export a testing suite
-and can be used to test both the standalone functions and ICW methods that
-wrap them. These suites are located in the `test/suites` folder.
+In order to share tests between standalone functions and ICW methods, most of
+the tests are written inside files that export a testing suite factory, which
+is called in the file that actually runs the test. These suites are located
+in the `test/suites` folder.
 
 If you are writing a new function, you should generally:
 
-1. create a suite in `test/suites` that exports a function that accepts your
-   method as an argument. For example, if your new function is called
-   `myAwesomeFunction.ts`, you should create a file called
-   `test/suites/runMyAwesomeFunctionSuite.js`
+- create a suite in `test/suites` that exports a function that accepts your
+  method as an argument. For example, if your new function is called
+  `myAwesomeFunction.ts`, you should create a file called
+  `test/suites/runMyAwesomeFunctionSuite.js`
 
-2. create a file in at the root of `test` with the same base name as your
-   standalone function, i.e. if your function is defined in
-   `myAwesomeFunction.ts`, the test should be called
-   `myAwesomeFunction.spec.js`
+- create a file in at the root of `test` with the same base name as your
+  standalone function, i.e. if your function is defined in
+  `myAwesomeFunction.ts`, the test should be called
+  `myAwesomeFunction.spec.js`
 
-3. add your function to the test suite in `test/ICW.spec.js`
+- add your function to the test suite in `test/ICW.spec.js`
 
-Your tests should test for consuming input from both synchronous (i.e.
-`Symbol.iterator`) and asynchronous (i.e. `Symbol.asyncIterator`) iterables.
-If your new function returns an iterable, you should test that:
+- test your function using async iterables instead of sync ones. For example,
+  try to use `of(1, 2, 3)` instead of `[1, 2, 3]` whenever possible.
 
-- it consumes its input lazily
-- it is closeable
+If your function returns an iterable, you should:
 
-If your new function operates on iterables does not return them (e.g.
-`toArray`), you should test that it consumes its input either eagerly or
-lazily, whichever is appropriate.
+- test that it is closeable
+- test that it lazily consumes its input
 
-If your function accepts a callback, you should have separate tests for each
-argument that will be passed to the callback. That is, instead of something like
+If you are writing a sink function (e.g. <code>toArray</code>), you should:
 
-```javascript
-test("calls callback with expected arguments", () => {});
-```
+- test that your function eagerly consumes its input.
 
-You should have something like:
+If your function accepts a callback, you should:
 
-```javascript
-test("provides iterable as first argument to callback", () => {});
-test("provides index as second argument to callback", () => {});
-test("provides thisArg as second argument to callback", () => {});
-```
+- test that the callback is called with the correct number of arguments
+- test that it is called with the appropriate `this` context (if your
+  function has a `thisArg` param)
+- have a separate test for each argument that will be passed to the callback.
+  That is, instead of something like
+
+  ```javascript
+  test("calls callback with expected arguments", () => {});
+  ```
+
+  You should write something like:
+
+  ```javascript
+  test("calls callback with three arguments", () => {});
+  test("provides iterable as first argument to callback", () => {});
+  test("provides index as second argument to callback", () => {});
+  test("provides thisArg as third argument to callback", () => {});
+  ```
+
+#### Linting Tests
 
 The tests are linted using [`eslint-plugin-jest`][], but here are some
 general guidelines:
@@ -241,18 +243,18 @@ general guidelines:
 
 ### Style
 
-The code in `icw` is somewhat idiosyncratic. It doesn't follow Airbnb or any
-other major style guide, and I have no intention of ever doing so. There's
-nothing wrong with those other style guides. It's just that I (very selfishly)
-view `icw` is a chance to write code how _I_ want to write code.
+The code in `icw` doesn't follow Airbnb, StandardJS, or any other major style
+guide, and it probably never will.
 
-Most of the nitpicky stylistic stuff is automatically handled by ESLint and
-`prettier`. This section here is to point out some of the unlintable
-preferences I have, or to explain reasons for why some of the stylistic
-choices are the way they are.
+That being said, most of the nitpicky stylistic stuff is automatically
+handled by ESLint and `prettier`. This section here is to point out some of
+the unlintable guidelines, or to explain why some of the less common rules
+are the way the are.
 
-#### No default exports
+#### Guidelines
 
+<details>
+  <summary>No default exports</summary>
 Default exports are cool, but they're also one of the major pain points of
 writing a library that has a consistent interface for both ES Modules and
 CommonJS.
@@ -265,75 +267,75 @@ using something like
 const foo = require("foo").default;
 ```
 
-#### Sort imports alphabetically within groups
+</details>
 
-Please try to sort your imports alphabetically by filename
+<details>
+<summary>Sort imports alphabetically within groups</summary>
 
-(It would be great to handle this automatically. `icw` already uses the
-excellent [`eslint-pluign-import`][] to handle most `import`-related sorting,
-but it currently [doesn't have a way to sort imports within
-groups][import/order], and it doesn't play well with ESLint's own
-`sort-order` rule :crying_cat_face:)
+This just makes it easier to find imports.
 
-[`eslint-plugin-import`]: https://www.npmjs.com/package/eslint-plugin-import
-[import/order]: https://github.com/benmosher/eslint-plugin-import/issues/389
+It would be great to handle this automatically. <code>icw</code> already uses
+the excellent <a
+href="https://www.npmjs.com/package/eslint-plugin-import"><code>eslint-pluign-import</code></a>
+to handle most <code>import</code>-related sorting.
 
-#### Prefer `let` over `const`
+Unfortunately, <code>eslint-plugin-import</code> currently <a
+href="https://github.com/benmosher/eslint-plugin-import/issues/389">does not
+support sorting imports within groups</a>, and its <code>import/order</code>
+rule doesn't play well with ESLint's own <code>sort-order</code> rule.
+
+</details>
+
+<details>
+<summary>Prefer <code>let</code> over <code>const</code></summary>
 
 Most ES6+ style guides have rules that go something like:
 
-- use `const` by default
-- if you need to modify a primitive, use `let`
-- never use `var`
+<ul>
+  <li>use <code>const</code> by default
+  <li>if you need to modify a primitive, use <code>let</code>
+  <li>never use <code>var</code>
+</ul>
 
-The rules for `icw`, however, are:
+However, the rules for <code>icw</code> are:
 
-- use `let` by default
-- only use `const` for CommonJS imports and SHOUTY_CASE top-level primitives
-- never use `var`
+<ul>
+  <li>use <code>let</code> by default
+  <li>only use <code>const</code> for CommonJS imports and SHOUTY_CASE top-level primitives
+  <li>never use <code>var</code>
+</ul>
 
-I know, I know, this probably seems crazy. And this is probably the most
-eccentric stylistic part of the repo.
+Don't knock it till you try it!
 
-I've got nothing against `const`, per se. I, too, use `prefer-const` at work.
-But I get annoyed whenever ESLint "autofixes" a `let`, and I feel kind of dirty
-whenever I `push` a value into a `const` array, or change a property on a const
-object. Yes, `const` is only about constant _binding_, but still. "`const`
-all the things!" has started to bug me, and this is my chance to let my `let`
-flag fly.
+For longer (and better) thoughts on this topic, please see the following
+articles:
 
-If you're in the habit of using `const` by default, and get annoyed by the
-lack of autofixing for `prefer-let`, take a look at [pull request #2][] over at
-[`eslint-plugin-prefer-let`][].
+<ul>
+  <li><a href="https://jamie.build/const">A fucking rant about fucking <code>const</code> vs fucking <code>let</code></a> by Jamie Kyle
+  <li><a href="https://madhatted.com/2016/1/25/let-it-be">Let It Be - How to declare JavaScript variables</a> by Matthew Beale
+  <li><a href="https://web.archive.org/web/20160315114714/http://blog.getify.com/constantly-confusing-const/">Constantly confusing <code>const</code></a> by Kyle Simpson
+</ul>
 
-For longer (and better) thoughts on this topic, I heartily recommend reading
-the following:
+</details>
 
-- [A fucking rant about fucking `const` vs fucking `let`][2018-03-20 kyle] by Jamie Kyle
-- [Let It Be - How to declare JavaScript variables][2016-01-05 beale] by Matthew Beale
-- [Constantly confusing `const`][2015-09-08 simpson] by Kyle Simpson
+<details>
+<summary>Prefer <code>function</code>-keyword declarations, and make liberal use of function hoisting</summary>
 
-[pull request #2]: https://github.com/cowboyd/eslint-plugin-prefer-let/pull/6
-[`eslint-plugin-prefer-let`]: https://github.com/cowboyd/eslint-plugin-prefer-let
-[2015-09-08 simpson]: https://web.archive.org/web/20160315114714/http://blog.getify.com/constantly-confusing-const/
-[2016-01-05 beale]: https://madhatted.com/2016/1/25/let-it-be
-[2018-03-20 kyle]: https://jamie.build/const
-
-#### Prefer `function` declarations, and make liberal use of function hoisting
-
-Arrow functions are _awesome_, but please avoid using them except in tests
-and callbacks.
+Arrow functions are awesome, but please avoid using them except in tests
+and inline callbacks.
 
 There are a couple reasons for this:
 
-- There is (currently) no syntax for arrow generator functions, so it's more
-  consistent if all of our exports just use the full `function` keyword
-
-- I love &ndash; _love_ &ndash; function hoisting, and arrow functions don't
-  let me do that
+<ul>
+  <li>There is (currently) no syntax for arrow generator functions, so it's more
+    consistent if all of our exports just use the full `function` keyword
+  <li> Function hoisting is awesome, and arrow functions don't allow it
+</ul>
 
 In general, try to keep your main, exported function near the top of the file
 and put any helper functions underneath it.
+
+</details>
 
 ## Security
 
@@ -344,11 +346,5 @@ Security issues will always receive the highest priority for fixing.
 
 ---
 
-Whew!
-
-On behalf of myself and all users and contributors of `icw`, thanks again for
+On behalf of all the users and contributors of `icw`, thanks again for
 taking the time to read this, and thank you so much for your contribution!
-
-<p align="right">
-&horbar; Ben Chauvette :heart:
-</p>
