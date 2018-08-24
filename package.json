@@ -22,9 +22,7 @@
   },
   "main": "cjs/index",
   "module": "index",
-  "dependencies": {
-    "postinstall-build": "^5.0.1"
-  },
+  "dependencies": {},
   "optionalDependencies": {
     "@types/node": "^10.5.4"
   },
@@ -68,8 +66,7 @@
     "lint:eslint": "eslint . --ext .js,.ts",
     "lint:prettier": "prettier \"./**/*.{json,md,yml}\"",
     "lint:fix": "npm-run-all \"lint:eslint -- --fix\" \"lint:prettier -- --write\"",
-    "postinstall": "postinstall-build index.js --only-as-dependency --script build",
-    "prepack": "node scripts/prepare-package-json",
-    "postpack": "node scripts/restore-package-json"
+    "prepare": "npm run build",
+    "postpack": "npm run clean"
   }
 }
