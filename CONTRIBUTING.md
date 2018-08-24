@@ -74,12 +74,6 @@ Commit messages are linted using [`commitlint`][] with the [`@commitlint/config-
 Staged files are linted using [`lint-staged`][]. Any linting errors will
 prevent the staged files from being committed.
 
-#### `pre-push`
-
-Before pushing, the test suite will be run against any files that have
-changed from the `master` branch. This is used to prevent Travis builds from
-running when there are errors that can be caught locally.
-
 [`husky`]: https://github.com/typicode/husky
 [`commitlint`]: https://github.com/marionebl/commitlint
 [`@commitlint/config-conventional`]: https://github.com/marionebl/commitlint/tree/master/%40commitlint/config-conventional
