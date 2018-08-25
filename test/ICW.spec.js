@@ -6,7 +6,9 @@ import { runOfSuite } from "./suites/runOfSuite";
 import { runCollectSuite } from "./suites/runCollectSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
+import { runFirstSuite } from "./suites/runFirstSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
+import { runHeadSuite } from "./suites/runHeadSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
@@ -188,7 +190,9 @@ describe.each`
   ${"collect"}   | ${runCollectSuite}
   ${"drain"}     | ${runDrainSuite}
   ${"filter"}    | ${runFilterSuite}
+  ${"first"}     | ${runFirstSuite}
   ${"forEach"}   | ${runForEachSuite}
+  ${"head"}      | ${runHeadSuite}
   ${"map"}       | ${runMapSuite}
   ${"reject"}    | ${runRejectSuite}
   ${"scan"}      | ${runScanSuite}

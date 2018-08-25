@@ -10,6 +10,7 @@ import { of } from "./of";
 import { collect } from "./collect";
 import { drain } from "./drain";
 import { filter } from "./filter";
+import { first } from "./first";
 import { forEach } from "./forEach";
 import { map } from "./map";
 import { reject } from "./reject";
@@ -85,11 +86,19 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return new ICW(filter(this, shouldInclude, thisArg));
   }
 
+  first(): ICW<T> {
+    return new ICW(first(this));
+  }
+
   forEach(
     callback: (value: T, index?: number) => void | Promise<void>,
     thisArg?: any
   ): Promise<void> {
     return forEach(this, callback, thisArg);
+  }
+
+  head(): ICW<T> {
+    return this.first();
   }
 
   map<U>(
