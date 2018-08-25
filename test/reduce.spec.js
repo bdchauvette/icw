@@ -1,4 +1,4 @@
-import { reduce } from "../../src";
-import { runReduceSuite } from "./runReduceSuite";
+import { reduce } from "../src";
+import { runReduceSuite } from "./suites/runReduceSuite";
 
 runReduceSuite(reduce);
