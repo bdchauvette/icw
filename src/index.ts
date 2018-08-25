@@ -19,7 +19,7 @@ export { skipWhile } from "./skipWhile";
 export { tail } from "./tail";
 export { take } from "./take";
 export { takeWhile } from "./takeWhile";
+export { tap } from "./tap";
 export { toArray } from "./toArray";
 export { toPromise } from "./toPromise";
-export { tap } from "./tap";
 export { withIndex } from "./withIndex";
