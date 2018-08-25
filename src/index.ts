@@ -16,6 +16,7 @@ export { reject } from "./reject";
 export { scan } from "./scan";
 export { skip } from "./skip";
 export { skipWhile } from "./skipWhile";
+export { some } from "./some";
 export { tail } from "./tail";
 export { take } from "./take";
 export { takeWhile } from "./takeWhile";

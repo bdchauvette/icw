@@ -19,6 +19,7 @@ import { reject } from "./reject";
 import { scan } from "./scan";
 import { skip } from "./skip";
 import { skipWhile } from "./skipWhile";
+import { some } from "./some";
 import { take } from "./take";
 import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
@@ -148,6 +149,13 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     thisArg?: any
   ): ICW<T> {
     return new ICW(skipWhile(this, shouldSkip, thisArg));
+  }
+
+  some(
+    isOK: (value: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): ICW<boolean> {
+    return new ICW(some(this, isOK, thisArg));
   }
 
   tail(): ICW<T> {
