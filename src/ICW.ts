@@ -10,7 +10,9 @@ import { of } from "./of";
 import { collect } from "./collect";
 import { drain } from "./drain";
 import { filter } from "./filter";
+import { first } from "./first";
 import { forEach } from "./forEach";
+import { last } from "./last";
 import { map } from "./map";
 import { reject } from "./reject";
 import { scan } from "./scan";
@@ -22,6 +24,7 @@ import { tap } from "./tap";
 import { toArray } from "./toArray";
 import { toPromise } from "./toPromise";
 import { withIndex } from "./withIndex";
+import { tail } from "./tail";
 
 const _iterator = Symbol("@icw/ICW/_iterable");
 
@@ -85,11 +88,23 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return new ICW(filter(this, shouldInclude, thisArg));
   }
 
+  first(): ICW<T> {
+    return new ICW(first(this));
+  }
+
   forEach(
     callback: (value: T, index?: number) => void | Promise<void>,
     thisArg?: any
   ): Promise<void> {
     return forEach(this, callback, thisArg);
+  }
+
+  head(): ICW<T> {
+    return this.first();
+  }
+
+  last(): ICW<T> {
+    return new ICW(last(this));
   }
 
   map<U>(
@@ -126,6 +141,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     thisArg?: any
   ): ICW<T> {
     return new ICW(skipWhile(this, shouldSkip, thisArg));
+  }
+
+  tail(): ICW<T> {
+    return new ICW(tail(this));
   }
 
   take(numToTake: number): ICW<T> {

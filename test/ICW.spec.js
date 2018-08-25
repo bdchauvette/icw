@@ -6,12 +6,16 @@ import { runOfSuite } from "./suites/runOfSuite";
 import { runCollectSuite } from "./suites/runCollectSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
+import { runFirstSuite } from "./suites/runFirstSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
+import { runHeadSuite } from "./suites/runHeadSuite";
+import { runLastSuite } from "./suites/runLastSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
 import { runSkipSuite } from "./suites/runSkipSuite";
 import { runSkipWhileSuite } from "./suites/runSkipWhileSuite";
+import { runTailSuite } from "./suites/runTailSuite";
 import { runTakeSuite } from "./suites/runTakeSuite";
 import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
@@ -188,12 +192,16 @@ describe.each`
   ${"collect"}   | ${runCollectSuite}
   ${"drain"}     | ${runDrainSuite}
   ${"filter"}    | ${runFilterSuite}
+  ${"first"}     | ${runFirstSuite}
   ${"forEach"}   | ${runForEachSuite}
+  ${"head"}      | ${runHeadSuite}
+  ${"last"}      | ${runLastSuite}
   ${"map"}       | ${runMapSuite}
   ${"reject"}    | ${runRejectSuite}
   ${"scan"}      | ${runScanSuite}
   ${"skip"}      | ${runSkipSuite}
   ${"skipWhile"} | ${runSkipWhileSuite}
+  ${"tail"}      | ${runTailSuite}
   ${"take"}      | ${runTakeSuite}
   ${"takeWhile"} | ${runTakeWhileSuite}
   ${"tap"}       | ${runTapSuite}
