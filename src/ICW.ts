@@ -23,6 +23,7 @@ import { tap } from "./tap";
 import { toArray } from "./toArray";
 import { toPromise } from "./toPromise";
 import { withIndex } from "./withIndex";
+import { tail } from "./tail";
 
 const _iterator = Symbol("@icw/ICW/_iterable");
 
@@ -135,6 +136,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     thisArg?: any
   ): ICW<T> {
     return new ICW(skipWhile(this, shouldSkip, thisArg));
+  }
+
+  tail(): ICW<T> {
+    return new ICW(tail(this));
   }
 
   take(numToTake: number): ICW<T> {

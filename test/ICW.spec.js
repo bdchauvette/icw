@@ -14,6 +14,7 @@ import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
 import { runSkipSuite } from "./suites/runSkipSuite";
 import { runSkipWhileSuite } from "./suites/runSkipWhileSuite";
+import { runTailSuite } from "./suites/runTailSuite";
 import { runTakeSuite } from "./suites/runTakeSuite";
 import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
@@ -198,6 +199,7 @@ describe.each`
   ${"scan"}      | ${runScanSuite}
   ${"skip"}      | ${runSkipSuite}
   ${"skipWhile"} | ${runSkipWhileSuite}
+  ${"tail"}      | ${runTailSuite}
   ${"take"}      | ${runTakeSuite}
   ${"takeWhile"} | ${runTakeWhileSuite}
   ${"tap"}       | ${runTapSuite}
