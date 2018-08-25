@@ -11,6 +11,7 @@ import { runForEachSuite } from "./suites/runForEachSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
 import { runLastSuite } from "./suites/runLastSuite";
 import { runMapSuite } from "./suites/runMapSuite";
+import { runReduceSuite } from "./suites/runReduceSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
 import { runSkipSuite } from "./suites/runSkipSuite";
@@ -197,6 +198,7 @@ describe.each`
   ${"head"}      | ${runHeadSuite}
   ${"last"}      | ${runLastSuite}
   ${"map"}       | ${runMapSuite}
+  ${"reduce"}    | ${runReduceSuite}
   ${"reject"}    | ${runRejectSuite}
   ${"scan"}      | ${runScanSuite}
   ${"skip"}      | ${runSkipSuite}

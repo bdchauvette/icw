@@ -14,6 +14,7 @@ import { first } from "./first";
 import { forEach } from "./forEach";
 import { last } from "./last";
 import { map } from "./map";
+import { reduce } from "./reduce";
 import { reject } from "./reject";
 import { scan } from "./scan";
 import { skip } from "./skip";
@@ -112,6 +113,12 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     thisArg?: any
   ): ICW<U> {
     return new ICW(map(this, callbackFn, thisArg));
+  }
+
+  reduce(
+    ...args: [(accumulator: T, value: T, index?: number) => T | Promise<T>, T?]
+  ): ICW<T> {
+    return new ICW(reduce(this, ...args));
   }
 
   reject(

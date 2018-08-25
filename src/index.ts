@@ -11,6 +11,7 @@ export { forEach } from "./forEach";
 export { head } from "./head";
 export { last } from "./last";
 export { map } from "./map";
+export { reduce } from "./reduce";
 export { reject } from "./reject";
 export { scan } from "./scan";
 export { skip } from "./skip";
