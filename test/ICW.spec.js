@@ -9,6 +9,7 @@ import { runFilterSuite } from "./suites/runFilterSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
+import { runLastSuite } from "./suites/runLastSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
@@ -194,6 +195,7 @@ describe.each`
   ${"first"}     | ${runFirstSuite}
   ${"forEach"}   | ${runForEachSuite}
   ${"head"}      | ${runHeadSuite}
+  ${"last"}      | ${runLastSuite}
   ${"map"}       | ${runMapSuite}
   ${"reject"}    | ${runRejectSuite}
   ${"scan"}      | ${runScanSuite}

@@ -9,6 +9,7 @@ export { filter } from "./filter";
 export { first } from "./first";
 export { forEach } from "./forEach";
 export { head } from "./head";
+export { last } from "./last";
 export { map } from "./map";
 export { reject } from "./reject";
 export { scan } from "./scan";

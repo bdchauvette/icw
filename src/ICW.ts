@@ -12,6 +12,7 @@ import { drain } from "./drain";
 import { filter } from "./filter";
 import { first } from "./first";
 import { forEach } from "./forEach";
+import { last } from "./last";
 import { map } from "./map";
 import { reject } from "./reject";
 import { scan } from "./scan";
@@ -100,6 +101,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
 
   head(): ICW<T> {
     return this.first();
+  }
+
+  last(): ICW<T> {
+    return new ICW(last(this));
   }
 
   map<U>(
