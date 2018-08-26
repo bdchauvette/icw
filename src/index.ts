@@ -5,6 +5,7 @@ export { of } from "./of";
 
 export { collect } from "./collect";
 export { drain } from "./drain";
+export { every } from "./every";
 export { filter } from "./filter";
 export { first } from "./first";
 export { forEach } from "./forEach";

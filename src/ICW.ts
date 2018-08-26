@@ -9,6 +9,7 @@ import { of } from "./of";
 // Prototype methods
 import { collect } from "./collect";
 import { drain } from "./drain";
+import { every } from "./every";
 import { filter } from "./filter";
 import { first } from "./first";
 import { forEach } from "./forEach";
@@ -81,6 +82,13 @@ export class ICW<T> implements AsyncIterableIterator<T> {
 
   drain(): Promise<void> {
     return drain(this);
+  }
+
+  every(
+    isOK: (value: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): ICW<boolean> {
+    return new ICW(every(this, isOK, thisArg));
   }
 
   filter(
