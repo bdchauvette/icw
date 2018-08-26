@@ -5,6 +5,7 @@ import { runOfSuite } from "./suites/runOfSuite";
 
 import { runCollectSuite } from "./suites/runCollectSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
+import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
@@ -193,6 +194,7 @@ describe.each`
   method         | runSuite
   ${"collect"}   | ${runCollectSuite}
   ${"drain"}     | ${runDrainSuite}
+  ${"every"}     | ${runEverySuite}
   ${"filter"}    | ${runFilterSuite}
   ${"first"}     | ${runFirstSuite}
   ${"forEach"}   | ${runForEachSuite}
