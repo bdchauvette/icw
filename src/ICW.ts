@@ -2,11 +2,7 @@ import { isAsyncIterable } from "./__internal__/isAsyncIterable";
 import { isIterable } from "./__internal__/isIterable";
 import { isFunction } from "./__internal__/isFunction";
 
-// Static methods
-import { from } from "./from";
-import { of } from "./of";
-
-// Prototype methods
+// $plop: Import methods
 import { collect } from "./collect";
 import { drain } from "./drain";
 import { every } from "./every";
@@ -14,26 +10,30 @@ import { filter } from "./filter";
 import { first } from "./first";
 import { firstValue } from "./firstValue";
 import { forEach } from "./forEach";
+import { from } from "./from";
 import { last } from "./last";
 import { lastValue } from "./lastValue";
 import { map } from "./map";
 import { nthValue } from "./nthValue";
+import { of } from "./of";
 import { reduce } from "./reduce";
 import { reject } from "./reject";
 import { scan } from "./scan";
 import { skip } from "./skip";
 import { skipWhile } from "./skipWhile";
 import { some } from "./some";
+import { tail } from "./tail";
 import { take } from "./take";
 import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
 import { toArray } from "./toArray";
 import { withIndex } from "./withIndex";
-import { tail } from "./tail";
 
 const _iterator = Symbol("@icw/ICW/_iterable");
 
 export class ICW<T> implements AsyncIterableIterator<T> {
+  // $plop: Static methods
+
   static from<U>(
     input: AsyncIterable<U> | Iterable<U> | ArrayLike<U> | Promise<U>
   ): ICW<U> {
@@ -77,6 +77,8 @@ export class ICW<T> implements AsyncIterableIterator<T> {
 
     throw error;
   }
+
+  // $plop: Prototype methods
 
   collect(): ICW<T[]> {
     return new ICW(collect(this));

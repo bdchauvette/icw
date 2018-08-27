@@ -1,8 +1,6 @@
 import { ICW } from "../src";
 
-import { runFromSuite } from "./suites/runFromSuite";
-import { runOfSuite } from "./suites/runOfSuite";
-
+// $plop: Import suites
 import { runCollectSuite } from "./suites/runCollectSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
@@ -10,11 +8,13 @@ import { runFilterSuite } from "./suites/runFilterSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
 import { runFirstValueSuite } from "./suites/runFirstValueSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
+import { runFromSuite } from "./suites/runFromSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
 import { runLastSuite } from "./suites/runLastSuite";
 import { runLastValueSuite } from "./suites/runLastValueSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runNthValueSuite } from "./suites/runNthValueSuite";
+import { runOfSuite } from "./suites/runOfSuite";
 import { runReduceSuite } from "./suites/runReduceSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
