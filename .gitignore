@@ -1,13 +1,15 @@
 node_modules
 
 # Build & publishing artifacts
-__internal__
-cjs
-tmp
-/icw-icw-?.?.?.tgz
+/__internal__
+/cjs
 /*.js
 /*.d.ts
 /*.map
+
+# Publishing artifacts
+/icw-icw-?.?.?.tgz
+tmp
 
 # Files that look like build artifacts, but really aren't
 !*.config.js

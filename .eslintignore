@@ -4,11 +4,11 @@ tmp
 scratchpad*
 
 # Build artifacts
-__internal__
-cjs
-lib
-*.d.ts
+/__internal__
+/cjs
+/lib
 /*.js
+*.d.ts
 
 # Files that look like build artifacts, but really aren't
 !*.config.js
