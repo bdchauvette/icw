@@ -1,8 +1,6 @@
 import { ICW } from "../src";
 
-import { runFromSuite } from "./suites/runFromSuite";
-import { runOfSuite } from "./suites/runOfSuite";
-
+// $plop: Import suites
 import { runCollectSuite } from "./suites/runCollectSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
@@ -10,11 +8,13 @@ import { runFilterSuite } from "./suites/runFilterSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
 import { runFirstValueSuite } from "./suites/runFirstValueSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
+import { runFromSuite } from "./suites/runFromSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
 import { runLastSuite } from "./suites/runLastSuite";
 import { runLastValueSuite } from "./suites/runLastValueSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runNthValueSuite } from "./suites/runNthValueSuite";
+import { runOfSuite } from "./suites/runOfSuite";
 import { runReduceSuite } from "./suites/runReduceSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
@@ -29,11 +29,11 @@ import { runToArraySuite } from "./suites/runToArraySuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
 describe.each`
-  method    | runSuite
-  ${"of"}   | ${runOfSuite}
-  ${"from"} | ${runFromSuite}
-`("static method $method", ({ method, runSuite }) => {
-  runSuite(ICW[method]);
+  staticMethod | runSuite
+  ${"of"}      | ${runOfSuite}
+  ${"from"}    | ${runFromSuite}
+`("static method $staticMethod", ({ staticMethod, runSuite }) => {
+  runSuite(ICW[staticMethod]);
 });
 
 describe("constructor", () => {
@@ -193,7 +193,7 @@ describe('prototype method "throw"', () => {
 });
 
 describe.each`
-  method          | runSuite
+  prototypeMethod | runSuite
   ${"collect"}    | ${runCollectSuite}
   ${"drain"}      | ${runDrainSuite}
   ${"every"}      | ${runEverySuite}
@@ -218,8 +218,8 @@ describe.each`
   ${"tap"}        | ${runTapSuite}
   ${"toArray"}    | ${runToArraySuite}
   ${"withIndex"}  | ${runWithIndexSuite}
-`("prototype method $method", ({ method, runSuite }) => {
-  runSuite(bindMethod(method));
+`("prototype method $prototypeMethod", ({ prototypeMethod, runSuite }) => {
+  runSuite(bindMethod(prototypeMethod));
 });
 
 function bindMethod(method) {

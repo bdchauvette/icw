@@ -12,6 +12,7 @@ node_modules
 tmp
 
 # Files that look like build artifacts, but really aren't
+!plopfile.js
 !*.config.js
 !*.conf.js
 

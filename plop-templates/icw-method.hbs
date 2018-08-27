@@ -1,0 +1,12 @@
+{{#if methodHasCallback}}
+  {{name}}(
+    callback: (value: T, index?: number) => void | Promise<void>,
+    thisArg?: any
+  ): ICW<T> {
+    return new ICW({{name}}(this, callback, thisArg));
+  }
+{{else}}
+  {{name}}(): ICW<T> {
+    return new ICW({{name}}(this));
+  }
+{{/if}}

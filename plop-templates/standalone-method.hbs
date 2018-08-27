@@ -1,0 +1,11 @@
+export async function* {{name}}<T>(
+  {{#if methodHasCallback}}
+  iterable: AsyncIterable<T> | Iterable<T>,
+  callback: (value: T, index?: number) => void | Promise<void>,
+  thisArg?: any
+  {{else}}
+  iterable: AsyncIterable<T> | Iterable<T>
+  {{/if}}
+): AsyncIterableIterator<T> {
+  for await (let value of iterable) {}
+}

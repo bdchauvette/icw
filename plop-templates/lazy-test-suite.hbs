@@ -1,0 +1,115 @@
+{{#if methodHasCallback}}
+import { drain, of } from "../../src";
+{{else}}
+import { of } from "../../src";
+{{/if}}
+
+export function run{{properCase name}}Suite({{name}}) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    {{#if methodHasCallback}}
+    expect({{name}}(of(), testCallback)).toReturnSameAsyncIterator();
+    {{else}}
+    expect({{name}}(of())).toReturnSameAsyncIterator();
+    {{/if}}
+  });
+
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    {{#if methodHasCallback}}
+    await expect({{name}}(of(), testCallback)).toBeCloseableAsyncIterator();
+    {{else}}
+    await expect({{name}}(of())).toBeCloseableAsyncIterator();
+    {{/if}}
+  });
+
+  test("lazily consumes wrapped async iterable", async () => {
+    expect.assertions(1);
+    {{#if methodHasCallback}}
+    await expect(_ => {{name}}(_, testCallback)).toLazilyConsumeWrappedAsyncIterable();
+    {{else}}
+    await expect(_ => {{name}}(_)).toLazilyConsumeWrappedAsyncIterable();
+    {{/if}}
+  });
+
+  test("lazily consumes wrapped sync iterable", async () => {
+    expect.assertions(1);
+    {{#if methodHasCallback}}
+    await expect(_ => {{name}}(_, testCallback)).toLazilyConsumeWrappedIterable();
+    {{else}}
+    await expect(_ => {{name}}(_)).toLazilyConsumeWrappedIterable();
+    {{/if}}
+  });
+  {{#if methodHasCallback}}
+
+  test.each`
+    callbackType | callback
+    ${"async"}   | ${testCallback}
+    ${"sync"}    | ${testCallbackSync}
+  `("works with $callbackType callback", async ({ callback }) => {
+    expect.assertions(2);
+    let input = of("foo", "bar", "baz");
+    let expectedValues = ["foo", "bar", "baz"];
+
+    for await (let value of {{name}}(input, callback)) {
+      expect(value).toStrictEqual(expectedValues.shift());
+    }
+  });
+
+  test("provides two arguments to callback", async () => {
+    expect.assertions(1);
+
+    await drain(
+      {{name}}(of("foo"), (...args) => {
+        expect(args).toHaveLength(2);
+      })
+    );
+  });
+
+  test("provides current value as first argument to callback", async () => {
+    expect.assertions(3);
+
+    let input = of("foo", "bar", "baz");
+    let expectedValues = ["foo", "bar", "baz"];
+
+    await drain(
+      {{name}}(input, value => {
+        expect(value).toStrictEqual(expectedValues.shift());
+      })
+    );
+  });
+
+  test("provides current index as second argument to callback", async () => {
+    expect.assertions(3);
+
+
+    let input = of("foo", "bar", "baz");
+    let expectedIndexes = [0, 1, 2];
+
+    await drain(
+      {{name}}(input, (_, index) => {
+        expect(index).toStrictEqual(expectedIndexes.shift());
+      })
+    );
+  });
+
+  test("calls callback with an `undefined` `this`-context by default", async () => {
+    expect.assertions(1);
+    await drain({{name}}(of("foo"), testCallback));
+
+    function testCallback() {
+      expect(this).toBeUndefined();
+    }
+  });
+
+  test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
+    expect.assertions(1);
+    let expectedThis = {};
+    await drain({{name}}(of("foo"), testCallback, expectedThis));
+
+    function testCallback() {
+      expect(this).toBe(expectedThis);
+    }
+  });
+  {{/if}}
+}
