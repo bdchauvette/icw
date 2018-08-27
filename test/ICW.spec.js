@@ -29,11 +29,11 @@ import { runToArraySuite } from "./suites/runToArraySuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
 describe.each`
-  method    | runSuite
-  ${"of"}   | ${runOfSuite}
-  ${"from"} | ${runFromSuite}
-`("static method $method", ({ method, runSuite }) => {
-  runSuite(ICW[method]);
+  staticMethod | runSuite
+  ${"of"}      | ${runOfSuite}
+  ${"from"}    | ${runFromSuite}
+`("static method $staticMethod", ({ staticMethod, runSuite }) => {
+  runSuite(ICW[staticMethod]);
 });
 
 describe("constructor", () => {
@@ -193,7 +193,7 @@ describe('prototype method "throw"', () => {
 });
 
 describe.each`
-  method          | runSuite
+  prototypeMethod | runSuite
   ${"collect"}    | ${runCollectSuite}
   ${"drain"}      | ${runDrainSuite}
   ${"every"}      | ${runEverySuite}
@@ -218,8 +218,8 @@ describe.each`
   ${"tap"}        | ${runTapSuite}
   ${"toArray"}    | ${runToArraySuite}
   ${"withIndex"}  | ${runWithIndexSuite}
-`("prototype method $method", ({ method, runSuite }) => {
-  runSuite(bindMethod(method));
+`("prototype method $prototypeMethod", ({ prototypeMethod, runSuite }) => {
+  runSuite(bindMethod(prototypeMethod));
 });
 
 function bindMethod(method) {

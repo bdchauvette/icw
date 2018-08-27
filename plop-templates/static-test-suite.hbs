@@ -1,0 +1,13 @@
+import { of } from "../../src";
+
+export function run{{properCase name}}Suite({{name}}) {
+  test("returns same async iterator", () => {
+    expect.assertions(1);
+    expect(of()).toReturnSameAsyncIterator();
+  });
+
+  test("returns a closeable iterator", async () => {
+    expect.assertions(1);
+    await expect(of()).toBeCloseableAsyncIterator();
+  });
+}
