@@ -8,10 +8,13 @@ import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
+import { runFirstValueSuite } from "./suites/runFirstValueSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
 import { runLastSuite } from "./suites/runLastSuite";
+import { runLastValueSuite } from "./suites/runLastValueSuite";
 import { runMapSuite } from "./suites/runMapSuite";
+import { runNthValueSuite } from "./suites/runNthValueSuite";
 import { runReduceSuite } from "./suites/runReduceSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
@@ -23,7 +26,6 @@ import { runTakeSuite } from "./suites/runTakeSuite";
 import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
 import { runToArraySuite } from "./suites/runToArraySuite";
-import { runToPromiseSuite } from "./suites/runToPromiseSuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
 
 describe.each`
@@ -191,29 +193,31 @@ describe('prototype method "throw"', () => {
 });
 
 describe.each`
-  method         | runSuite
-  ${"collect"}   | ${runCollectSuite}
-  ${"drain"}     | ${runDrainSuite}
-  ${"every"}     | ${runEverySuite}
-  ${"filter"}    | ${runFilterSuite}
-  ${"first"}     | ${runFirstSuite}
-  ${"forEach"}   | ${runForEachSuite}
-  ${"head"}      | ${runHeadSuite}
-  ${"last"}      | ${runLastSuite}
-  ${"map"}       | ${runMapSuite}
-  ${"reduce"}    | ${runReduceSuite}
-  ${"reject"}    | ${runRejectSuite}
-  ${"scan"}      | ${runScanSuite}
-  ${"skip"}      | ${runSkipSuite}
-  ${"skipWhile"} | ${runSkipWhileSuite}
-  ${"some"}      | ${runSomeSuite}
-  ${"tail"}      | ${runTailSuite}
-  ${"take"}      | ${runTakeSuite}
-  ${"takeWhile"} | ${runTakeWhileSuite}
-  ${"tap"}       | ${runTapSuite}
-  ${"toArray"}   | ${runToArraySuite}
-  ${"toPromise"} | ${runToPromiseSuite}
-  ${"withIndex"} | ${runWithIndexSuite}
+  method          | runSuite
+  ${"collect"}    | ${runCollectSuite}
+  ${"drain"}      | ${runDrainSuite}
+  ${"every"}      | ${runEverySuite}
+  ${"filter"}     | ${runFilterSuite}
+  ${"first"}      | ${runFirstSuite}
+  ${"firstValue"} | ${runFirstValueSuite}
+  ${"forEach"}    | ${runForEachSuite}
+  ${"head"}       | ${runHeadSuite}
+  ${"last"}       | ${runLastSuite}
+  ${"lastValue"}  | ${runLastValueSuite}
+  ${"map"}        | ${runMapSuite}
+  ${"nthValue"}   | ${runNthValueSuite}
+  ${"reduce"}     | ${runReduceSuite}
+  ${"reject"}     | ${runRejectSuite}
+  ${"scan"}       | ${runScanSuite}
+  ${"skip"}       | ${runSkipSuite}
+  ${"skipWhile"}  | ${runSkipWhileSuite}
+  ${"some"}       | ${runSomeSuite}
+  ${"tail"}       | ${runTailSuite}
+  ${"take"}       | ${runTakeSuite}
+  ${"takeWhile"}  | ${runTakeWhileSuite}
+  ${"tap"}        | ${runTapSuite}
+  ${"toArray"}    | ${runToArraySuite}
+  ${"withIndex"}  | ${runWithIndexSuite}
 `("prototype method $method", ({ method, runSuite }) => {
   runSuite(bindMethod(method));
 });
