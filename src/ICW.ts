@@ -12,9 +12,12 @@ import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
 import { first } from "./first";
+import { firstValue } from "./firstValue";
 import { forEach } from "./forEach";
 import { last } from "./last";
+import { lastValue } from "./lastValue";
 import { map } from "./map";
+import { nthValue } from "./nthValue";
 import { reduce } from "./reduce";
 import { reject } from "./reject";
 import { scan } from "./scan";
@@ -25,7 +28,6 @@ import { take } from "./take";
 import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
 import { toArray } from "./toArray";
-import { toPromise } from "./toPromise";
 import { withIndex } from "./withIndex";
 import { tail } from "./tail";
 
@@ -102,6 +104,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return new ICW(first(this));
   }
 
+  firstValue(): Promise<T | undefined> {
+    return firstValue(this);
+  }
+
   forEach(
     callback: (value: T, index?: number) => void | Promise<void>,
     thisArg?: any
@@ -117,11 +123,19 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return new ICW(last(this));
   }
 
+  lastValue(): Promise<T | undefined> {
+    return lastValue(this);
+  }
+
   map<U>(
     callbackFn: (value: T, index?: number) => U | Promise<U>,
     thisArg?: any
   ): ICW<U> {
     return new ICW(map(this, callbackFn, thisArg));
+  }
+
+  nthValue(index: number): Promise<T | undefined> {
+    return nthValue(this, index);
   }
 
   reduce(
@@ -190,10 +204,6 @@ export class ICW<T> implements AsyncIterableIterator<T> {
 
   toArray(): Promise<T[]> {
     return toArray(this);
-  }
-
-  toPromise(): Promise<T | undefined> {
-    return toPromise(this);
   }
 
   withIndex(): ICW<[T, number]> {

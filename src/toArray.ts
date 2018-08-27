@@ -1,8 +1,8 @@
 import { collect } from "./collect";
-import { toPromise } from "./toPromise";
+import { firstValue } from "./firstValue";
 
 export async function toArray<T>(
   iterable: AsyncIterable<T> | Iterable<T>
 ): Promise<T[]> {
-  return toPromise(collect(iterable)) as Promise<T[]>;
+  return firstValue(collect(iterable)) as Promise<T[]>;
 }

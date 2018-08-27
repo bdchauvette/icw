@@ -1,14 +1,14 @@
 import { of } from "../../src";
 
-export function runToPromiseSuite(toPromise) {
+export function runFirstValueSuite(firstValue) {
   test("eagerly consumes wrapped async iterable", async () => {
     expect.assertions(1);
-    await expect(_ => toPromise(_)).toEagerlyConsumeWrappedAsyncIterable();
+    await expect(_ => firstValue(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
   test("eagerly consumes wrapped sync iterable", async () => {
     expect.assertions(1);
-    await expect(_ => toPromise(_)).toEagerlyConsumeWrappedIterable();
+    await expect(_ => firstValue(_)).toEagerlyConsumeWrappedIterable();
   });
 
   test.each`
@@ -19,7 +19,7 @@ export function runToPromiseSuite(toPromise) {
     "resolves to the first value from $iterableType iterator",
     async ({ input, expectedValue }) => {
       expect.assertions(1);
-      expect(await toPromise(input)).toStrictEqual(expectedValue);
+      await expect(firstValue(input)).resolves.toStrictEqual(expectedValue);
     }
   );
 
@@ -31,7 +31,7 @@ export function runToPromiseSuite(toPromise) {
     "resolves to `undefined` if $iterableType iterable yields no values",
     async ({ input }) => {
       expect.assertions(1);
-      expect(await toPromise(input)).toBeUndefined();
+      await expect(firstValue(input)).resolves.toBeUndefined();
     }
   );
 }
