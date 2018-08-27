@@ -22,6 +22,7 @@
   },
   "main": "cjs/index",
   "module": "index",
+  "sideEffects": false,
   "dependencies": {},
   "optionalDependencies": {
     "@types/node": "^10.5.4"
