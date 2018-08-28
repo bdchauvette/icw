@@ -1,31 +1,52 @@
 import { of } from "../../src";
 
 export function runLastSuite(last) {
-  test("returns same async iterator", () => {
+  test("eagerly consumes wrapped async iterable", async () => {
     expect.assertions(1);
-    expect(last(of())).toReturnSameAsyncIterator();
+    await expect(_ => last(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("returns a closeable iterator", async () => {
+  test("eagerly consumes wrapped sync iterable", async () => {
     expect.assertions(1);
-    await expect(last(of())).toBeCloseableAsyncIterator();
+    await expect(_ => last(_)).toEagerlyConsumeWrappedIterable();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => last(_)).toLazilyConsumeWrappedAsyncIterable();
-  });
-
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => last(_)).toLazilyConsumeWrappedIterable();
-  });
-
-  test("yields the last value from the input", async () => {
-    expect.assertions(1);
-
-    for await (let value of last(of("foo", "bar", "baz"))) {
-      expect(value).toStrictEqual("baz");
+  test.each`
+    iterableType | input                      | expectedValue
+    ${"async"}   | ${of("foo", "bar", "baz")} | ${"baz"}
+    ${"sync"}    | ${["foo", "bar", "baz"]}   | ${"baz"}
+  `(
+    "resolves to the nth value from $iterableType iterator",
+    async ({ input, expectedValue }) => {
+      expect.assertions(1);
+      await expect(last(input)).resolves.toStrictEqual(expectedValue);
     }
-  });
+  );
+
+  test.each`
+    iterableType | input                    | expectedValue
+    ${"array"}   | ${["foo", "bar", "baz"]} | ${"baz"}
+    ${"string"}  | ${"qux"}                 | ${"x"}
+  `(
+    "uses fast random access for $iterableType",
+    async ({ input, expectedValue }) => {
+      expect.assertions(2);
+      let iterator = input[Symbol.iterator]();
+      let next = jest.spyOn(iterator, "next");
+      await expect(last(input)).resolves.toStrictEqual(expectedValue);
+      expect(next).not.toHaveBeenCalled();
+    }
+  );
+
+  test.each`
+    iterableType | input
+    ${"async"}   | ${of()}
+    ${"sync"}    | ${[]}
+  `(
+    "resolves to `undefined` if iterable yields no values",
+    async ({ input }) => {
+      expect.assertions(1);
+      await expect(last(input)).resolves.toBeUndefined();
+    }
+  );
 }

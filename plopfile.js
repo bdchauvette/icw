@@ -31,7 +31,10 @@ module.exports = plop => {
         {
           type: "add",
           path: "src/{{name}}.ts",
-          templateFile: "plop-templates/standalone-method.hbs"
+          templateFile:
+            data.methodType === "eager"
+              ? "plop-templates/eager-method.hbs"
+              : "plop-templates/lazy-method.hbs"
         },
         {
           type: "add",

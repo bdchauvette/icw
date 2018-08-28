@@ -1,26 +1,26 @@
-import { drain, of } from "../../src";
+import { of } from "../../src";
 import { isTruthy } from "../helpers/isTruthy";
 import { isTruthySync } from "../helpers/isTruthySync";
 
 export function runSomeSuite(some) {
-  test("returns same async iterator", () => {
+  test("eagerly consumes wrapped async iterable", async () => {
     expect.assertions(1);
-    expect(some(of(), isTruthy)).toReturnSameAsyncIterator();
+    await expect(_ => some(_, isTruthy)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("returns a closeable iterator", async () => {
+  test("eagerly consumes wrapped sync iterable", async () => {
     expect.assertions(1);
-    await expect(some(of(), isTruthy)).toBeCloseableAsyncIterator();
+    await expect(_ => some(_, isTruthy)).toEagerlyConsumeWrappedIterable();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
+  test("runs the provided iterable until the predicate returns a truthy value", async () => {
     expect.assertions(1);
-    await expect(_ => some(_, isTruthy)).toLazilyConsumeWrappedAsyncIterable();
-  });
 
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => some(_, isTruthy)).toLazilyConsumeWrappedIterable();
+    let input = of(false, false, true, true, true);
+    let next = jest.spyOn(input, "next");
+
+    await some(input, isTruthy);
+    expect(next).toHaveBeenCalledTimes(3);
   });
 
   test.each`
@@ -29,19 +29,15 @@ export function runSomeSuite(some) {
     ${"sync"}    | ${isTruthySync}
   `("works with $callbackType callback", async ({ callback }) => {
     expect.assertions(1);
-    for await (let value of some(of(false, false, true), callback)) {
-      expect(value).toBe(true);
-    }
+    await expect(some(of(false, false, true), callback)).resolves.toBe(true);
   });
 
   test("provides two arguments to callback", async () => {
     expect.assertions(1);
 
-    await drain(
-      some(of(true), (...args) => {
-        expect(args).toHaveLength(2);
-      })
-    );
+    await some(of(true), (...args) => {
+      expect(args).toHaveLength(2);
+    });
   });
 
   test("provides current value as first argument to callback", async () => {
@@ -50,11 +46,9 @@ export function runSomeSuite(some) {
     let input = of(true, false, true);
     let expectedValues = [true, false, true];
 
-    await drain(
-      some(input, value => {
-        expect(value).toStrictEqual(expectedValues.shift());
-      })
-    );
+    await some(input, value => {
+      expect(value).toStrictEqual(expectedValues.shift());
+    });
   });
 
   test("provides current index as second argument to callback", async () => {
@@ -63,16 +57,14 @@ export function runSomeSuite(some) {
     let input = of(true, false, true);
     let expectedIndexes = [0, 1, 2];
 
-    await drain(
-      some(input, (_, index) => {
-        expect(index).toStrictEqual(expectedIndexes.shift());
-      })
-    );
+    await some(input, (_, index) => {
+      expect(index).toStrictEqual(expectedIndexes.shift());
+    });
   });
 
   test("calls callback with an `undefined` `this`-context by default", async () => {
     expect.assertions(1);
-    await drain(some(of("foo"), testCallback));
+    await some(of("foo"), testCallback);
 
     function testCallback() {
       expect(this).toBeUndefined();
@@ -82,7 +74,7 @@ export function runSomeSuite(some) {
   test("calls callback with the `this`-context provided by `thisArg` argument", async () => {
     expect.assertions(1);
     let expectedThis = {};
-    await drain(some(of("foo"), testCallback, expectedThis));
+    await some(of("foo"), testCallback, expectedThis);
 
     function testCallback() {
       expect(this).toBe(expectedThis);

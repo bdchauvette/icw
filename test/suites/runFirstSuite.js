@@ -1,31 +1,37 @@
 import { of } from "../../src";
 
 export function runFirstSuite(first) {
-  test("returns same async iterator", () => {
+  test("eagerly consumes wrapped async iterable", async () => {
     expect.assertions(1);
-    expect(first(of())).toReturnSameAsyncIterator();
+    await expect(_ => first(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("returns a closeable iterator", async () => {
+  test("eagerly consumes wrapped sync iterable", async () => {
     expect.assertions(1);
-    await expect(first(of())).toBeCloseableAsyncIterator();
+    await expect(_ => first(_)).toEagerlyConsumeWrappedIterable();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => first(_)).toLazilyConsumeWrappedAsyncIterable();
-  });
-
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => first(_)).toLazilyConsumeWrappedIterable();
-  });
-
-  test("yields first value from the provided input", async () => {
-    expect.assertions(1);
-
-    for await (let value of first(of(1, 2, 3, 4, 5))) {
-      expect(value).toStrictEqual(1);
+  test.each`
+    iterableType | input          | expectedValue
+    ${"async"}   | ${of(1, 2, 3)} | ${1}
+    ${"sync"}    | ${[1, 2, 3]}   | ${1}
+  `(
+    "resolves to the first value from $iterableType iterator",
+    async ({ input, expectedValue }) => {
+      expect.assertions(1);
+      await expect(first(input)).resolves.toStrictEqual(expectedValue);
     }
-  });
+  );
+
+  test.each`
+    iterableType | input
+    ${"async"}   | ${of()}
+    ${"sync"}    | ${[]}
+  `(
+    "resolves to `undefined` if $iterableType iterable yields no values",
+    async ({ input }) => {
+      expect.assertions(1);
+      await expect(first(input)).resolves.toBeUndefined();
+    }
+  );
 }

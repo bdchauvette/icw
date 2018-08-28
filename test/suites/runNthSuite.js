@@ -1,14 +1,14 @@
 import { of } from "../../src";
 
-export function runNthValueSuite(nthValue) {
+export function runNthSuite(nth) {
   test("eagerly consumes wrapped async iterable", async () => {
     expect.assertions(1);
-    await expect(_ => nthValue(_)).toEagerlyConsumeWrappedAsyncIterable();
+    await expect(_ => nth(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
   test("eagerly consumes wrapped sync iterable", async () => {
     expect.assertions(1);
-    await expect(_ => nthValue(_)).toEagerlyConsumeWrappedIterable();
+    await expect(_ => nth(_)).toEagerlyConsumeWrappedIterable();
   });
 
   test.each`
@@ -19,9 +19,7 @@ export function runNthValueSuite(nthValue) {
     "resolves to the nth value from $iterableType iterator",
     async ({ input, index, expectedValue }) => {
       expect.assertions(1);
-      await expect(nthValue(input, index)).resolves.toStrictEqual(
-        expectedValue
-      );
+      await expect(nth(input, index)).resolves.toStrictEqual(expectedValue);
     }
   );
 
@@ -35,9 +33,7 @@ export function runNthValueSuite(nthValue) {
       expect.assertions(2);
       let iterator = input[Symbol.iterator]();
       let next = jest.spyOn(iterator, "next");
-      await expect(nthValue(input, index)).resolves.toStrictEqual(
-        expectedValue
-      );
+      await expect(nth(input, index)).resolves.toStrictEqual(expectedValue);
       expect(next).not.toHaveBeenCalled();
     }
   );
@@ -50,7 +46,7 @@ export function runNthValueSuite(nthValue) {
     "resolves to `undefined` if iterable yields no value for provided index",
     async ({ input }) => {
       expect.assertions(1);
-      await expect(nthValue(input, 100)).resolves.toBeUndefined();
+      await expect(nth(input, 100)).resolves.toBeUndefined();
     }
   );
 }

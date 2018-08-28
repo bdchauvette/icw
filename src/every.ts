@@ -1,19 +1,17 @@
+import { IterableLike } from "./IterableLike";
 import { withIndex } from "./withIndex";
 
-export async function* every<T>(
-  iterable: AsyncIterable<T> | Iterable<T>,
+export async function every<T>(
+  iterableLike: IterableLike<T>,
   predicate: (value: T, index?: number) => boolean | Promise<boolean>,
   thisArg?: any
-): AsyncIterableIterator<boolean> {
+): Promise<boolean> {
   let iterableDidPass = false;
 
-  for await (let [value, index] of withIndex(iterable)) {
-    iterableDidPass = !!(await Reflect.apply(predicate, thisArg, [
-      value,
-      index
-    ]));
-    if (!iterableDidPass) break;
+  for await (let [value, index] of withIndex(iterableLike)) {
+    iterableDidPass = Reflect.apply(predicate, thisArg, [value, index]);
+    if (!(await iterableDidPass)) return false;
   }
 
-  yield iterableDidPass;
+  return iterableDidPass;
 }

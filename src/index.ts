@@ -1,19 +1,16 @@
 export { ICW } from "./ICW";
 
 // $plop: Import methods
-export { collect } from "./collect";
 export { drain } from "./drain";
 export { every } from "./every";
 export { filter } from "./filter";
 export { first } from "./first";
-export { firstValue } from "./firstValue";
 export { forEach } from "./forEach";
 export { from } from "./from";
 export { head } from "./head";
 export { last } from "./last";
-export { lastValue } from "./lastValue";
 export { map } from "./map";
-export { nthValue } from "./nthValue";
+export { nth } from "./nth";
 export { of } from "./of";
 export { reduce } from "./reduce";
 export { reject } from "./reject";
