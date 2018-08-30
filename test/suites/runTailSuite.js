@@ -1,4 +1,5 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runTailSuite(tail) {
   test("returns same async iterator", () => {
@@ -11,24 +12,31 @@ export function runTailSuite(tail) {
     await expect(tail(of())).toBeCloseableAsyncIterator();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
+  test("lazily consumes provided IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => tail(_)).toLazilyConsumeWrappedAsyncIterable();
   });
 
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => tail(_)).toLazilyConsumeWrappedIterable();
-  });
+  test.each`
+    inputType          | iterableLike                          | expectedValues
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${["bar", "baz"]}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${["bar", "baz"]}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${["bar", "baz"]}
+  `(
+    "yields all but the first value from $inputType input",
+    async ({ iterableLike, expectedValues }) => {
+      expect.assertions(expectedValues.length);
 
-  test("yields all but the first value from the input", async () => {
-    expect.assertions(4);
-
-    let input = of(1, 2, 3, 4, 5);
-    let expectedValues = [2, 3, 4, 5];
-
-    for await (let value of tail(input)) {
-      expect(value).toStrictEqual(expectedValues.shift());
+      for await (let value of tail(iterableLike)) {
+        expect(value).toStrictEqual(expectedValues.shift());
+      }
     }
+  );
+
+  test("yields no values for Promise input", async () => {
+    expect.assertions(1);
+    let iterator = tail(Promise.resolve("foo"));
+    let result = await iterator.next();
+    expect(result.done).toBe(true);
   });
 }

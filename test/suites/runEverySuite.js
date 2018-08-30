@@ -1,49 +1,18 @@
 import { of } from "../../src";
 import { isTruthy } from "../helpers/isTruthy";
 import { isTruthySync } from "../helpers/isTruthySync";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runEverySuite(every) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ =>
       every(_, isTruthy)
     ).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("eagerly consumes wrapped sync iterable", async () => {
+  test("calls callback with 2 arguments", async () => {
     expect.assertions(1);
-    await expect(_ => every(_, isTruthy)).toEagerlyConsumeWrappedIterable();
-  });
-
-  test("runs the provided iterable to completion", async () => {
-    expect.assertions(1);
-
-    let input = of(1, 2, 3);
-    let next = jest.spyOn(input, "next");
-
-    await every(input, isTruthy);
-    expect(next).toHaveBeenCalledTimes(4);
-  });
-
-  describe.each`
-    callbackType | callback
-    ${"async"}   | ${isTruthy}
-    ${"sync"}    | ${isTruthySync}
-  `("$callbackType callback", async ({ callback }) => {
-    test("returns true when every item of input satisfies the condition", async () => {
-      expect.assertions(1);
-      await expect(every(of(true, true, true), callback)).resolves.toBe(true);
-    });
-
-    test("returns false when every item of input satisfies the condition", async () => {
-      expect.assertions(1);
-      await expect(every(of(true, true, false), callback)).resolves.toBe(false);
-    });
-  });
-
-  test("provides two arguments to callback", async () => {
-    expect.assertions(1);
-
     await every(of(true), (...args) => {
       expect(args).toHaveLength(2);
     });
@@ -90,5 +59,39 @@ export function runEverySuite(every) {
     function testCallback() {
       expect(this).toBe(expectedThis);
     }
+  });
+
+  describe.each`
+    callbackType | callback
+    ${"async"}   | ${isTruthy}
+    ${"sync"}    | ${isTruthySync}
+  `("$callbackType callback", async ({ callback }) => {
+    test.each`
+      inputType          | iterableLike
+      ${"AsyncIterable"} | ${of(true, true, true)}
+      ${"Iterable"}      | ${[true, true, true]}
+      ${"ArrayLike"}     | ${new ArrayLike(true, true, true)}
+      ${"Promise"}       | ${Promise.resolve(true)}
+    `(
+      "returns `Promise<true>` when predicate returns true for *every* item of $inputType input",
+      async ({ iterableLike }) => {
+        expect.assertions(1);
+        await expect(every(iterableLike, callback)).resolves.toBe(true);
+      }
+    );
+
+    test.each`
+      inputType          | iterableLike
+      ${"AsyncIterable"} | ${of(true, true, false)}
+      ${"Iterable"}      | ${[true, true, false]}
+      ${"ArrayLike"}     | ${new ArrayLike(true, true, false)}
+      ${"Promise"}       | ${Promise.resolve(false)}
+    `(
+      "returns `Promise<false>` when predicate returns false for *any* item of $inputType input",
+      async ({ iterableLike }) => {
+        expect.assertions(1);
+        await expect(every(iterableLike, callback)).resolves.toBe(false);
+      }
+    );
   });
 }

@@ -1,3 +1,3 @@
-export async function sum(sum, currentValue) {
-  return sum + currentValue;
+export async function sum(acc, currentValue) {
+  return acc + currentValue;
 }

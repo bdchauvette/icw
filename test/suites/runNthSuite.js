@@ -1,52 +1,41 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runNthSuite(nth) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => nth(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("eagerly consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => nth(_)).toEagerlyConsumeWrappedIterable();
-  });
-
   test.each`
-    iterableType | input                      | index | expectedValue
-    ${"async"}   | ${of("foo", "bar", "baz")} | ${1}  | ${"bar"}
-    ${"sync"}    | ${["foo", "bar", "baz"]}   | ${1}  | ${"bar"}
+    inputType          | iterableLike                          | index | expectedValue
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${1}  | ${"bar"}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${1}  | ${"bar"}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${1}  | ${"bar"}
+    ${"Promise"}       | ${Promise.resolve("foo")}             | ${0}  | ${"foo"}
   `(
-    "resolves to the nth value from $iterableType iterator",
-    async ({ input, index, expectedValue }) => {
+    "resolves to the nth value from $inputType input",
+    async ({ iterableLike, index, expectedValue }) => {
       expect.assertions(1);
-      await expect(nth(input, index)).resolves.toStrictEqual(expectedValue);
+      await expect(nth(iterableLike, index)).resolves.toStrictEqual(
+        expectedValue
+      );
     }
   );
 
   test.each`
-    iterableType | input                    | index | expectedValue
-    ${"array"}   | ${["foo", "bar", "baz"]} | ${1}  | ${"bar"}
-    ${"string"}  | ${"qux"}                 | ${1}  | ${"u"}
+    inputType          | iterableLike
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")}
+    ${"Promise"}       | ${Promise.resolve("foo")}
   `(
-    "uses fast random access for $iterableType",
-    async ({ input, index, expectedValue }) => {
-      expect.assertions(2);
-      let iterator = input[Symbol.iterator]();
-      let next = jest.spyOn(iterator, "next");
-      await expect(nth(input, index)).resolves.toStrictEqual(expectedValue);
-      expect(next).not.toHaveBeenCalled();
-    }
-  );
-
-  test.each`
-    iterableType | input
-    ${"async"}   | ${of()}
-    ${"sync"}    | ${[]}
-  `(
-    "resolves to `undefined` if iterable yields no value for provided index",
-    async ({ input }) => {
+    "resolves to undefined if $inputType input does not have an nth value",
+    async ({ iterableLike }) => {
       expect.assertions(1);
-      await expect(nth(input, 100)).resolves.toBeUndefined();
+      await expect(
+        nth(iterableLike, Number.MAX_SAFE_INTEGER)
+      ).resolves.toBeUndefined();
     }
   );
 }

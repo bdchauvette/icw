@@ -1,4 +1,4 @@
-test("passes when received value lazily consumes wrapped async iterable", async () => {
+test("passes when received value lazily consumes provided IterableLike input", async () => {
   expect.assertions(1);
 
   await expect(_ => lazyWrapper(_)).toLazilyConsumeWrappedAsyncIterable();

@@ -1,37 +1,37 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runFirstSuite(first) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => first(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("eagerly consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => first(_)).toEagerlyConsumeWrappedIterable();
-  });
-
   test.each`
-    iterableType | input          | expectedValue
-    ${"async"}   | ${of(1, 2, 3)} | ${1}
-    ${"sync"}    | ${[1, 2, 3]}   | ${1}
+    inputType          | iterableLike                          | expectedValue
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${"foo"}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${"foo"}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${"foo"}
+    ${"Promise"}       | ${Promise.resolve("foo")}             | ${"foo"}
   `(
-    "resolves to the first value from $iterableType iterator",
-    async ({ input, expectedValue }) => {
+    "resolves to the first value of $inputType input",
+    async ({ iterableLike, expectedValue }) => {
       expect.assertions(1);
-      await expect(first(input)).resolves.toStrictEqual(expectedValue);
+      await expect(first(iterableLike)).resolves.toStrictEqual(expectedValue);
     }
   );
 
   test.each`
-    iterableType | input
-    ${"async"}   | ${of()}
-    ${"sync"}    | ${[]}
+    inputType          | iterableLike
+    ${"AsyncIterable"} | ${of()}
+    ${"Iterable"}      | ${[]}
+    ${"ArrayLike"}     | ${new ArrayLike()}
+    ${"Promise"}       | ${Promise.resolve()}
   `(
-    "resolves to `undefined` if $iterableType iterable yields no values",
-    async ({ input }) => {
+    "resolves to `undefined` if $inputType input contains no values",
+    async ({ iterableLike }) => {
       expect.assertions(1);
-      await expect(first(input)).resolves.toBeUndefined();
+      await expect(first(iterableLike)).resolves.toBeUndefined();
     }
   );
 }

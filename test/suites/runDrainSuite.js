@@ -1,17 +1,12 @@
 import { of } from "../../src";
 
 export function runDrainSuite(drain) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => drain(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("eagerly consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => drain(_)).toEagerlyConsumeWrappedIterable();
-  });
-
-  test("runs the provided iterable to completion", async () => {
+  test("runs the provided iterableLike to completion", async () => {
     expect.assertions(1);
 
     let input = of(1, 2, 3);
@@ -20,4 +15,6 @@ export function runDrainSuite(drain) {
     await drain(input);
     expect(next).toHaveBeenCalledTimes(4);
   });
+
+  // TODO: Add tests for each iterable-like input type
 }

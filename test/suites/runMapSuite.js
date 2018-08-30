@@ -1,47 +1,28 @@
 import { drain, of } from "../../src";
-import { identity } from "../helpers/identity";
 import { toUpperCase } from "../helpers/toUpperCase";
 import { toUpperCaseSync } from "../helpers/toUpperCaseSync";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runMapSuite(map) {
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(map(of(), identity)).toReturnSameAsyncIterator();
+    expect(map(of(), toUpperCase)).toReturnSameAsyncIterator();
   });
 
   test("returns a closeable iterator", async () => {
     expect.assertions(1);
-    await expect(map(of(), identity)).toBeCloseableAsyncIterator();
+    await expect(map(of(), toUpperCase)).toBeCloseableAsyncIterator();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
+  test("lazily consumes provided IterableLike input", async () => {
     expect.assertions(1);
-    await expect(_ => map(_, identity)).toLazilyConsumeWrappedAsyncIterable();
+    await expect(_ =>
+      map(_, toUpperCase)
+    ).toLazilyConsumeWrappedAsyncIterable();
   });
 
-  test("lazily consumes wrapped sync iterable", async () => {
+  test("calls callback with 2 arguments", async () => {
     expect.assertions(1);
-    await expect(_ => map(_, identity)).toLazilyConsumeWrappedIterable();
-  });
-
-  test.each`
-    callbackType | callback
-    ${"async"}   | ${toUpperCase}
-    ${"sync"}    | ${toUpperCaseSync}
-  `("maps each value with $callbackType callback", async ({ callback }) => {
-    expect.assertions(3);
-
-    let input = of("foo", "bar", "baz");
-    let expectedValues = ["FOO", "BAR", "BAZ"];
-
-    for await (let value of map(input, callback)) {
-      expect(value).toStrictEqual(expectedValues.shift());
-    }
-  });
-
-  test("provides two arguments to callback", async () => {
-    expect.assertions(1);
-
     await drain(
       map(of(true), (...args) => {
         expect(args).toHaveLength(2);
@@ -52,8 +33,8 @@ export function runMapSuite(map) {
   test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
-    let input = of("foo", "bar", "baz");
-    let expectedValues = ["foo", "bar", "baz"];
+    let input = of(true, false, true);
+    let expectedValues = [true, false, true];
 
     await drain(
       map(input, value => {
@@ -65,7 +46,7 @@ export function runMapSuite(map) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let input = of("foo", "bar", "baz");
+    let input = of(true, false, true);
     let expectedIndexes = [0, 1, 2];
 
     await drain(
@@ -92,5 +73,27 @@ export function runMapSuite(map) {
     function testCallback() {
       expect(this).toBe(expectedThis);
     }
+  });
+
+  describe.each`
+    callbackType | callback
+    ${"async"}   | ${toUpperCase}
+    ${"sync"}    | ${toUpperCaseSync}
+  `("$callbackType callback", ({ callback }) => {
+    test.each`
+      inputType          | iterableLike                          | expectedValues
+      ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${["FOO", "BAR", "BAZ"]}
+      ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${["FOO", "BAR", "BAZ"]}
+      ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${["FOO", "BAR", "BAZ"]}
+      ${"Promise"}       | ${Promise.resolve("foo")}             | ${["FOO"]}
+    `(
+      "yields each mapped items from $inputType input",
+      async ({ iterableLike, expectedValues }) => {
+        expect.assertions(expectedValues.length);
+        for await (let value of map(iterableLike, callback)) {
+          expect(value).toStrictEqual(expectedValues.shift());
+        }
+      }
+    );
   });
 }

@@ -1,4 +1,5 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runFromSuite(from) {
   describe("async iterable input", () => {
@@ -15,10 +16,10 @@ export function runFromSuite(from) {
     test("yields each value from the input", async () => {
       expect.assertions(3);
 
-      let input = of("foo", "bar", "baz");
+      let asyncIterable = of("foo", "bar", "baz");
       let expectedValues = ["foo", "bar", "baz"];
 
-      for await (let value of from(input)) {
+      for await (let value of from(asyncIterable)) {
         expect(value).toStrictEqual(expectedValues.shift());
       }
     });
@@ -38,10 +39,10 @@ export function runFromSuite(from) {
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
-      let input = ["foo", "bar", "baz"];
-      let expectedValues = [...input];
+      let iterable = ["foo", "bar", "baz"];
+      let expectedValues = [...iterable];
 
-      for await (let value of from(input)) {
+      for await (let value of from(iterable)) {
         expect(value).toStrictEqual(expectedValues.shift());
       }
     });
@@ -51,21 +52,21 @@ export function runFromSuite(from) {
   describe("Array-like input", () => {
     test("returns same async iterator", () => {
       expect.assertions(1);
-      expect(from({ length: 0 })).toReturnSameAsyncIterator();
+      expect(from(new ArrayLike())).toReturnSameAsyncIterator();
     });
 
     test("returns a closeable iterator", async () => {
       expect.assertions(1);
-      await expect(from({ length: 0 })).toBeCloseableAsyncIterator();
+      await expect(from(new ArrayLike())).toBeCloseableAsyncIterator();
     });
 
     test("yields each item from the input", async () => {
       expect.assertions(3);
 
-      let input = { length: 3, 0: "foo", 1: "bar", 2: "baz" };
+      let arrayLike = new ArrayLike("foo", "bar", "baz");
       let expectedValues = ["foo", "bar", "baz"];
 
-      for await (let value of from(input)) {
+      for await (let value of from(arrayLike)) {
         expect(value).toStrictEqual(expectedValues.shift());
       }
     });
@@ -85,8 +86,8 @@ export function runFromSuite(from) {
 
     test("yields the resolved value of the promise", async () => {
       expect.assertions(1);
-
-      for await (let value of from(Promise.resolve("foo"))) {
+      let promise = Promise.resolve("foo");
+      for await (let value of from(promise)) {
         expect(value).toStrictEqual("foo");
       }
     });

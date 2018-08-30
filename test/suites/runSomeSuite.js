@@ -1,40 +1,16 @@
 import { of } from "../../src";
 import { isTruthy } from "../helpers/isTruthy";
 import { isTruthySync } from "../helpers/isTruthySync";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runSomeSuite(some) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => some(_, isTruthy)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("eagerly consumes wrapped sync iterable", async () => {
+  test("calls callback with 2 arguments", async () => {
     expect.assertions(1);
-    await expect(_ => some(_, isTruthy)).toEagerlyConsumeWrappedIterable();
-  });
-
-  test("runs the provided iterable until the predicate returns a truthy value", async () => {
-    expect.assertions(1);
-
-    let input = of(false, false, true, true, true);
-    let next = jest.spyOn(input, "next");
-
-    await some(input, isTruthy);
-    expect(next).toHaveBeenCalledTimes(3);
-  });
-
-  test.each`
-    callbackType | callback
-    ${"async"}   | ${isTruthy}
-    ${"sync"}    | ${isTruthySync}
-  `("works with $callbackType callback", async ({ callback }) => {
-    expect.assertions(1);
-    await expect(some(of(false, false, true), callback)).resolves.toBe(true);
-  });
-
-  test("provides two arguments to callback", async () => {
-    expect.assertions(1);
-
     await some(of(true), (...args) => {
       expect(args).toHaveLength(2);
     });
@@ -43,8 +19,8 @@ export function runSomeSuite(some) {
   test("provides current value as first argument to callback", async () => {
     expect.assertions(3);
 
-    let input = of(true, false, true);
-    let expectedValues = [true, false, true];
+    let input = of("foo", "bar", "baz");
+    let expectedValues = ["foo", "bar", "baz"];
 
     await some(input, value => {
       expect(value).toStrictEqual(expectedValues.shift());
@@ -54,7 +30,7 @@ export function runSomeSuite(some) {
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
 
-    let input = of(true, false, true);
+    let input = of("foo", "bar", "baz");
     let expectedIndexes = [0, 1, 2];
 
     await some(input, (_, index) => {
@@ -79,5 +55,39 @@ export function runSomeSuite(some) {
     function testCallback() {
       expect(this).toBe(expectedThis);
     }
+  });
+
+  describe.each`
+    callbackType | callback
+    ${"async"}   | ${isTruthy}
+    ${"sync"}    | ${isTruthySync}
+  `("$callbackType callback", async ({ callback }) => {
+    test.each`
+      inputType          | iterableLike
+      ${"AsyncIterable"} | ${of(false, false, true)}
+      ${"Iterable"}      | ${[false, false, true]}
+      ${"ArrayLike"}     | ${new ArrayLike(false, false, true)}
+      ${"Promise"}       | ${Promise.resolve(true)}
+    `(
+      "returns `Promise<true>` when predicate returns true for *any* item of $inputType input",
+      async ({ iterableLike }) => {
+        expect.assertions(1);
+        await expect(some(iterableLike, callback)).resolves.toBe(true);
+      }
+    );
+
+    test.each`
+      inputType          | iterableLike
+      ${"AsyncIterable"} | ${of(false, false, false)}
+      ${"Iterable"}      | ${[false, false, false]}
+      ${"ArrayLike"}     | ${new ArrayLike(false, false, false)}
+      ${"Promise"}       | ${Promise.resolve(false)}
+    `(
+      "returns `Promise<false>` when predicate returns false for *every* item of $inputType input",
+      async ({ iterableLike }) => {
+        expect.assertions(1);
+        await expect(some(iterableLike, callback)).resolves.toBe(false);
+      }
+    );
   });
 }

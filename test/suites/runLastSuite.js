@@ -1,52 +1,37 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runLastSuite(last) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => last(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("eagerly consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => last(_)).toEagerlyConsumeWrappedIterable();
-  });
-
   test.each`
-    iterableType | input                      | expectedValue
-    ${"async"}   | ${of("foo", "bar", "baz")} | ${"baz"}
-    ${"sync"}    | ${["foo", "bar", "baz"]}   | ${"baz"}
+    inputType          | iterableLike                          | expectedValue
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${"baz"}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${"baz"}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${"baz"}
+    ${"Promise"}       | ${Promise.resolve("foo")}             | ${"foo"}
   `(
-    "resolves to the nth value from $iterableType iterator",
-    async ({ input, expectedValue }) => {
+    "resolves to the  value of $inputType input",
+    async ({ iterableLike, expectedValue }) => {
       expect.assertions(1);
-      await expect(last(input)).resolves.toStrictEqual(expectedValue);
+      await expect(last(iterableLike)).resolves.toStrictEqual(expectedValue);
     }
   );
 
   test.each`
-    iterableType | input                    | expectedValue
-    ${"array"}   | ${["foo", "bar", "baz"]} | ${"baz"}
-    ${"string"}  | ${"qux"}                 | ${"x"}
+    inputType          | iterableLike
+    ${"AsyncIterable"} | ${of()}
+    ${"Iterable"}      | ${[]}
+    ${"ArrayLike"}     | ${new ArrayLike()}
+    ${"Promise"}       | ${Promise.resolve()}
   `(
-    "uses fast random access for $iterableType",
-    async ({ input, expectedValue }) => {
-      expect.assertions(2);
-      let iterator = input[Symbol.iterator]();
-      let next = jest.spyOn(iterator, "next");
-      await expect(last(input)).resolves.toStrictEqual(expectedValue);
-      expect(next).not.toHaveBeenCalled();
-    }
-  );
-
-  test.each`
-    iterableType | input
-    ${"async"}   | ${of()}
-    ${"sync"}    | ${[]}
-  `(
-    "resolves to `undefined` if iterable yields no values",
-    async ({ input }) => {
+    "resolves to `undefined` if $inputType input contains no values",
+    async ({ iterableLike }) => {
       expect.assertions(1);
-      await expect(last(input)).resolves.toBeUndefined();
+      await expect(last(iterableLike)).resolves.toBeUndefined();
     }
   );
 }
