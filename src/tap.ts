@@ -3,11 +3,11 @@ import { withIndex } from "./withIndex";
 
 export async function* tap<T>(
   iterableLike: IterableLike<T>,
-  predicate: (value: T, index?: number) => void | Promise<void>,
+  callback: (value: T, index?: number) => void | Promise<void>,
   thisArg?: any
 ): AsyncIterableIterator<T> {
   for await (let [value, index] of withIndex(iterableLike)) {
-    Reflect.apply(predicate, thisArg, [value, index]);
+    Reflect.apply(callback, thisArg, [value, index]);
     yield value;
   }
 }
