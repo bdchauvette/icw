@@ -3,6 +3,7 @@ import { drain, of } from "../../src";
 {{else}}
 import { of } from "../../src";
 {{/if}}
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function run{{properCase name}}Suite({{name}}) {
   test("returns same async iterator", () => {
@@ -23,7 +24,7 @@ export function run{{properCase name}}Suite({{name}}) {
     {{/if}}
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
+  test("lazily consumes provided IterableLike input", async () => {
     expect.assertions(1);
     {{#if methodHasCallback}}
     await expect(_ => {{name}}(_, testCallback)).toLazilyConsumeWrappedAsyncIterable();
@@ -32,36 +33,13 @@ export function run{{properCase name}}Suite({{name}}) {
     {{/if}}
   });
 
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    {{#if methodHasCallback}}
-    await expect(_ => {{name}}(_, testCallback)).toLazilyConsumeWrappedIterable();
-    {{else}}
-    await expect(_ => {{name}}(_)).toLazilyConsumeWrappedIterable();
-    {{/if}}
-  });
   {{#if methodHasCallback}}
-
-  test.each`
-    callbackType | callback
-    ${"async"}   | ${testCallback}
-    ${"sync"}    | ${testCallbackSync}
-  `("works with $callbackType callback", async ({ callback }) => {
-    expect.assertions(2);
-    let input = of("foo", "bar", "baz");
-    let expectedValues = ["foo", "bar", "baz"];
-
-    for await (let value of {{name}}(input, callback)) {
-      expect(value).toStrictEqual(expectedValues.shift());
-    }
-  });
-
-  test("provides two arguments to callback", async () => {
+  test("calls callback with {{callbackLength}} arguments", async () => {
     expect.assertions(1);
 
     await drain(
       {{name}}(of("foo"), (...args) => {
-        expect(args).toHaveLength(2);
+        expect(args).toHaveLength({{calbackLength}});
       })
     );
   });
@@ -81,7 +59,6 @@ export function run{{properCase name}}Suite({{name}}) {
 
   test("provides current index as second argument to callback", async () => {
     expect.assertions(3);
-
 
     let input = of("foo", "bar", "baz");
     let expectedIndexes = [0, 1, 2];
@@ -109,6 +86,38 @@ export function run{{properCase name}}Suite({{name}}) {
 
     function testCallback() {
       expect(this).toBe(expectedThis);
+    }
+  });
+
+  describe.each`
+    callbackType | callback
+    ${"async"}   | ${testCallback}
+    ${"sync"}    | ${testCallbackSync}
+  `("$callbackType callback", async ({ callback }) => {
+    test.each`
+      inputType          | iterableLike         | expectedValues
+      ${"AsyncIterable"} | ${of()}              | ${[]}
+      ${"Iterable"}      | ${[]}                | ${[]}
+      ${"ArrayLike"}     | ${new ArrayLike()}   | ${[]}
+      ${"Promise"}       | ${Promise.resolve()} | ${[]}
+    `("TODO: Add test", async ({ iterableLike, expectedValues }) => {
+      expect.assertions(expectedValues.length);
+      for await (let value of {{name}}(iterableLike, callback)) {
+        expect(value).toStrictEqual(expectedValues.shift());
+      }
+    });
+  });
+  {{else}}
+  test.each`
+    inputType          | iterableLike         | expectedValues
+    ${"AsyncIterable"} | ${of()}              | ${[]}
+    ${"Iterable"}      | ${[]}                | ${[]}
+    ${"ArrayLike"}     | ${new ArrayLike()}   | ${[]}
+    ${"Promise"}       | ${Promise.resolve()} | ${[]}
+  `("TODO: Add descrption", async ({ iterableLike, expectedValues }) => {
+    expect.assertions(expectedValues.length);
+    for await (let value of {{name}}(iterableLike)) {
+      expect(value).toStrictEqual(expectedValues.shift());
     }
   });
   {{/if}}
