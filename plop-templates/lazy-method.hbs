@@ -1,11 +1,14 @@
+import { from } from "./from";
+import { IterableLike } from "./IterableLike";
+
 export async function* {{name}}<T>(
   {{#if methodHasCallback}}
-  iterable: AsyncIterable<T> | Iterable<T>,
+  iterableLike: IterableLike<T>,
   callback: (value: T, index?: number) => void | Promise<void>,
   thisArg?: any
   {{else}}
-  iterable: AsyncIterable<T> | Iterable<T>
+  iterableLike: IterableLike<T>
   {{/if}}
 ): AsyncIterableIterator<T> {
-  for await (let value of iterable) {}
+  for await (let value of from(iterableLike)) {}
 }

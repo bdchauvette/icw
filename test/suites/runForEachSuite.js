@@ -3,14 +3,9 @@ import { noop } from "../helpers/noop";
 import { noopSync } from "../helpers/noopSync";
 
 export function runForEachSuite(forEach) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => forEach(_, noop)).toEagerlyConsumeWrappedAsyncIterable();
-  });
-
-  test("eagerly consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => forEach(_, noop)).toEagerlyConsumeWrappedIterable();
   });
 
   test("runs the provided iterable to completion", async () => {

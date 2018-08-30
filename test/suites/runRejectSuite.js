@@ -1,6 +1,7 @@
 import { drain, of } from "../../src";
 import { isTruthy } from "../helpers/isTruthy";
 import { isTruthySync } from "../helpers/isTruthySync";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runRejectSuite(reject) {
   test("returns same async iterator", () => {
@@ -13,39 +14,15 @@ export function runRejectSuite(reject) {
     await expect(reject(of(), isTruthy)).toBeCloseableAsyncIterator();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
+  test("lazily consumes provided IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ =>
       reject(_, isTruthy)
     ).toLazilyConsumeWrappedAsyncIterable();
   });
 
-  test("lazily consumes wrapped sync iterable", async () => {
+  test("calls callback with 2 arguments", async () => {
     expect.assertions(1);
-    await expect(_ => reject(_, isTruthy)).toLazilyConsumeWrappedIterable();
-  });
-
-  test.each`
-    callbackType | callback
-    ${"async"}   | ${isTruthy}
-    ${"sync"}    | ${isTruthySync}
-  `(
-    "rejects values when using $callbackType callback",
-    async ({ callback }) => {
-      expect.assertions(2);
-
-      let input = of(true, false, true, false);
-      let expectedValues = [false, false];
-
-      for await (let value of reject(input, callback)) {
-        expect(value).toStrictEqual(expectedValues.shift());
-      }
-    }
-  );
-
-  test("provides two arguments to callback", async () => {
-    expect.assertions(1);
-
     await drain(
       reject(of(true), (...args) => {
         expect(args).toHaveLength(2);
@@ -96,5 +73,40 @@ export function runRejectSuite(reject) {
     function testCallback() {
       expect(this).toBe(expectedThis);
     }
+  });
+
+  describe.each`
+    callbackType | callback
+    ${"async"}   | ${isTruthy}
+    ${"sync"}    | ${isTruthySync}
+  `("$callbackType callback", ({ callback }) => {
+    test.each`
+      inputType          | iterableLike                         | expectedValues
+      ${"AsyncIterable"} | ${of(false, true, false)}            | ${[false, false]}
+      ${"Iterable"}      | ${[false, true, false]}              | ${[false, false]}
+      ${"ArrayLike"}     | ${new ArrayLike(false, true, false)} | ${[false, false]}
+    `(
+      "excludes items from $inputType input that satisfy the predicate",
+      async ({ iterableLike, expectedValues }) => {
+        expect.assertions(expectedValues.length);
+        for await (let value of reject(iterableLike, callback)) {
+          expect(value).toStrictEqual(expectedValues.shift());
+        }
+      }
+    );
+
+    test("yields resolved Promise value if it does *not* satisfy the predicate", async () => {
+      expect.assertions(1);
+      for await (let value of reject(Promise.resolve(false), callback)) {
+        expect(value).toStrictEqual(false);
+      }
+    });
+
+    test("yields no values if resolved Promise value *does* satisfy the predicate", async () => {
+      expect.assertions(1);
+      let iterator = reject(Promise.resolve(true), callback);
+      let result = await iterator.next();
+      expect(result.done).toBe(true);
+    });
   });
 }

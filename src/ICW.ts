@@ -1,20 +1,13 @@
-import { isAsyncIterable } from "./__internal__/isAsyncIterable";
-import { isIterable } from "./__internal__/isIterable";
-import { isFunction } from "./__internal__/isFunction";
-
 // $plop: Import methods
-import { collect } from "./collect";
 import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
 import { first } from "./first";
-import { firstValue } from "./firstValue";
 import { forEach } from "./forEach";
 import { from } from "./from";
 import { last } from "./last";
-import { lastValue } from "./lastValue";
 import { map } from "./map";
-import { nthValue } from "./nthValue";
+import { nth } from "./nth";
 import { of } from "./of";
 import { reduce } from "./reduce";
 import { reject } from "./reject";
@@ -28,32 +21,25 @@ import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
 import { toArray } from "./toArray";
 import { withIndex } from "./withIndex";
+import { IterableLike } from "./IterableLike";
 
-const _iterator = Symbol("@icw/ICW/_iterable");
+const _iterator = Symbol("_iterator");
 
 export class ICW<T> implements AsyncIterableIterator<T> {
   // $plop: Static methods
 
-  static from<U>(
-    input: AsyncIterable<U> | Iterable<U> | ArrayLike<U> | Promise<U>
-  ): ICW<U> {
-    return new ICW(from(input));
+  static from<U>(iterableLike: IterableLike<U>): ICW<U> {
+    return new ICW(iterableLike);
   }
 
   static of<U>(...items: U[]): ICW<U> {
     return new ICW(of(...items));
   }
 
-  private [_iterator]: AsyncIterator<T> | Iterator<T>;
+  private [_iterator]: AsyncIterator<T>;
 
-  constructor(iterable: AsyncIterable<T> | Iterable<T>) {
-    if (isAsyncIterable(iterable)) {
-      this[_iterator] = iterable[Symbol.asyncIterator]();
-    } else if (isIterable(iterable)) {
-      this[_iterator] = iterable[Symbol.iterator]();
-    } else {
-      throw new Error("First argument must implement the Iterable protocol");
-    }
+  constructor(iterableLike: IterableLike<T>) {
+    this[_iterator] = from(iterableLike);
   }
 
   [Symbol.asyncIterator](): AsyncIterableIterator<T> {
@@ -65,24 +51,14 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   async return(value?: any): Promise<IteratorResult<T>> {
-    return isFunction(this[_iterator].return)
-      ? this[_iterator].return!(value)
-      : (({ done: true, value: undefined } as any) as IteratorResult<T>);
+    return this[_iterator].return!(value);
   }
 
   async throw(error?: any): Promise<IteratorResult<T>> {
-    if (isFunction(this[_iterator].throw)) {
-      return this[_iterator].throw!(error);
-    }
-
-    throw error;
+    return this[_iterator].throw!(error);
   }
 
   // $plop: Prototype methods
-
-  collect(): ICW<T[]> {
-    return new ICW(collect(this));
-  }
 
   drain(): Promise<void> {
     return drain(this);
@@ -91,8 +67,8 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   every(
     isOK: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
-  ): ICW<boolean> {
-    return new ICW(every(this, isOK, thisArg));
+  ): Promise<boolean> {
+    return every(this, isOK, thisArg);
   }
 
   filter(
@@ -102,12 +78,8 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return new ICW(filter(this, shouldInclude, thisArg));
   }
 
-  first(): ICW<T> {
-    return new ICW(first(this));
-  }
-
-  firstValue(): Promise<T | undefined> {
-    return firstValue(this);
+  first(): Promise<T | undefined> {
+    return first(this);
   }
 
   forEach(
@@ -117,16 +89,12 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return forEach(this, callback, thisArg);
   }
 
-  head(): ICW<T> {
+  head(): Promise<T | undefined> {
     return this.first();
   }
 
-  last(): ICW<T> {
-    return new ICW(last(this));
-  }
-
-  lastValue(): Promise<T | undefined> {
-    return lastValue(this);
+  last(): Promise<T | undefined> {
+    return last(this);
   }
 
   map<U>(
@@ -136,14 +104,14 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return new ICW(map(this, callbackFn, thisArg));
   }
 
-  nthValue(index: number): Promise<T | undefined> {
-    return nthValue(this, index);
+  nth(index: number): Promise<T | undefined> {
+    return nth(this, index);
   }
 
-  reduce(
-    ...args: [(accumulator: T, value: T, index?: number) => T | Promise<T>, T?]
-  ): ICW<T> {
-    return new ICW(reduce(this, ...args));
+  reduce<R>(
+    ...args: [(accumulator: R, value: T, index?: number) => R | Promise<R>, R?]
+  ): Promise<R> {
+    return reduce(this, ...args);
   }
 
   reject(
@@ -153,15 +121,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return new ICW(reject(this, shouldReject, thisArg));
   }
 
-  scan(
-    accumulate: (accumulator: T, value: T, index?: number) => T | Promise<T>,
-    initialValue?: T
-  ): ICW<T> {
-    let firstValueIsInitialAccumulator = arguments.length < 2;
-
-    return firstValueIsInitialAccumulator
-      ? new ICW(scan(this, accumulate))
-      : new ICW(scan(this, accumulate, initialValue));
+  scan<R>(
+    ...args: [(accumulator: R, value: T, index?: number) => R | Promise<R>, R?]
+  ): ICW<R> {
+    return new ICW(scan(this, ...args));
   }
 
   skip(numToSkip: number): ICW<T> {
@@ -178,8 +141,8 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   some(
     isOK: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
-  ): ICW<boolean> {
-    return new ICW(some(this, isOK, thisArg));
+  ): Promise<boolean> {
+    return some(this, isOK, thisArg);
   }
 
   tail(): ICW<T> {

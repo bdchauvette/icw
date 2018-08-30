@@ -1,19 +1,16 @@
-import { ICW } from "../src";
+import { ICW, of } from "../src";
 
 // $plop: Import suites
-import { runCollectSuite } from "./suites/runCollectSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
-import { runFirstValueSuite } from "./suites/runFirstValueSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
 import { runFromSuite } from "./suites/runFromSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
 import { runLastSuite } from "./suites/runLastSuite";
-import { runLastValueSuite } from "./suites/runLastValueSuite";
 import { runMapSuite } from "./suites/runMapSuite";
-import { runNthValueSuite } from "./suites/runNthValueSuite";
+import { runNthSuite } from "./suites/runNthSuite";
 import { runOfSuite } from "./suites/runOfSuite";
 import { runReduceSuite } from "./suites/runReduceSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
@@ -49,10 +46,10 @@ describe("constructor", () => {
     }
   );
 
-  test("throws an error if no iterable is provided", () => {
+  test("throws an error if no iterable-like value is provided", () => {
     expect.assertions(1);
     expect(() => new ICW(null)).toThrowErrorMatchingInlineSnapshot(
-      `"First argument must implement the Iterable protocol"`
+      `"Must provide an iterable, an Array-like value, or a Promise."`
     );
   });
 });
@@ -60,152 +57,71 @@ describe("constructor", () => {
 describe("prototype method [Symbol.asyncIterator]", () => {
   test("returns itself", () => {
     expect.assertions(1);
-    let icw = new ICW([]);
+    let icw = new ICW(of());
     expect(icw[Symbol.asyncIterator]()).toBe(icw);
   });
 
   test("returns same async iterator", () => {
     expect.assertions(1);
-    expect(new ICW([])).toReturnSameAsyncIterator();
+    expect(new ICW(of())).toReturnSameAsyncIterator();
   });
 });
 
 describe('prototype method "next"', () => {
-  test.each`
-    iteratorType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "calls method on wrapped $iteratorType iterator",
-    async ({ createIterableIterator }) => {
-      expect.assertions(1);
+  test("calls method on wrapped $iteratorType iterator", async () => {
+    expect.assertions(1);
 
-      let iterableIterator = createIterableIterator();
-      let wrappedNext = jest.spyOn(iterableIterator, "next");
+    let icw = new ICW(of());
+    let iterator = getIterator(icw);
+    let wrappedNext = jest.spyOn(iterator, "next");
 
-      let icw = new ICW(iterableIterator);
-      await icw.next("foo");
-      expect(wrappedNext).toHaveBeenCalledWith("foo");
-    }
-  );
+    await icw.next("foo");
+    expect(wrappedNext).toHaveBeenCalledWith("foo");
+  });
 });
 
 describe('prototype method "return"', () => {
-  test.each`
-    iteratorType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "calls method on wrapped $iteratorType iterator, if it exists",
-    async ({ createIterableIterator }) => {
-      expect.assertions(1);
-
-      let iterableIterator = createIterableIterator();
-      let wrappedReturn = jest.spyOn(iterableIterator, "return");
-
-      let icw = new ICW(iterableIterator);
-      await icw.return("foo");
-      expect(wrappedReturn).toHaveBeenCalledWith("foo");
-    }
-  );
-
-  test.each`
-    iteratorType | iteratorSymbol
-    ${"sync"}    | ${Symbol.iterator}
-    ${"async"}   | ${Symbol.asyncIterator}
-  `(
-    "returns { done: true, value: undefined } if wrapped $iteratorType iterable does not have method",
-    async ({ iteratorSymbol }) => {
-      expect.assertions(1);
-
-      let iterable = {
-        [iteratorSymbol]: () => ({
-          next: () => ({ done: true })
-        })
-      };
-
-      let icw = new ICW(iterable);
-      let result = await icw.return("foo");
-      expect(result).toStrictEqual({ done: true, value: undefined });
-    }
-  );
-
-  test("returns { done: true, value: undefined } if wrapped async iterable does not have method", async () => {
+  test("calls method on wrapped iterator", async () => {
     expect.assertions(1);
 
-    let iterable = {
-      [Symbol.asyncIterator]: () => ({
-        next: () => ({ done: true })
-      })
-    };
+    let icw = new ICW(of());
+    let iterator = getIterator(icw);
+    let wrappedReturn = jest.spyOn(iterator, "return");
 
-    let icw = new ICW(iterable);
-    let result = await icw.return("foo");
-    expect(result).toStrictEqual({ done: true, value: undefined });
+    await icw.return("foo");
+    expect(wrappedReturn).toHaveBeenCalledWith("foo");
   });
 });
 
 describe('prototype method "throw"', () => {
-  test.each`
-    iteratorType | createIterableIterator
-    ${"sync"}    | ${function*() {}}
-    ${"async"}   | ${async function*() {}}
-  `(
-    "calls method on wrapped $iteratorType iterator, if it exists",
-    async ({ createIterableIterator }) => {
-      expect.assertions(1);
+  test("calls method on wrapped iterator", async () => {
+    expect.assertions(1);
 
-      let iterableIterator = createIterableIterator();
-      let wrappedThrow = jest.spyOn(iterableIterator, "throw");
+    let icw = new ICW(of());
+    let iterator = getIterator(icw);
+    let wrappedThrow = jest.spyOn(iterator, "throw");
 
-      let icw = new ICW(iterableIterator);
-      let error = new Error("boom");
+    let error = new Error("boom");
 
-      try {
-        await icw.throw(error);
-      } catch (_) {
-        expect(wrappedThrow).toHaveBeenCalledWith(error);
-      }
+    try {
+      await icw.throw(error);
+    } catch (_) {
+      expect(wrappedThrow).toHaveBeenCalledWith(error);
     }
-  );
-
-  test.each`
-    iteratorType | iteratorSymbol
-    ${"sync"}    | ${Symbol.iterator}
-    ${"async"}   | ${Symbol.asyncIterator}
-  `(
-    "throws error if wrapped $iteratorType iterator does not have method",
-    async ({ iteratorSymbol }) => {
-      expect.assertions(1);
-
-      let iterable = {
-        [iteratorSymbol]: () => ({
-          next: () => ({ done: true })
-        })
-      };
-
-      let icw = new ICW(iterable);
-      let error = new Error("boom");
-
-      await expect(icw.throw(error)).rejects.toThrowError(error);
-    }
-  );
+  });
 });
 
 describe.each`
   prototypeMethod | runSuite
-  ${"collect"}    | ${runCollectSuite}
   ${"drain"}      | ${runDrainSuite}
   ${"every"}      | ${runEverySuite}
   ${"filter"}     | ${runFilterSuite}
   ${"first"}      | ${runFirstSuite}
-  ${"firstValue"} | ${runFirstValueSuite}
   ${"forEach"}    | ${runForEachSuite}
   ${"head"}       | ${runHeadSuite}
   ${"last"}       | ${runLastSuite}
-  ${"lastValue"}  | ${runLastValueSuite}
   ${"map"}        | ${runMapSuite}
-  ${"nthValue"}   | ${runNthValueSuite}
+  ${"nth"}        | ${runNthSuite}
   ${"reduce"}     | ${runReduceSuite}
   ${"reject"}     | ${runRejectSuite}
   ${"scan"}       | ${runScanSuite}
@@ -226,4 +142,12 @@ function bindMethod(method) {
   return function callBoundMethod(iterable, ...args) {
     return new ICW(iterable)[method](...args);
   };
+}
+
+function getIterator(icw) {
+  let symbols = Object.getOwnPropertySymbols(icw);
+  let _iterator = symbols.find(
+    symbol => String(symbol) === "Symbol(_iterator)"
+  );
+  return icw[_iterator];
 }

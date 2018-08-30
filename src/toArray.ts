@@ -1,8 +1,8 @@
-import { collect } from "./collect";
-import { firstValue } from "./firstValue";
+import { IterableLike } from "./IterableLike";
+import { from } from "./from";
 
-export async function toArray<T>(
-  iterable: AsyncIterable<T> | Iterable<T>
-): Promise<T[]> {
-  return firstValue(collect(iterable))! as Promise<T[]>;
+export async function toArray<T>(iterableLike: IterableLike<T>): Promise<T[]> {
+  let values = [];
+  for await (let value of from(iterableLike)) values.push(value);
+  return values;
 }

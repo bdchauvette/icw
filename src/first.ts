@@ -1,7 +1,9 @@
-import { take } from "./take";
+import { from } from "./from";
+import { IterableLike } from "./IterableLike";
+import { nth } from "./nth";
 
 export function first<T>(
-  iterable: AsyncIterable<T> | Iterable<T>
-): AsyncIterableIterator<T> {
-  return take(iterable, 1);
+  iterableLike: IterableLike<T>
+): Promise<T | undefined> {
+  return nth(from(iterableLike), 0);
 }

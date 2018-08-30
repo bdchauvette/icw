@@ -1,6 +1,7 @@
-import { drain, forEach, of } from "../../src";
+import { drain, of, forEach } from "../../src";
 import { noop } from "../helpers/noop";
 import { noopSync } from "../helpers/noopSync";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runTapSuite(tap) {
   test("returns same async iterator", () => {
@@ -13,47 +14,12 @@ export function runTapSuite(tap) {
     await expect(tap(of(), noop)).toBeCloseableAsyncIterator();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
+  test("lazily consumes provided IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => tap(_, noop)).toLazilyConsumeWrappedAsyncIterable();
   });
 
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => tap(_, noop)).toLazilyConsumeWrappedIterable();
-  });
-
-  test.each`
-    callbackType | callback
-    ${"async"}   | ${noop}
-    ${"sync"}    | ${noopSync}
-  `(
-    "calls $callbackType callback once for each value of input",
-    async ({ callback }) => {
-      expect.assertions(1);
-
-      let input = of(1, 2, 3);
-      let mockCallback = jest.fn(callback);
-
-      await forEach(input, mockCallback);
-      expect(mockCallback).toHaveBeenCalledTimes(3);
-    }
-  );
-
-  test("calls callback before yielding the value", async () => {
-    expect.assertions(3);
-    let callback = jest.fn();
-    let tap$ = tap(of("foo", "bar", "baz"), callback);
-
-    await forEach(tap$, (_, index) => {
-      // If the value were yielded _before_ calling the callback, then the
-      // call count would be equal to the index, because the generator would
-      // suspend before calling the function.
-      expect(callback).toHaveBeenCalledTimes(index + 1);
-    });
-  });
-
-  test("provides two arguments to callback", async () => {
+  test("calls callback with 2 arguments", async () => {
     expect.assertions(1);
 
     await drain(
@@ -106,5 +72,56 @@ export function runTapSuite(tap) {
     function testCallback() {
       expect(this).toBe(expectedThis);
     }
+  });
+
+  test("calls callback before yielding the value", async () => {
+    expect.assertions(3);
+    let callback = jest.fn();
+    let tap$ = tap(of("foo", "bar", "baz"), callback);
+
+    await forEach(tap$, (_, index) => {
+      // If the value were yielded _before_ calling the callback, then the
+      // call count would be equal to the index, because the generator would
+      // suspend before calling the function.
+      expect(callback).toHaveBeenCalledTimes(index + 1);
+    });
+  });
+
+  describe.each`
+    callbackType | callback
+    ${"async"}   | ${noop}
+    ${"sync"}    | ${noopSync}
+  `("$callbackType callback", ({ callback }) => {
+    test.each`
+      inputType          | iterableLike                          | expectedCallCount
+      ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${3}
+      ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${3}
+      ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${3}
+      ${"Promise"}       | ${Promise.resolve("foo")}             | ${1}
+    `(
+      "calls callback once for each value of $inputType input",
+      async ({ iterableLike, expectedCallCount }) => {
+        expect.assertions(1);
+        let mockCallback = jest.fn(callback);
+        await drain(tap(iterableLike, mockCallback));
+        expect(mockCallback).toHaveBeenCalledTimes(expectedCallCount);
+      }
+    );
+
+    test.each`
+      inputType          | iterableLike                          | expectedValues
+      ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${["foo", "bar", "baz"]}
+      ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${["foo", "bar", "baz"]}
+      ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${["foo", "bar", "baz"]}
+      ${"Promise"}       | ${Promise.resolve("foo")}             | ${["foo"]}
+    `(
+      "yields each value from $inputType input",
+      async ({ iterableLike, expectedValues }) => {
+        expect.assertions(expectedValues.length);
+        for await (let value of tap(iterableLike, callback)) {
+          expect(value).toStrictEqual(expectedValues.shift());
+        }
+      }
+    );
   });
 }

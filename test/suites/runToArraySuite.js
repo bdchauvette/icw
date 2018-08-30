@@ -1,37 +1,43 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runToArraySuite(toArray) {
-  test("eagerly consumes wrapped async iterable", async () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => toArray(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("eagerly consumes wrapped sync iterable", async () => {
+  test.each`
+    inputType          | iterableLike                          | expectedValue
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${["foo", "bar", "baz"]}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${["foo", "bar", "baz"]}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${["foo", "bar", "baz"]}
+    ${"Promise"}       | ${Promise.resolve("foo")}             | ${["foo"]}
+  `(
+    "resolves to an array containing the values from $inputType input",
+    async ({ iterableLike, expectedValue }) => {
+      expect.assertions(1);
+      await expect(toArray(iterableLike)).resolves.toStrictEqual(expectedValue);
+    }
+  );
+
+  test.each`
+    inputType          | iterableLike
+    ${"AsyncIterable"} | ${of()}
+    ${"Iterable"}      | ${[]}
+    ${"ArrayLike"}     | ${new ArrayLike()}
+  `(
+    "resolves to an empty array if $inputType input yields no values",
+    async ({ iterableLike }) => {
+      expect.assertions(1);
+      await expect(toArray(iterableLike)).resolves.toStrictEqual([]);
+    }
+  );
+
+  test("resolves to `[undefined]` if Promise input resolves to `undefined`", async () => {
     expect.assertions(1);
-    await expect(_ => toArray(_)).toEagerlyConsumeWrappedIterable();
+    await expect(toArray(Promise.resolve())).resolves.toStrictEqual([
+      undefined
+    ]);
   });
-
-  test.each`
-    iterableType | input          | expectedValue
-    ${"async"}   | ${of(1, 2, 3)} | ${[1, 2, 3]}
-    ${"sync"}    | ${[1, 2, 3]}   | ${[1, 2, 3]}
-  `(
-    "resolves to an array containing the values from $iterableType iterator",
-    async ({ input, expectedValue }) => {
-      expect.assertions(1);
-      expect(await toArray(input)).toStrictEqual(expectedValue);
-    }
-  );
-
-  test.each`
-    iterableType | input
-    ${"async"}   | ${of()}
-    ${"sync"}    | ${[]}
-  `(
-    "resolves to an empty array if $iterableType iterator yields no values",
-    async ({ input }) => {
-      expect.assertions(1);
-      expect(await toArray(input)).toStrictEqual([]);
-    }
-  );
 }

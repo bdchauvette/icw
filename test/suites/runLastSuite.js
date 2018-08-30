@@ -1,31 +1,37 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runLastSuite(last) {
-  test("returns same async iterator", () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
-    expect(last(of())).toReturnSameAsyncIterator();
+    await expect(_ => last(_)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("returns a closeable iterator", async () => {
-    expect.assertions(1);
-    await expect(last(of())).toBeCloseableAsyncIterator();
-  });
-
-  test("lazily consumes wrapped async iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => last(_)).toLazilyConsumeWrappedAsyncIterable();
-  });
-
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => last(_)).toLazilyConsumeWrappedIterable();
-  });
-
-  test("yields the last value from the input", async () => {
-    expect.assertions(1);
-
-    for await (let value of last(of("foo", "bar", "baz"))) {
-      expect(value).toStrictEqual("baz");
+  test.each`
+    inputType          | iterableLike                          | expectedValue
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${"baz"}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${"baz"}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${"baz"}
+    ${"Promise"}       | ${Promise.resolve("foo")}             | ${"foo"}
+  `(
+    "resolves to the  value of $inputType input",
+    async ({ iterableLike, expectedValue }) => {
+      expect.assertions(1);
+      await expect(last(iterableLike)).resolves.toStrictEqual(expectedValue);
     }
-  });
+  );
+
+  test.each`
+    inputType          | iterableLike
+    ${"AsyncIterable"} | ${of()}
+    ${"Iterable"}      | ${[]}
+    ${"ArrayLike"}     | ${new ArrayLike()}
+    ${"Promise"}       | ${Promise.resolve()}
+  `(
+    "resolves to `undefined` if $inputType input contains no values",
+    async ({ iterableLike }) => {
+      expect.assertions(1);
+      await expect(last(iterableLike)).resolves.toBeUndefined();
+    }
+  );
 }

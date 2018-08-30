@@ -5,25 +5,37 @@ module.exports = plop => {
     prompts: [
       {
         name: "name",
-        type: "input",
-        message: "Name?"
+        message: "Name?",
+        type: "input"
       },
       {
         name: "methodType",
+        message: "Type?",
         type: "list",
         choices: ["lazy", "eager", "static"],
-        message: "Type?",
         default: false
       },
       {
         name: "methodHasCallback",
-        type: "confirm",
         message: "Has callback?",
+        type: "confirm",
         default: false
+      },
+      {
+        name: "callbackLength",
+        message: "Number of callback params?",
+        type: "input",
+        default: 2,
+        when: answers => answers.methodHasCallback,
+        validate: input => {
+          let numParams = Number(input);
+          if (Number.isInteger(numParams) && numParams > 0) return true;
+          return "Number of params must be an integer >= 0";
+        }
       }
     ],
 
-    actions: data => {
+    actions: answers => {
       let actions = [];
 
       // Standalone files
@@ -31,7 +43,10 @@ module.exports = plop => {
         {
           type: "add",
           path: "src/{{name}}.ts",
-          templateFile: "plop-templates/standalone-method.hbs"
+          templateFile:
+            answers.methodType === "eager"
+              ? "plop-templates/eager-method.hbs"
+              : "plop-templates/lazy-method.hbs"
         },
         {
           type: "add",
@@ -41,7 +56,7 @@ module.exports = plop => {
         {
           type: "add",
           path: "test/suites/run{{properCase name}}Suite.js",
-          templateFile: `plop-templates/${data.methodType}-test-suite.hbs`
+          templateFile: `plop-templates/${answers.methodType}-test-suite.hbs`
         }
       );
 
@@ -65,7 +80,7 @@ module.exports = plop => {
           type: "append",
           path: "src/ICW.ts",
           pattern:
-            data.methodType === "static"
+            answers.methodType === "static"
               ? "// $plop: Static methods"
               : "// $plop: Prototype methods",
           templateFile: "plop-templates/icw-method.hbs"
@@ -85,7 +100,7 @@ module.exports = plop => {
           type: "append",
           path: "test/ICW.spec.js",
           pattern:
-            data.methodType === "static"
+            answers.methodType === "static"
               ? /staticMethod\s+\| runSuite/
               : /prototypeMethod\s+\| runSuite/,
           // eslint-disable-next-line no-template-curly-in-string

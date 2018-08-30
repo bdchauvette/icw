@@ -1,4 +1,5 @@
 import { of } from "../../src";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runTakeSuite(take) {
   test("returns same async iterator", () => {
@@ -11,25 +12,40 @@ export function runTakeSuite(take) {
     await expect(take(of(), 1)).toBeCloseableAsyncIterator();
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
+  test("lazily consumes provided IterableLike input", async () => {
     expect.assertions(1);
     await expect(_ => take(_, 1)).toLazilyConsumeWrappedAsyncIterable();
   });
 
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => take(_, 1)).toLazilyConsumeWrappedIterable();
-  });
-
-  test("yields values from the provided input until `numToTake` values have been yielded", async () => {
-    expect.assertions(2);
-
-    let input = of(1, 2, 3, 4, 5);
-    let numToTake = 2;
-    let expectedValues = [1, 2];
-
-    for await (let value of take(input, numToTake)) {
-      expect(value).toStrictEqual(expectedValues.shift());
+  test.each`
+    inputType          | iterableLike                                 | numToTake | expectedValues
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz", "qux")}            | ${2}      | ${["foo", "bar"]}
+    ${"Iterable"}      | ${["foo", "bar", "baz", "qux"]}              | ${2}      | ${["foo", "bar"]}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz", "qux")} | ${2}      | ${["foo", "bar"]}
+    ${"Promise"}       | ${Promise.resolve("foo")}                    | ${1}      | ${["foo"]}
+  `(
+    "yields all values from $inputType input until `numToTake` values have been taken",
+    async ({ iterableLike, numToTake, expectedValues }) => {
+      expect.assertions(expectedValues.length);
+      for await (let value of take(iterableLike, numToTake)) {
+        expect(value).toStrictEqual(expectedValues.shift());
+      }
     }
-  });
+  );
+
+  test.each`
+    inputType          | iterableLike                          | expectedValues
+    ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${["foo", "bar", "baz"]}
+    ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${["foo", "bar", "baz"]}
+    ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${["foo", "bar", "baz"]}
+    ${"Promise"}       | ${Promise.resolve("foo")}             | ${["foo"]}
+  `(
+    "yields all values if `numToTake` is larger than the number of items in $inputType input",
+    async ({ iterableLike, expectedValues }) => {
+      expect.assertions(expectedValues.length);
+      for await (let value of take(iterableLike, Number.POSITIVE_INFINITY)) {
+        expect(value).toStrictEqual(expectedValues.shift());
+      }
+    }
+  );
 }

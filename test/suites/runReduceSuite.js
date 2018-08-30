@@ -1,95 +1,69 @@
-import { drain, of } from "../../src";
+import { of } from "../../src";
 import { sum } from "../helpers/sum";
 import { sumSync } from "../helpers/sumSync";
+import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runReduceSuite(reduce) {
-  test("returns same async iterator", () => {
+  test("eagerly consumes wrapped IterableLike input", async () => {
     expect.assertions(1);
-    expect(reduce(of(), sum)).toReturnSameAsyncIterator();
+    await expect(_ => reduce(_, sum)).toEagerlyConsumeWrappedAsyncIterable();
   });
 
-  test("returns a closeable iterator", async () => {
+  test("call callback with 3 arguments", async () => {
     expect.assertions(1);
-    await expect(reduce(of(), sum)).toBeCloseableAsyncIterator();
+    await reduce(of(true), (...args) => {
+      expect(args).toHaveLength(3);
+    });
   });
 
-  test("lazily consumes wrapped async iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => reduce(_, sum)).toLazilyConsumeWrappedAsyncIterable();
+  test("provides accumulator as first argument to callback", async () => {
+    expect.assertions(3);
+
+    let input = of(1, 2, 3);
+    let expectedAccumulators = [0, 1, 3];
+    let testCallback = jest.fn(sum);
+
+    await reduce(input, testCallback, 0);
+
+    testCallback.mock.calls.forEach((mockCall, index) => {
+      expect(mockCall[0]).toStrictEqual(expectedAccumulators[index]);
+    });
   });
 
-  test("lazily consumes wrapped sync iterable", async () => {
-    expect.assertions(1);
-    await expect(_ => reduce(_, sum)).toLazilyConsumeWrappedIterable();
-  });
-
-  let eachCallbackType = test.each`
-    callbackType | callback
-    ${"async"}   | ${sum}
-    ${"sync"}    | ${sumSync}
-  `;
-
-  eachCallbackType(
-    "yields accumulated value of the input with $callbackType callback (implicit initial value)",
-    async ({ callback }) => {
-      expect.assertions(1);
-
-      for await (let value of reduce(of(1, 2, 3), callback)) {
-        expect(value).toStrictEqual(7);
-      }
-    }
-  );
-
-  eachCallbackType(
-    "accumulates values from the input with $callbackType callback (explicit initial value)",
-    async ({ callback }) => {
-      expect.assertions(1);
-
-      for await (let value of reduce(of(1, 2, 3), callback, 0)) {
-        expect(value).toStrictEqual(6);
-      }
-    }
-  );
-
-  test("provides three arguments to callback", async () => {
+  test("uses provided seed as first accumulator", async () => {
     expect.assertions(1);
 
-    await drain(
-      reduce(of(true), (...args) => {
-        expect(args).toHaveLength(3);
-      })
-    );
-  });
+    let seed = "seed";
+    let input = of("foo");
 
-  test("uses first value as initial accumulator value if no initial value is provided", async () => {
-    expect.assertions(1);
-
-    let firstValue = Symbol("first value");
-    await drain(reduce(of(firstValue), testCallback));
+    await reduce(input, testCallback, seed);
 
     function testCallback(accumulator) {
-      expect(accumulator).toBe(firstValue);
+      expect(accumulator).toStrictEqual(seed);
     }
   });
 
-  test("uses provided initial value as first accumulator value", async () => {
+  test("uses `undefined` as first accumulator if seed is explicitly set to `undefined`", async () => {
     expect.assertions(1);
 
-    let initialValue = Symbol("initial value");
-    await drain(reduce(of("foo"), testCallback, initialValue));
+    let input = of("foo");
 
-    function testCallback(accumulator) {
-      expect(accumulator).toBe(initialValue);
-    }
-  });
-
-  test("uses `undefined` as initial accumulator value if `undefined` is explicitly provided", async () => {
-    expect.assertions(1);
-
-    await drain(reduce(of("foo"), testCallback, undefined));
+    await reduce(input, testCallback, undefined);
 
     function testCallback(accumulator) {
       expect(accumulator).toBeUndefined();
+    }
+  });
+
+  test("uses first value as first accumulator if seed is not provided", async () => {
+    expect.assertions(1);
+
+    let input = of("foo");
+
+    await reduce(input, testCallback);
+
+    function testCallback(accumulator) {
+      expect(accumulator).toStrictEqual("foo");
     }
   });
 
@@ -99,11 +73,9 @@ export function runReduceSuite(reduce) {
     let input = of("foo", "bar", "baz");
     let expectedValues = ["foo", "bar", "baz"];
 
-    await drain(
-      reduce(input, (_, value) => {
-        expect(value).toStrictEqual(expectedValues.shift());
-      })
-    );
+    await reduce(input, (_, value) => {
+      expect(value).toStrictEqual(expectedValues.shift());
+    });
   });
 
   test("provides current index as third argument to callback", async () => {
@@ -112,10 +84,30 @@ export function runReduceSuite(reduce) {
     let input = of("foo", "bar", "baz");
     let expectedIndexes = [0, 1, 2];
 
-    await drain(
-      reduce(input, (_, __, value) => {
-        expect(value).toStrictEqual(expectedIndexes.shift());
-      })
+    await reduce(input, (_, __, value) => {
+      expect(value).toStrictEqual(expectedIndexes.shift());
+    });
+  });
+
+  describe.each`
+    callbackType | callback
+    ${"async"}   | ${sum}
+    ${"sync"}    | ${sumSync}
+  `("$callbackType callback", ({ callback }) => {
+    test.each`
+      inputType          | iterableLike              | expectedValue
+      ${"AsyncIterable"} | ${of(1, 2, 3)}            | ${6}
+      ${"Iterable"}      | ${[1, 2, 3]}              | ${6}
+      ${"ArrayLike"}     | ${new ArrayLike(1, 2, 3)} | ${6}
+      ${"Promise"}       | ${Promise.resolve(1)}     | ${1}
+    `(
+      "resolves to accumulated value of $inputType input",
+      async ({ iterableLike, expectedValue }) => {
+        expect.assertions(1);
+        await expect(reduce(iterableLike, callback, 0)).resolves.toStrictEqual(
+          expectedValue
+        );
+      }
     );
   });
 }
