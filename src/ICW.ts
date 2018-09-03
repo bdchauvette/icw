@@ -4,6 +4,7 @@ import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
 import { find } from "./find";
+import { findIndex } from "./findIndex";
 import { first } from "./first";
 import { forEach } from "./forEach";
 import { from } from "./from";
@@ -62,6 +63,13 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // $plop: Prototype methods
+  findIndex(
+    predicate: (value: T, index?: number) => number | Promise<number>,
+    thisArg?: any
+  ): Promise<number> {
+    return findIndex(this, predicate, thisArg);
+  }
+
   find(
     predicate: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any

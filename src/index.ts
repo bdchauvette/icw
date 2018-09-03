@@ -7,6 +7,7 @@ export { drain } from "./drain";
 export { every } from "./every";
 export { filter } from "./filter";
 export { find } from "./find";
+export { findIndex } from "./findIndex";
 export { first } from "./first";
 export { forEach } from "./forEach";
 export { from } from "./from";
