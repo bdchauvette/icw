@@ -1,6 +1,7 @@
 import { ICW, of } from "../src";
 
 // $plop: Import suites
+import { runFindLastSuite } from "./suites/runFindLastSuite";
 import { runFindLastIndexSuite } from "./suites/runFindLastIndexSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
@@ -125,6 +126,7 @@ describe.each`
   ${"filter"}        | ${runFilterSuite}
   ${"find"}          | ${runFindSuite}
   ${"findIndex"}     | ${runFindIndexSuite}
+  ${"findLast"}      | ${runFindLastSuite}
   ${"findLastIndex"} | ${runFindLastIndexSuite}
   ${"first"}         | ${runFirstSuite}
   ${"forEach"}       | ${runForEachSuite}

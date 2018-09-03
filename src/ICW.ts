@@ -1,4 +1,5 @@
 // $plop: Import methods
+import { findLast } from "./findLast";
 import { indexOf } from "./indexOf";
 import { drain } from "./drain";
 import { every } from "./every";
@@ -64,6 +65,13 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // $plop: Prototype methods
+  findLast(
+    predicate: (value: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): Promise<T | undefined> {
+    return findLast(this, predicate, thisArg);
+  }
+
   findLastIndex(
     predicate: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
