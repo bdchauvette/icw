@@ -8,6 +8,7 @@ import { runFirstSuite } from "./suites/runFirstSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
 import { runFromSuite } from "./suites/runFromSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
+import { runIndexOfSuite } from "./suites/runIndexOfSuite";
 import { runLastSuite } from "./suites/runLastSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runNthSuite } from "./suites/runNthSuite";
@@ -113,6 +114,7 @@ describe('prototype method "throw"', () => {
 
 describe.each`
   prototypeMethod | runSuite
+  ${"indexOf"}    | ${runIndexOfSuite}
   ${"drain"}      | ${runDrainSuite}
   ${"every"}      | ${runEverySuite}
   ${"filter"}     | ${runFilterSuite}
