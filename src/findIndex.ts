@@ -3,7 +3,7 @@ import { withIndex } from "./withIndex";
 
 export async function findIndex<T>(
   iterableLike: IterableLike<T>,
-  predicate: (value: T, index?: number) => number | Promise<number>,
+  predicate: (value: T, index?: number) => boolean | Promise<boolean>,
   thisArg?: any
 ): Promise<number> {
   for await (let [value, index] of withIndex(iterableLike)) {

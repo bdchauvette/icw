@@ -64,7 +64,7 @@ export class ICW<T> implements AsyncIterableIterator<T> {
 
   // $plop: Prototype methods
   findIndex(
-    predicate: (value: T, index?: number) => number | Promise<number>,
+    predicate: (value: T, index?: number) => boolean | Promise<boolean>,
     thisArg?: any
   ): Promise<number> {
     return findIndex(this, predicate, thisArg);
