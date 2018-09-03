@@ -1,0 +1,12 @@
+{{#if methodHasCallback}}
+  {{name}}(
+    callback: (value: T, index?: number) => void | Promise<void>,
+    thisArg?: any
+  ): Promise<T> {
+    return {{name}}(this, callback, thisArg);
+  }
+{{else}}
+  {{name}}(): Promise<T> {
+    return {{name}}(this);
+  }
+{{/if}}

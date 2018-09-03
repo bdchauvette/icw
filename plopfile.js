@@ -12,8 +12,20 @@ module.exports = plop => {
         name: "methodType",
         message: "Type?",
         type: "list",
-        choices: ["lazy", "eager", "static"],
-        default: false
+        choices: [
+          {
+            name: "Lazy (e.g. map, filter)",
+            value: "lazy"
+          },
+          {
+            name: "Eager (e.g. forEach, toArray)",
+            value: "eager"
+          },
+          {
+            name: "Static (e.g. of, from)",
+            value: "static"
+          }
+        ]
       },
       {
         name: "methodHasCallback",
@@ -83,7 +95,11 @@ module.exports = plop => {
             answers.methodType === "static"
               ? "// $plop: Static methods"
               : "// $plop: Prototype methods",
-          templateFile: "plop-templates/icw-method.hbs"
+          templateFile: {
+            eager: "plop-templates/icw-eager-method.hbs",
+            lazy: "plop-templates/icw-lazy-method.hbs",
+            static: "plop-templates/icw-lazy-method.hbs"
+          }[answers.methodType]
         }
       );
 
@@ -94,7 +110,7 @@ module.exports = plop => {
           path: "test/ICW.spec.js",
           pattern: "// $plop: Import suites",
           template:
-            'import { run{{properCase name}}Suite } from "./suites/run{{properCase name}}Suire";'
+            'import { run{{properCase name}}Suite } from "./suites/run{{properCase name}}Suite";'
         },
         {
           type: "append",
