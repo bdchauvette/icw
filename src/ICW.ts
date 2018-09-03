@@ -1,4 +1,5 @@
 // $plop: Import methods
+import { indexOf } from "./indexOf";
 import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
@@ -6,6 +7,7 @@ import { first } from "./first";
 import { forEach } from "./forEach";
 import { from } from "./from";
 import { last } from "./last";
+import { lastIndexOf } from "./lastIndexOf";
 import { map } from "./map";
 import { nth } from "./nth";
 import { of } from "./of";
@@ -59,6 +61,13 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // $plop: Prototype methods
+  lastIndexOf(targetValue: T, fromIndex = 0): Promise<number> {
+    return lastIndexOf(this, targetValue, fromIndex);
+  }
+
+  indexOf(targetValue: T, fromIndex = 0): Promise<number> {
+    return indexOf(this, targetValue, fromIndex);
+  }
 
   drain(): Promise<void> {
     return drain(this);

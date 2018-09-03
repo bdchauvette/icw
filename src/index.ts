@@ -1,6 +1,8 @@
 export { ICW } from "./ICW";
 
 // $plop: Import methods
+export { lastIndexOf } from "./lastIndexOf";
+export { indexOf } from "./indexOf";
 export { drain } from "./drain";
 export { every } from "./every";
 export { filter } from "./filter";
