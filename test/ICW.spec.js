@@ -1,6 +1,7 @@
 import { ICW, of } from "../src";
 
 // $plop: Import suites
+import { runFindLastIndexSuite } from "./suites/runFindLastIndexSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
@@ -116,32 +117,33 @@ describe('prototype method "throw"', () => {
 });
 
 describe.each`
-  prototypeMethod  | runSuite
-  ${"lastIndexOf"} | ${runLastIndexOfSuite}
-  ${"indexOf"}     | ${runIndexOfSuite}
-  ${"drain"}       | ${runDrainSuite}
-  ${"every"}       | ${runEverySuite}
-  ${"filter"}      | ${runFilterSuite}
-  ${"find"}        | ${runFindSuite}
-  ${"findIndex"}   | ${runFindIndexSuite}
-  ${"first"}       | ${runFirstSuite}
-  ${"forEach"}     | ${runForEachSuite}
-  ${"head"}        | ${runHeadSuite}
-  ${"last"}        | ${runLastSuite}
-  ${"map"}         | ${runMapSuite}
-  ${"nth"}         | ${runNthSuite}
-  ${"reduce"}      | ${runReduceSuite}
-  ${"reject"}      | ${runRejectSuite}
-  ${"scan"}        | ${runScanSuite}
-  ${"skip"}        | ${runSkipSuite}
-  ${"skipWhile"}   | ${runSkipWhileSuite}
-  ${"some"}        | ${runSomeSuite}
-  ${"tail"}        | ${runTailSuite}
-  ${"take"}        | ${runTakeSuite}
-  ${"takeWhile"}   | ${runTakeWhileSuite}
-  ${"tap"}         | ${runTapSuite}
-  ${"toArray"}     | ${runToArraySuite}
-  ${"withIndex"}   | ${runWithIndexSuite}
+  prototypeMethod    | runSuite
+  ${"lastIndexOf"}   | ${runLastIndexOfSuite}
+  ${"indexOf"}       | ${runIndexOfSuite}
+  ${"drain"}         | ${runDrainSuite}
+  ${"every"}         | ${runEverySuite}
+  ${"filter"}        | ${runFilterSuite}
+  ${"find"}          | ${runFindSuite}
+  ${"findIndex"}     | ${runFindIndexSuite}
+  ${"findLastIndex"} | ${runFindLastIndexSuite}
+  ${"first"}         | ${runFirstSuite}
+  ${"forEach"}       | ${runForEachSuite}
+  ${"head"}          | ${runHeadSuite}
+  ${"last"}          | ${runLastSuite}
+  ${"map"}           | ${runMapSuite}
+  ${"nth"}           | ${runNthSuite}
+  ${"reduce"}        | ${runReduceSuite}
+  ${"reject"}        | ${runRejectSuite}
+  ${"scan"}          | ${runScanSuite}
+  ${"skip"}          | ${runSkipSuite}
+  ${"skipWhile"}     | ${runSkipWhileSuite}
+  ${"some"}          | ${runSomeSuite}
+  ${"tail"}          | ${runTailSuite}
+  ${"take"}          | ${runTakeSuite}
+  ${"takeWhile"}     | ${runTakeWhileSuite}
+  ${"tap"}           | ${runTapSuite}
+  ${"toArray"}       | ${runToArraySuite}
+  ${"withIndex"}     | ${runWithIndexSuite}
 `("prototype method $prototypeMethod", ({ prototypeMethod, runSuite }) => {
   runSuite(bindMethod(prototypeMethod));
 });
