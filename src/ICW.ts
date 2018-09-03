@@ -1,8 +1,12 @@
 // $plop: Import methods
+import { findLast } from "./findLast";
 import { indexOf } from "./indexOf";
 import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
+import { find } from "./find";
+import { findIndex } from "./findIndex";
+import { findLastIndex } from "./findLastIndex";
 import { first } from "./first";
 import { forEach } from "./forEach";
 import { from } from "./from";
@@ -61,6 +65,34 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // $plop: Prototype methods
+  findLast(
+    predicate: (value: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): Promise<T | undefined> {
+    return findLast(this, predicate, thisArg);
+  }
+
+  findLastIndex(
+    predicate: (value: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): Promise<number> {
+    return findLastIndex(this, predicate, thisArg);
+  }
+
+  findIndex(
+    predicate: (value: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): Promise<number> {
+    return findIndex(this, predicate, thisArg);
+  }
+
+  find(
+    predicate: (value: T, index?: number) => boolean | Promise<boolean>,
+    thisArg?: any
+  ): Promise<T | undefined> {
+    return find(this, predicate, thisArg);
+  }
+
   lastIndexOf(targetValue: T, fromIndex = 0): Promise<number> {
     return lastIndexOf(this, targetValue, fromIndex);
   }
