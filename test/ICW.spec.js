@@ -4,6 +4,7 @@ import { ICW, of } from "../src";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
+import { runFindSuite } from "./suites/runFindSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
 import { runFromSuite } from "./suites/runFromSuite";
@@ -115,6 +116,7 @@ describe('prototype method "throw"', () => {
 
 describe.each`
   prototypeMethod  | runSuite
+  ${"find"}        | ${runFindSuite}
   ${"lastIndexOf"} | ${runLastIndexOfSuite}
   ${"indexOf"}     | ${runIndexOfSuite}
   ${"drain"}       | ${runDrainSuite}
