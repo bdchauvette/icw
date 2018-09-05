@@ -1,4 +1,6 @@
-import { drain, of, forEach } from "../../src";
+import { drain } from "../../src/drain";
+import { forEach } from "../../src/forEach";
+import { of } from "../../src/of";
 import { noop } from "../helpers/noop";
 import { noopSync } from "../helpers/noopSync";
 import { ArrayLike } from "../helpers/ArrayLike";

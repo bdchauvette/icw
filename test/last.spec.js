@@ -1,4 +1,4 @@
-import { last } from "../src";
+import { last } from "../src/last";
 import { runLastSuite } from "./suites/runLastSuite";
 
 runLastSuite(last);

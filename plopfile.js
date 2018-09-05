@@ -73,12 +73,20 @@ module.exports = plop => {
       );
 
       // Add new method to index.ts
-      actions.push({
-        type: "append",
-        path: "src/index.ts",
-        pattern: "// $plop: Import methods",
-        template: 'export { {{name}} } from "./{{name}}";'
-      });
+      actions.push(
+        {
+          type: "append",
+          path: "src/index.ts",
+          pattern: "// $plop: Functions",
+          template: 'export { {{name}} } from "./{{name}}";'
+        },
+        {
+          type: "append",
+          path: "test/index.spec.js",
+          pattern: "// $plop: Exported functions",
+          template: '  "{{ name }}",'
+        }
+      );
 
       // ICW
       actions.push(

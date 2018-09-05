@@ -1,4 +1,4 @@
-import { of } from "../../src";
+import { of } from "../../src/of";
 import { isTruthy } from "../helpers/isTruthy";
 import { isTruthySync } from "../helpers/isTruthySync";
 import { ArrayLike } from "../helpers/ArrayLike";

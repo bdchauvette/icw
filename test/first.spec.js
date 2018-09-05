@@ -1,4 +1,4 @@
-import { first } from "../src";
+import { first } from "../src/first";
 import { runFirstSuite } from "./suites/runFirstSuite";
 
 runFirstSuite(first);

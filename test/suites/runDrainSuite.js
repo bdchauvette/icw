@@ -1,4 +1,4 @@
-import { of } from "../../src";
+import { of } from "../../src/of";
 
 export function runDrainSuite(drain) {
   test("eagerly consumes wrapped IterableLike input", async () => {

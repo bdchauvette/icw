@@ -1,4 +1,5 @@
-import { ICW, of } from "../src";
+import { ICW } from "../src/ICW";
+import { of } from "../src/of";
 
 // $plop: Import suites
 import { runDrainSuite } from "./suites/runDrainSuite";

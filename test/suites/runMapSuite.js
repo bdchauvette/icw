@@ -1,4 +1,5 @@
-import { drain, of } from "../../src";
+import { drain } from "../../src/drain";
+import { of } from "../../src/of";
 import { toUpperCase } from "../helpers/toUpperCase";
 import { toUpperCaseSync } from "../helpers/toUpperCaseSync";
 import { ArrayLike } from "../helpers/ArrayLike";

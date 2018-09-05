@@ -1,4 +1,4 @@
-import { findLast } from "../src";
+import { findLast } from "../src/findLast";
 import { runFindLastSuite } from "./suites/runFindLastSuite";
 
 runFindLastSuite(findLast);

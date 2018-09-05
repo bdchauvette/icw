@@ -1,4 +1,5 @@
-import { drain, of } from "../../src";
+import { drain } from "../../src/drain";
+import { of } from "../../src/of";
 import { sum } from "../helpers/sum";
 import { sumSync } from "../helpers/sumSync";
 import { ArrayLike } from "../helpers/ArrayLike";

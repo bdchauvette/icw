@@ -1,4 +1,4 @@
-import { of } from "../../src";
+import { of } from "../../src/of";
 import { ArrayLike } from "../helpers/ArrayLike";
 
 export function runFromSuite(from) {

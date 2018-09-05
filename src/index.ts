@@ -1,6 +1,9 @@
 export { ICW } from "./ICW";
 
-// $plop: Import methods
+// Types
+export { IterableLike } from "./IterableLike";
+
+// $plop: Functions
 export { drain } from "./drain";
 export { every } from "./every";
 export { filter } from "./filter";

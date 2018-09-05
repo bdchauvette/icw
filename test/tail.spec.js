@@ -1,4 +1,4 @@
-import { tail } from "../src";
+import { tail } from "../src/tail";
 import { runTailSuite } from "./suites/runTailSuite";
 
 runTailSuite(tail);

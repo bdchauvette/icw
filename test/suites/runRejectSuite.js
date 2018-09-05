@@ -1,4 +1,5 @@
-import { drain, of } from "../../src";
+import { drain } from "../../src/drain";
+import { of } from "../../src/of";
 import { isTruthy } from "../helpers/isTruthy";
 import { isTruthySync } from "../helpers/isTruthySync";
 import { ArrayLike } from "../helpers/ArrayLike";

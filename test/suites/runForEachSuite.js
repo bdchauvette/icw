@@ -1,4 +1,4 @@
-import { of } from "../../src";
+import { of } from "../../src/of";
 import { noop } from "../helpers/noop";
 import { noopSync } from "../helpers/noopSync";
 

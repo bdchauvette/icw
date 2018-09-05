@@ -1,7 +1,8 @@
 {{#if methodHasCallback}}
-import { drain, of } from "../../src";
+import { drain } from "../../src/drain";
+import { of } from "../../src/of";
 {{else}}
-import { of } from "../../src";
+import { of } from "../../src/of";
 {{/if}}
 import { ArrayLike } from "../helpers/ArrayLike";
 
