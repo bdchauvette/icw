@@ -9,6 +9,7 @@ import { findLastIndex } from "./findLastIndex";
 import { first } from "./first";
 import { forEach } from "./forEach";
 import { from } from "./from";
+import { includes } from "./includes";
 import { indexOf } from "./indexOf";
 import { IterableLike } from "./IterableLike";
 import { last } from "./last";
@@ -65,6 +66,7 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // $plop: Prototype methods
+
   drain(): Promise<void> {
     return drain(this);
   }
@@ -124,6 +126,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
 
   head(): Promise<T | undefined> {
     return this.first();
+  }
+
+  includes(targetValue: T): Promise<boolean> {
+    return includes(this, targetValue);
   }
 
   indexOf(targetValue: T, fromIndex = 0): Promise<number> {
