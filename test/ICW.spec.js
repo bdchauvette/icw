@@ -1,20 +1,20 @@
 import { ICW, of } from "../src";
 
 // $plop: Import suites
-import { runFindLastSuite } from "./suites/runFindLastSuite";
-import { runFindLastIndexSuite } from "./suites/runFindLastIndexSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
-import { runFindSuite } from "./suites/runFindSuite";
 import { runFindIndexSuite } from "./suites/runFindIndexSuite";
+import { runFindLastIndexSuite } from "./suites/runFindLastIndexSuite";
+import { runFindLastSuite } from "./suites/runFindLastSuite";
+import { runFindSuite } from "./suites/runFindSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
 import { runFromSuite } from "./suites/runFromSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
 import { runIndexOfSuite } from "./suites/runIndexOfSuite";
-import { runLastSuite } from "./suites/runLastSuite";
 import { runLastIndexOfSuite } from "./suites/runLastIndexOfSuite";
+import { runLastSuite } from "./suites/runLastSuite";
 import { runMapSuite } from "./suites/runMapSuite";
 import { runNthSuite } from "./suites/runNthSuite";
 import { runOfSuite } from "./suites/runOfSuite";
@@ -119,8 +119,6 @@ describe('prototype method "throw"', () => {
 
 describe.each`
   prototypeMethod    | runSuite
-  ${"lastIndexOf"}   | ${runLastIndexOfSuite}
-  ${"indexOf"}       | ${runIndexOfSuite}
   ${"drain"}         | ${runDrainSuite}
   ${"every"}         | ${runEverySuite}
   ${"filter"}        | ${runFilterSuite}
@@ -131,7 +129,9 @@ describe.each`
   ${"first"}         | ${runFirstSuite}
   ${"forEach"}       | ${runForEachSuite}
   ${"head"}          | ${runHeadSuite}
+  ${"indexOf"}       | ${runIndexOfSuite}
   ${"last"}          | ${runLastSuite}
+  ${"lastIndexOf"}   | ${runLastIndexOfSuite}
   ${"map"}           | ${runMapSuite}
   ${"nth"}           | ${runNthSuite}
   ${"reduce"}        | ${runReduceSuite}

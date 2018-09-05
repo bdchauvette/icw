@@ -1,8 +1,6 @@
 export { ICW } from "./ICW";
 
 // $plop: Import methods
-export { lastIndexOf } from "./lastIndexOf";
-export { indexOf } from "./indexOf";
 export { drain } from "./drain";
 export { every } from "./every";
 export { filter } from "./filter";
@@ -14,7 +12,9 @@ export { first } from "./first";
 export { forEach } from "./forEach";
 export { from } from "./from";
 export { head } from "./head";
+export { indexOf } from "./indexOf";
 export { last } from "./last";
+export { lastIndexOf } from "./lastIndexOf";
 export { map } from "./map";
 export { nth } from "./nth";
 export { of } from "./of";
