@@ -57,18 +57,18 @@ module.exports = plop => {
           path: "src/{{name}}.ts",
           templateFile:
             answers.methodType === "eager"
-              ? "plop-templates/eager-method.hbs"
-              : "plop-templates/lazy-method.hbs"
+              ? "plop/templates/eager-method.hbs"
+              : "plop/templates/lazy-method.hbs"
         },
         {
           type: "add",
           path: "test/{{name}}.spec.js",
-          templateFile: "plop-templates/standalone-test.hbs"
+          templateFile: "plop/templates/standalone-test.hbs"
         },
         {
           type: "add",
           path: "test/suites/run{{properCase name}}Suite.js",
-          templateFile: `plop-templates/${answers.methodType}-test-suite.hbs`
+          templateFile: `plop/templates/${answers.methodType}-test-suite.hbs`
         }
       );
 
@@ -104,9 +104,9 @@ module.exports = plop => {
               ? "// $plop: Static methods"
               : "// $plop: Prototype methods",
           templateFile: {
-            eager: "plop-templates/icw-eager-method.hbs",
-            lazy: "plop-templates/icw-lazy-method.hbs",
-            static: "plop-templates/icw-lazy-method.hbs"
+            eager: "plop/templates/icw-eager-method.hbs",
+            lazy: "plop/templates/icw-lazy-method.hbs",
+            static: "plop/templates/icw-lazy-method.hbs"
           }[answers.methodType]
         }
       );
