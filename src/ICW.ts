@@ -1,4 +1,5 @@
 // plop: Imports
+import { IterableLike } from "./IterableLike";
 import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
@@ -11,7 +12,6 @@ import { forEach } from "./forEach";
 import { from } from "./from";
 import { includes } from "./includes";
 import { indexOf } from "./indexOf";
-import { IterableLike } from "./IterableLike";
 import { last } from "./last";
 import { lastIndexOf } from "./lastIndexOf";
 import { map } from "./map";
