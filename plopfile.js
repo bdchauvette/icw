@@ -1,4 +1,8 @@
+const sortedAppend = require("./plop/actions/sortedAppend");
+
 module.exports = plop => {
+  plop.setActionType("sortedAppend", sortedAppend);
+
   plop.setGenerator("New Method", {
     description: "Adds a new method",
 
@@ -75,15 +79,15 @@ module.exports = plop => {
       // Add new method to index.ts
       actions.push(
         {
-          type: "append",
+          type: "sortedAppend",
           path: "src/index.ts",
-          pattern: "// $plop: Functions",
+          startPattern: "plop: Functions",
           template: 'export { {{name}} } from "./{{name}}";'
         },
         {
-          type: "append",
+          type: "sortedAppend",
           path: "test/index.spec.js",
-          pattern: "// $plop: Exported functions",
+          startPattern: "plop: Exports",
           template: '  "{{ name }}",'
         }
       );
@@ -91,9 +95,9 @@ module.exports = plop => {
       // ICW
       actions.push(
         {
-          type: "append",
+          type: "sortedAppend",
           path: "src/ICW.ts",
-          pattern: "// $plop: Import methods",
+          startPattern: "plop: Imports",
           template: 'import { {{name}} } from "./{{name}}";'
         },
         {
@@ -101,32 +105,29 @@ module.exports = plop => {
           path: "src/ICW.ts",
           pattern:
             answers.methodType === "static"
-              ? "// $plop: Static methods"
-              : "// $plop: Prototype methods",
+              ? "plop: Static methods\n"
+              : "plop: Prototype methods\n",
           templateFile: {
             eager: "plop/templates/icw-eager-method.hbs",
             lazy: "plop/templates/icw-lazy-method.hbs",
             static: "plop/templates/icw-lazy-method.hbs"
           }[answers.methodType]
-        }
-      );
-
-      // ICW tests
-      actions.push(
+        },
         {
-          type: "append",
+          type: "sortedAppend",
           path: "test/ICW.spec.js",
-          pattern: "// $plop: Import suites",
+          startPattern: "plop: Import suites",
           template:
             'import { run{{properCase name}}Suite } from "./suites/run{{properCase name}}Suite";'
         },
         {
-          type: "append",
+          type: "sortedAppend",
           path: "test/ICW.spec.js",
-          pattern:
+          startPattern:
             answers.methodType === "static"
-              ? /staticMethod\s+\| runSuite/
-              : /prototypeMethod\s+\| runSuite/,
+              ? "staticMethod\\s+\\| runSuite"
+              : "prototypeMethod\\s+\\| runSuite",
+          endPattern: '`\\(".*? method',
           // eslint-disable-next-line no-template-curly-in-string
           template: '  ${"{{name}}"} | ${run{{properCase name}}Suite}'
         }

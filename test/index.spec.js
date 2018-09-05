@@ -1,7 +1,7 @@
 import * as icw from "../src";
 
 test.each([
-  // $plop: Exported functions
+  // plop: Exports
   "ICW",
   "drain",
   "every",
@@ -33,6 +33,7 @@ test.each([
   "tap",
   "toArray",
   "withIndex"
+  // plop-end
 ])("exports %s", async exportName => {
   expect.assertions(1);
   let expectedExport = (await import(`../src/${exportName}`))[exportName];

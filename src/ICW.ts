@@ -1,4 +1,4 @@
-// $plop: Import methods
+// plop: Imports
 import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
@@ -29,11 +29,12 @@ import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
 import { toArray } from "./toArray";
 import { withIndex } from "./withIndex";
+// plop-end
 
 const _iterator = Symbol("_iterator");
 
 export class ICW<T> implements AsyncIterableIterator<T> {
-  // $plop: Static methods
+  // plop: Static methods
 
   static from<U>(iterableLike: IterableLike<U>): ICW<U> {
     return new ICW(iterableLike);
@@ -65,7 +66,7 @@ export class ICW<T> implements AsyncIterableIterator<T> {
     return this[_iterator].throw!(error);
   }
 
-  // $plop: Prototype methods
+  // plop: Prototype methods
 
   drain(): Promise<void> {
     return drain(this);

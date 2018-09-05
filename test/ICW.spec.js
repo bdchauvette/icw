@@ -1,7 +1,7 @@
 import { ICW } from "../src/ICW";
 import { of } from "../src/of";
 
-// $plop: Import suites
+// plop: Import suites
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
@@ -32,6 +32,7 @@ import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
 import { runToArraySuite } from "./suites/runToArraySuite";
 import { runWithIndexSuite } from "./suites/runWithIndexSuite";
+// plop-end
 
 describe.each`
   staticMethod | runSuite

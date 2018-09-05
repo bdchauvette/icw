@@ -3,7 +3,7 @@ export { ICW } from "./ICW";
 // Types
 export { IterableLike } from "./IterableLike";
 
-// $plop: Functions
+// plop: Functions
 export { drain } from "./drain";
 export { every } from "./every";
 export { filter } from "./filter";
@@ -34,3 +34,4 @@ export { takeWhile } from "./takeWhile";
 export { tap } from "./tap";
 export { toArray } from "./toArray";
 export { withIndex } from "./withIndex";
+// plop-end
