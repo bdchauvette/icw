@@ -55,6 +55,7 @@
     "typescript-eslint-parser": "18.0.0"
   },
   "scripts": {
+    "preplop": "node scripts/check-node-version",
     "plop": "plop",
     "preclean": "node scripts/check-node-version",
     "clean": "node scripts/clean",
