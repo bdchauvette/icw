@@ -22,6 +22,7 @@ export { lastIndexOf } from "./lastIndexOf";
 export { map } from "./map";
 export { nth } from "./nth";
 export { of } from "./of";
+export { pipeline } from "./pipeline";
 export { reduce } from "./reduce";
 export { reject } from "./reject";
 export { scan } from "./scan";
