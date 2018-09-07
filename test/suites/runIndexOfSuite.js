@@ -79,7 +79,7 @@ export function runIndexOfSuite(indexOf) {
     ${new String("foo")} | ${"foo"}             | ${-1}
     ${NaN}               | ${0}                 | ${-1}
     ${NaN}               | ${"foo"}             | ${-1}
-    ${NaN}               | ${NaN}               | ${-1}
+    ${NaN}               | ${NaN}               | ${0}
   `(
     "uses StrictEqual comparison: ($inputValue, $targetValue) -> $expectedIndex",
     async ({ inputValue, targetValue, expectedIndex }) => {

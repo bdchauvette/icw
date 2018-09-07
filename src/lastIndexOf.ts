@@ -1,4 +1,4 @@
-import { isStrictEqual } from "./__internal__/isStrictEqual";
+import { isSameValueZero } from "./__internal__/isSameValueZero";
 import { IterableLike } from "./IterableLike";
 import { withIndex } from "./withIndex";
 
@@ -10,7 +10,7 @@ export async function lastIndexOf<T>(
   let lastIndex = -1;
   for await (let [value, index] of withIndex(iterableLike)) {
     if (index < fromIndex) continue;
-    if (isStrictEqual(value, targetValue)) lastIndex = index;
+    if (isSameValueZero(value, targetValue)) lastIndex = index;
   }
   return lastIndex;
 }
