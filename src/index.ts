@@ -26,6 +26,7 @@ export { reduce } from "./reduce";
 export { reject } from "./reject";
 export { scan } from "./scan";
 export { skip } from "./skip";
+export { skipLast } from "./skipLast";
 export { skipWhile } from "./skipWhile";
 export { some } from "./some";
 export { tail } from "./tail";

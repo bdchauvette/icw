@@ -25,6 +25,7 @@ test.each([
   "reject",
   "scan",
   "skip",
+  "skipLast",
   "skipWhile",
   "some",
   "tail",
