@@ -23,10 +23,12 @@ import { runOfSuite } from "./suites/runOfSuite";
 import { runReduceSuite } from "./suites/runReduceSuite";
 import { runRejectSuite } from "./suites/runRejectSuite";
 import { runScanSuite } from "./suites/runScanSuite";
+import { runSkipLastSuite } from "./suites/runSkipLastSuite";
 import { runSkipSuite } from "./suites/runSkipSuite";
 import { runSkipWhileSuite } from "./suites/runSkipWhileSuite";
 import { runSomeSuite } from "./suites/runSomeSuite";
 import { runTailSuite } from "./suites/runTailSuite";
+import { runTakeLastSuite } from "./suites/runTakeLastSuite";
 import { runTakeSuite } from "./suites/runTakeSuite";
 import { runTakeWhileSuite } from "./suites/runTakeWhileSuite";
 import { runTapSuite } from "./suites/runTapSuite";
@@ -142,10 +144,12 @@ describe.each`
   ${"reject"}        | ${runRejectSuite}
   ${"scan"}          | ${runScanSuite}
   ${"skip"}          | ${runSkipSuite}
+  ${"skipLast"}      | ${runSkipLastSuite}
   ${"skipWhile"}     | ${runSkipWhileSuite}
   ${"some"}          | ${runSomeSuite}
   ${"tail"}          | ${runTailSuite}
   ${"take"}          | ${runTakeSuite}
+  ${"takeLast"}      | ${runTakeLastSuite}
   ${"takeWhile"}     | ${runTakeWhileSuite}
   ${"tap"}           | ${runTapSuite}
   ${"toArray"}       | ${runToArraySuite}
