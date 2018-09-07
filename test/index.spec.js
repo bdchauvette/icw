@@ -21,6 +21,7 @@ test.each([
   "map",
   "nth",
   "of",
+  "pipeline",
   "reduce",
   "reject",
   "scan",
