@@ -25,6 +25,7 @@ import { skipWhile } from "./skipWhile";
 import { some } from "./some";
 import { tail } from "./tail";
 import { take } from "./take";
+import { takeLast } from "./takeLast";
 import { takeWhile } from "./takeWhile";
 import { tap } from "./tap";
 import { toArray } from "./toArray";
@@ -67,6 +68,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // plop: Prototype methods
+
+  takeLast(numToTake: number): ICW<T> {
+    return new ICW(takeLast(this, numToTake));
+  }
 
   drain(): Promise<void> {
     return drain(this);

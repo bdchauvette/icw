@@ -30,6 +30,7 @@ export { skipWhile } from "./skipWhile";
 export { some } from "./some";
 export { tail } from "./tail";
 export { take } from "./take";
+export { takeLast } from "./takeLast";
 export { takeWhile } from "./takeWhile";
 export { tap } from "./tap";
 export { toArray } from "./toArray";

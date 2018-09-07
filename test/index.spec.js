@@ -29,6 +29,7 @@ test.each([
   "some",
   "tail",
   "take",
+  "takeLast",
   "takeWhile",
   "tap",
   "toArray",
