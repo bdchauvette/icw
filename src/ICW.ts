@@ -73,8 +73,8 @@ export class ICW<T> implements AsyncIterableIterator<T> {
 
   // plop: Prototype methods
 
-  concat(): ICW<T> {
-    return new ICW(concat(this));
+  concat<U>(...values: U[]): ICW<T | U> {
+    return new ICW(concat(this, ...values));
   }
 
   flatMap<U>(
