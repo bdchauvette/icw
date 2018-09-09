@@ -15,6 +15,7 @@ import { forEach } from "./forEach";
 import { from } from "./from";
 import { includes } from "./includes";
 import { indexOf } from "./indexOf";
+import { intersperse } from "./intersperse";
 import { last } from "./last";
 import { lastIndexOf } from "./lastIndexOf";
 import { map } from "./map";
@@ -72,6 +73,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // plop: Prototype methods
+
+  intersperse<U>(separator: U): ICW<T | U> {
+    return new ICW(intersperse(this, separator));
+  }
 
   concat<U>(...values: U[]): ICW<T | U> {
     return new ICW(concat(this, ...values));

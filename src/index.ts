@@ -20,6 +20,7 @@ export { from } from "./from";
 export { head } from "./head";
 export { includes } from "./includes";
 export { indexOf } from "./indexOf";
+export { intersperse } from "./intersperse";
 export { last } from "./last";
 export { lastIndexOf } from "./lastIndexOf";
 export { map } from "./map";
