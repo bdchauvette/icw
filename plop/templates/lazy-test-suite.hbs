@@ -40,7 +40,7 @@ export function run{{properCase name}}Suite({{name}}) {
 
     await drain(
       {{name}}(of("foo"), (...args) => {
-        expect(args).toHaveLength({{calbackLength}});
+        expect(args).toHaveLength({{callbackLength}});
       })
     );
   });
