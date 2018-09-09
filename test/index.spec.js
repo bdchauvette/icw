@@ -19,6 +19,8 @@ test.each([
   "head",
   "includes",
   "indexOf",
+  "intersperse",
+  "join",
   "last",
   "lastIndexOf",
   "map",
