@@ -1,5 +1,6 @@
 // plop: Imports
 import { IterableLike } from "./IterableLike";
+import { concat } from "./concat";
 import { drain } from "./drain";
 import { every } from "./every";
 import { filter } from "./filter";
@@ -71,6 +72,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // plop: Prototype methods
+
+  concat(): ICW<T> {
+    return new ICW(concat(this));
+  }
 
   flatMap<U>(
     callback: (value: T, index?: number) => U | Promise<U>,
