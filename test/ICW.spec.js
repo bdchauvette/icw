@@ -19,6 +19,7 @@ import { runHeadSuite } from "./suites/runHeadSuite";
 import { runIncludesSuite } from "./suites/runIncludesSuite";
 import { runIndexOfSuite } from "./suites/runIndexOfSuite";
 import { runIntersperseSuite } from "./suites/runIntersperseSuite";
+import { runJoinSuite } from "./suites/runJoinSuite";
 import { runLastIndexOfSuite } from "./suites/runLastIndexOfSuite";
 import { runLastSuite } from "./suites/runLastSuite";
 import { runMapSuite } from "./suites/runMapSuite";
@@ -144,6 +145,7 @@ describe.each`
   ${"includes"}      | ${runIncludesSuite}
   ${"indexOf"}       | ${runIndexOfSuite}
   ${"intersperse"}   | ${runIntersperseSuite}
+  ${"join"}          | ${runJoinSuite}
   ${"last"}          | ${runLastSuite}
   ${"lastIndexOf"}   | ${runLastIndexOfSuite}
   ${"map"}           | ${runMapSuite}

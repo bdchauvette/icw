@@ -16,6 +16,7 @@ import { from } from "./from";
 import { includes } from "./includes";
 import { indexOf } from "./indexOf";
 import { intersperse } from "./intersperse";
+import { join } from "./join";
 import { last } from "./last";
 import { lastIndexOf } from "./lastIndexOf";
 import { map } from "./map";
@@ -73,6 +74,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // plop: Prototype methods
+
+  join(separator: string): Promise<string> {
+    return join(this, separator);
+  }
 
   intersperse<U>(separator: U): ICW<T | U> {
     return new ICW(intersperse(this, separator));

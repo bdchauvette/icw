@@ -20,6 +20,7 @@ test.each([
   "includes",
   "indexOf",
   "intersperse",
+  "join",
   "last",
   "lastIndexOf",
   "map",
