@@ -79,17 +79,39 @@ export function runFlatMapSuite(flatMap) {
 
   describe.each`
     callbackType | callback
+    ${"async"}   | ${async n => [n * 2, n ** 2]}
+    ${"sync"}    | ${n => [n * 2, n ** 2]}
+  `("$callbackType callback", async ({ callback }) => {
+    test.each`
+      inputType          | iterableLike              | expectedValues
+      ${"AsyncIterable"} | ${of(1, 2, 3)}            | ${[2, 1, 4, 4, 6, 9]}
+      ${"Iterable"}      | ${[1, 2, 3]}              | ${[2, 1, 4, 4, 6, 9]}
+      ${"ArrayLike"}     | ${new ArrayLike(1, 2, 3)} | ${[2, 1, 4, 4, 6, 9]}
+      ${"Promise"}       | ${Promise.resolve(1)}     | ${[2, 1]}
+    `(
+      "maps and flattens input one level deep",
+      async ({ iterableLike, expectedValues }) => {
+        expect.assertions(expectedValues.length);
+        for await (let value of flatMap(iterableLike, callback)) {
+          expect(value).toStrictEqual(expectedValues.shift());
+        }
+      }
+    );
+  });
+
+  describe.each`
+    callbackType | callback
     ${"async"}   | ${toUpperCase}
     ${"sync"}    | ${toUpperCaseSync}
   `("$callbackType callback", async ({ callback }) => {
     test.each`
-      inputType          | iterableLike                          | expectedValues
-      ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${["F", "O", "O", "B", "A", "R", "B", "A", "Z"]}
-      ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${["F", "O", "O", "B", "A", "R", "B", "A", "Z"]}
-      ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${["F", "O", "O", "B", "A", "R", "B", "A", "Z"]}
-      ${"Promise"}       | ${Promise.resolve("foo")}             | ${["F", "O", "O"]}
+      inputType          | iterableLike              | expectedValues
+      ${"AsyncIterable"} | ${of("foo")}              | ${["FOO"]}
+      ${"Iterable"}      | ${["foo"]}                | ${["FOO"]}
+      ${"ArrayLike"}     | ${new ArrayLike("foo")}   | ${["FOO"]}
+      ${"Promise"}       | ${Promise.resolve("foo")} | ${["FOO"]}
     `(
-      "maps and flattens input one level deep",
+      "maps strings as a single value",
       async ({ iterableLike, expectedValues }) => {
         expect.assertions(expectedValues.length);
         for await (let value of flatMap(iterableLike, callback)) {

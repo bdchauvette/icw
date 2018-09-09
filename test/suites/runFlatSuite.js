@@ -64,4 +64,20 @@ export function runFlatSuite(flat) {
       }
     }
   );
+
+  test.each`
+    inputType          | iterableLike              | expectedValues
+    ${"AsyncIterable"} | ${of("foo")}              | ${["foo"]}
+    ${"Iterable"}      | ${["foo"]}                | ${["foo"]}
+    ${"ArrayLike"}     | ${new ArrayLike("foo")}   | ${["foo"]}
+    ${"Promise"}       | ${Promise.resolve("foo")} | ${["foo"]}
+  `(
+    "does not flatten string values from $inputType input",
+    async ({ iterableLike, depth, expectedValues }) => {
+      expect.assertions(expectedValues.length);
+      for await (let value of flat(iterableLike, depth)) {
+        expect(value).toStrictEqual(expectedValues.shift());
+      }
+    }
+  );
 }

@@ -53,4 +53,24 @@ export function runConcatSuite(concat) {
       }
     }
   );
+
+  test.each`
+    inputType          | iterableLike
+    ${"AsyncIterable"} | ${of("foo")}
+    ${"Iterable"}      | ${["foo"]}
+    ${"ArrayLike"}     | ${new ArrayLike("foo")}
+    ${"Promise"}       | ${Promise.resolve("foo")}
+  `(
+    "treats strings as single values when concatenating to $inputType input",
+    async ({ iterableLike }) => {
+      expect.assertions(3);
+
+      let newValues = ["bar", "baz"];
+      let expectedValues = ["foo", "bar", "baz"];
+
+      for await (let value of concat(iterableLike, ...newValues)) {
+        expect(value).toStrictEqual(expectedValues.shift());
+      }
+    }
+  );
 }
