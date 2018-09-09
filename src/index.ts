@@ -4,6 +4,7 @@ export { ICW } from "./ICW";
 export { IterableLike } from "./IterableLike";
 
 // plop: Functions
+export { concat } from "./concat";
 export { drain } from "./drain";
 export { every } from "./every";
 export { filter } from "./filter";

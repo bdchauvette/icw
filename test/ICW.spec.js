@@ -2,6 +2,7 @@ import { ICW } from "../src/ICW";
 import { of } from "../src/of";
 
 // plop: Import suites
+import { runConcatSuite } from "./suites/runConcatSuite";
 import { runDrainSuite } from "./suites/runDrainSuite";
 import { runEverySuite } from "./suites/runEverySuite";
 import { runFilterSuite } from "./suites/runFilterSuite";
@@ -126,6 +127,7 @@ describe('prototype method "throw"', () => {
 
 describe.each`
   prototypeMethod    | runSuite
+  ${"concat"}        | ${runConcatSuite}
   ${"drain"}         | ${runDrainSuite}
   ${"every"}         | ${runEverySuite}
   ${"filter"}        | ${runFilterSuite}
