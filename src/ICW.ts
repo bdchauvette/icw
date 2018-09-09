@@ -8,6 +8,7 @@ import { findIndex } from "./findIndex";
 import { findLast } from "./findLast";
 import { findLastIndex } from "./findLastIndex";
 import { first } from "./first";
+import { flat } from "./flat";
 import { forEach } from "./forEach";
 import { from } from "./from";
 import { includes } from "./includes";
@@ -69,6 +70,10 @@ export class ICW<T> implements AsyncIterableIterator<T> {
   }
 
   // plop: Prototype methods
+
+  flat(depth = 1): ICW<T> {
+    return new ICW(flat(this, depth));
+  }
 
   skipLast(numToSkip: number): ICW<T> {
     return new ICW(skipLast(this, numToSkip));

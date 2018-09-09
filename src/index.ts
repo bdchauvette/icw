@@ -12,6 +12,7 @@ export { findIndex } from "./findIndex";
 export { findLast } from "./findLast";
 export { findLastIndex } from "./findLastIndex";
 export { first } from "./first";
+export { flat } from "./flat";
 export { forEach } from "./forEach";
 export { from } from "./from";
 export { head } from "./head";

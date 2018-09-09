@@ -11,6 +11,7 @@ test.each([
   "findLast",
   "findLastIndex",
   "first",
+  "flat",
   "forEach",
   "from",
   "head",

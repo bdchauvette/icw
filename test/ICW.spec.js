@@ -10,6 +10,7 @@ import { runFindLastIndexSuite } from "./suites/runFindLastIndexSuite";
 import { runFindLastSuite } from "./suites/runFindLastSuite";
 import { runFindSuite } from "./suites/runFindSuite";
 import { runFirstSuite } from "./suites/runFirstSuite";
+import { runFlatSuite } from "./suites/runFlatSuite";
 import { runForEachSuite } from "./suites/runForEachSuite";
 import { runFromSuite } from "./suites/runFromSuite";
 import { runHeadSuite } from "./suites/runHeadSuite";
@@ -132,6 +133,7 @@ describe.each`
   ${"findLast"}      | ${runFindLastSuite}
   ${"findLastIndex"} | ${runFindLastIndexSuite}
   ${"first"}         | ${runFirstSuite}
+  ${"flat"}          | ${runFlatSuite}
   ${"forEach"}       | ${runForEachSuite}
   ${"head"}          | ${runHeadSuite}
   ${"includes"}      | ${runIncludesSuite}
