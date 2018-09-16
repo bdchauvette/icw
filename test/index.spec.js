@@ -2,7 +2,6 @@ import * as icw from "../src";
 
 test.each([
   // plop: Exports
-  "ICW",
   "concat",
   "drain",
   "every",
