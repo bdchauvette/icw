@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+process.env.NODE_NO_WARNINGS = 1;
+
 const fs = require("fs").promises;
 const { resolve } = require("path");
 

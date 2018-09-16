@@ -1,7 +1,7 @@
 import { from } from "./from";
 import { IterableLike } from "./IterableLike";
 
-export async function* {{name}}<T>(
+export async function {{name}}<T>(
   {{#if methodHasCallback}}
   iterableLike: IterableLike<T>,
   callback: (value: T, index?: number) => void | Promise<void>,
@@ -9,6 +9,8 @@ export async function* {{name}}<T>(
   {{else}}
   iterableLike: IterableLike<T>
   {{/if}}
-): AsyncIterableIterator<T> {
-  for await (let value of from(iterableLike)) {}
+): Promise<T> {
+  for await (let value of from(iterableLike)) {
+    // TODO: Implement
+  }
 }

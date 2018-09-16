@@ -3,8 +3,8 @@ const sortedAppend = require("./plop/actions/sortedAppend");
 module.exports = plop => {
   plop.setActionType("sortedAppend", sortedAppend);
 
-  plop.setGenerator("New Method", {
-    description: "Adds a new method",
+  plop.setGenerator("New Function", {
+    description: "Adds a new function",
 
     prompts: [
       {
@@ -13,21 +13,17 @@ module.exports = plop => {
         type: "input"
       },
       {
-        name: "methodType",
-        message: "Type?",
+        name: "returnType",
+        message: "Return Type?",
         type: "list",
         choices: [
           {
-            name: "Lazy (e.g. map, filter)",
-            value: "lazy"
+            name: "Iterator (e.g.  filter, map, take)",
+            value: "iterator"
           },
           {
-            name: "Eager (e.g. forEach, toArray)",
-            value: "eager"
-          },
-          {
-            name: "Static (e.g. of, from)",
-            value: "static"
+            name: "Promise (e.g. first, reduce, toArray)",
+            value: "promise"
           }
         ]
       },
@@ -59,24 +55,22 @@ module.exports = plop => {
         {
           type: "add",
           path: "src/{{name}}.ts",
-          templateFile:
-            answers.methodType === "eager"
-              ? "plop/templates/eager-method.hbs"
-              : "plop/templates/lazy-method.hbs"
+          templateFile: {
+            iterator: "plop/templates/iterator-fn.hbs",
+            promise: "plop/templates/promise-fn.hbs"
+          }[answers.returnType]
         },
         {
           type: "add",
           path: "test/{{name}}.spec.js",
-          templateFile: "plop/templates/standalone-test.hbs"
-        },
-        {
-          type: "add",
-          path: "test/suites/run{{properCase name}}Suite.js",
-          templateFile: `plop/templates/${answers.methodType}-test-suite.hbs`
+          templateFile: {
+            iterator: "plop/templates/iterator-fn-spec.hbs",
+            promise: "plop/templates/promise-fn-spec.hbs"
+          }[answers.returnType]
         }
       );
 
-      // Add new method to index.ts
+      // Add exports to index.ts
       actions.push(
         {
           type: "sortedAppend",
@@ -89,47 +83,6 @@ module.exports = plop => {
           path: "test/index.spec.js",
           startPattern: "plop: Exports",
           template: '  "{{ name }}",'
-        }
-      );
-
-      // ICW
-      actions.push(
-        {
-          type: "sortedAppend",
-          path: "src/ICW.ts",
-          startPattern: "plop: Imports",
-          template: 'import { {{name}} } from "./{{name}}";'
-        },
-        {
-          type: "append",
-          path: "src/ICW.ts",
-          pattern:
-            answers.methodType === "static"
-              ? "plop: Static methods\n"
-              : "plop: Prototype methods\n",
-          templateFile: {
-            eager: "plop/templates/icw-eager-method.hbs",
-            lazy: "plop/templates/icw-lazy-method.hbs",
-            static: "plop/templates/icw-lazy-method.hbs"
-          }[answers.methodType]
-        },
-        {
-          type: "sortedAppend",
-          path: "test/ICW.spec.js",
-          startPattern: "plop: Import suites",
-          template:
-            'import { run{{properCase name}}Suite } from "./suites/run{{properCase name}}Suite";'
-        },
-        {
-          type: "sortedAppend",
-          path: "test/ICW.spec.js",
-          startPattern:
-            answers.methodType === "static"
-              ? "staticMethod\\s+\\| runSuite"
-              : "prototypeMethod\\s+\\| runSuite",
-          endPattern: '`\\(".*? method',
-          // eslint-disable-next-line no-template-curly-in-string
-          template: '  ${"{{name}}"} | ${run{{properCase name}}Suite}'
         }
       );
 
