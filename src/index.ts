@@ -1,5 +1,3 @@
-export { ICW } from "./ICW";
-
 // Types
 export { IterableLike } from "./IterableLike";
 
