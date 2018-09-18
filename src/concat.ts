@@ -1,11 +1,11 @@
 import { flat } from "./flat";
-import { from } from "./from";
+import { toIterable } from "./__internal__/toIterable";
 import { IterableLike } from "./IterableLike";
 
 export async function* concat<T, U>(
   iterableLike: IterableLike<T>,
   ...values: U[]
 ): AsyncIterableIterator<T | U> {
-  yield* from(iterableLike);
+  yield* toIterable(iterableLike);
   yield* flat(values, 1);
 }

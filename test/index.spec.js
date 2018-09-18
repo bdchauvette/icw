@@ -14,7 +14,6 @@ test.each([
   "flat",
   "flatMap",
   "forEach",
-  "from",
   "head",
   "includes",
   "indexOf",

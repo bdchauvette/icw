@@ -1,4 +1,4 @@
-import { from } from "./from";
+import { toIterable } from "./__internal__/toIterable";
 import { IterableLike } from "./IterableLike";
 
 export async function* take<T>(
@@ -6,7 +6,7 @@ export async function* take<T>(
   numToTake: number
 ): AsyncIterableIterator<T> {
   let numTaken = 0;
-  for await (let value of from(iterableLike)) {
+  for await (let value of toIterable(iterableLike)) {
     numTaken += 1;
     if (numTaken > numToTake) return;
     yield value;

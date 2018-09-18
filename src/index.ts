@@ -14,7 +14,6 @@ export { first } from "./first";
 export { flat } from "./flat";
 export { flatMap } from "./flatMap";
 export { forEach } from "./forEach";
-export { from } from "./from";
 export { head } from "./head";
 export { includes } from "./includes";
 export { indexOf } from "./indexOf";

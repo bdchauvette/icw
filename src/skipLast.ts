@@ -1,4 +1,4 @@
-import { from } from "./from";
+import { toIterable } from "./__internal__/toIterable";
 import { IterableLike } from "./IterableLike";
 
 export async function* skipLast<T>(
@@ -7,7 +7,7 @@ export async function* skipLast<T>(
 ): AsyncIterableIterator<T> {
   let buffer = [];
 
-  for await (let value of from(iterableLike)) {
+  for await (let value of toIterable(iterableLike)) {
     buffer.push(value);
     if (buffer.length > numToSkip) yield buffer.shift() as T;
   }

@@ -1,9 +1,9 @@
 import { skip } from "./skip";
 import { IterableLike } from "./IterableLike";
-import { from } from "./from";
+import { toIterable } from "./__internal__/toIterable";
 
 export function tail<T>(
   iterableLike: IterableLike<T>
 ): AsyncIterableIterator<T> {
-  return skip(from(iterableLike), 1);
+  return skip(toIterable(iterableLike), 1);
 }

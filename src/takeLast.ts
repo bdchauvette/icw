@@ -1,4 +1,4 @@
-import { from } from "./from";
+import { toIterable } from "./__internal__/toIterable";
 import { IterableLike } from "./IterableLike";
 
 export async function* takeLast<T>(
@@ -9,7 +9,7 @@ export async function* takeLast<T>(
 
   let buffer = [];
 
-  for await (let value of from(iterableLike)) {
+  for await (let value of toIterable(iterableLike)) {
     buffer.push(value);
     if (buffer.length > numToTake) buffer.shift();
   }

@@ -1,5 +1,5 @@
 import { isString } from "./__internal__/isString";
-import { from } from "./from";
+import { toIterable } from "./__internal__/toIterable";
 import { IterableLike } from "./IterableLike";
 
 export async function last<T>(
@@ -11,6 +11,6 @@ export async function last<T>(
   }
 
   let lastValue = undefined;
-  for await (let value of from(iterableLike)) lastValue = value;
+  for await (let value of toIterable(iterableLike)) lastValue = value;
   return lastValue;
 }
