@@ -6,6 +6,16 @@ import { drain } from "../src/drain";
 import { of } from "../src/of";
 import { ArrayLike } from "./helpers/ArrayLike";
 
+test("rejects on non-IterableLike input", async () => {
+  expect.assertions(2);
+  try {
+    await {{name}}(null).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(TypeError);
+    expect(error.message).toMatchInlineSnapshot();
+  }
+});
+
 test("returns same async iterator", () => {
   expect.assertions(1);
   {{#if methodHasCallback}}
