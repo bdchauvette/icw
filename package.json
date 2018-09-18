@@ -1,7 +1,7 @@
 {
   "name": "@icw/icw",
   "version": "0.1.0",
-  "description": "Stream-like async iterable utility library",
+  "description": "Async iteration utility library",
   "license": "0BSD",
   "author": "Benjamin Chauvette <bdchauvette@gmail.com>",
   "homepage": "https://github.com/icwjs/icw#readme",
@@ -10,12 +10,14 @@
   "keywords": [
     "async",
     "asynchronous",
+    "frp",
+    "iterable",
     "iteration",
     "iterator",
-    "iterable",
-    "stream",
+    "promise",
     "reactive",
-    "frp"
+    "stream",
+    "utility"
   ],
   "engines": {
     "node": ">=10.0.0"
