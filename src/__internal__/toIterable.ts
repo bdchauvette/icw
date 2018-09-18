@@ -12,7 +12,7 @@ export function toIterable<T>(
   if (isArrayLike<T>(iterableLike)) return Array.from(iterableLike);
   if (isPromise<T>(iterableLike)) return fromPromise(iterableLike);
 
-  throw new Error(
+  throw new TypeError(
     "Must provide an iterable, async iterable, Array-like value, or a Promise."
   );
 }

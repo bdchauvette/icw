@@ -3,6 +3,34 @@ import { skip } from "../src/skip";
 import { of } from "../src/of";
 import { ArrayLike } from "./helpers/ArrayLike";
 
+test("rejects on non-IterableLike input", async () => {
+  expect.assertions(2);
+  try {
+    await skip(null, 1).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(TypeError);
+    expect(error.message).toMatchInlineSnapshot(
+      `"Must provide an iterable, async iterable, Array-like value, or a Promise."`
+    );
+  }
+});
+
+test.each`
+  description      | numToSkip
+  ${"null"}        | ${null}
+  ${"undefined"}   | ${undefined}
+  ${"non-numeric"} | ${"-1"}
+  ${"< 0"}         | ${-1}
+`("rejects when targetIndex is $description", async ({ numToSkip }) => {
+  expect.assertions(2);
+  try {
+    await skip(of("foo"), numToSkip).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(RangeError);
+    expect(error.message).toMatchSnapshot();
+  }
+});
+
 test("returns same async iterator", () => {
   expect.assertions(1);
   expect(skip(of(), 1)).toReturnSameAsyncIterator();

@@ -132,7 +132,13 @@ export function pipeline<A extends any[], R = any>(
   fn1: (...args: A) => any,
   ...fns: Function[]
 ): (...args: A) => R {
-  if (!isFunction(fn1)) throw new Error("Must provide at least one function");
+  [fn1, ...fns].forEach(
+    (fn, index): void => {
+      if (!isFunction(fn)) {
+        throw new TypeError(`Argument ${index} is not a function`);
+      }
+    }
+  );
 
   return function runPipeline(...args: A): R {
     let result = fn1(...args);

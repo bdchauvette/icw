@@ -3,6 +3,18 @@ import { concat } from "../src/concat";
 import { of } from "../src/of";
 import { ArrayLike } from "./helpers/ArrayLike";
 
+test("rejects on non-IterableLike input", async () => {
+  expect.assertions(2);
+  try {
+    await concat(null).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(TypeError);
+    expect(error.message).toMatchInlineSnapshot(
+      `"Must provide an iterable, async iterable, Array-like value, or a Promise."`
+    );
+  }
+});
+
 test("returns same async iterator", () => {
   expect.assertions(1);
   expect(concat(of())).toReturnSameAsyncIterator();

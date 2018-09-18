@@ -3,6 +3,34 @@ import { takeLast } from "../src/takeLast";
 import { of } from "../src/of";
 import { ArrayLike } from "./helpers/ArrayLike";
 
+test("rejects on non-IterableLike input", async () => {
+  expect.assertions(2);
+  try {
+    await takeLast(null, 1).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(TypeError);
+    expect(error.message).toMatchInlineSnapshot(
+      `"Must provide an iterable, async iterable, Array-like value, or a Promise."`
+    );
+  }
+});
+
+test.each`
+  description      | numToTake
+  ${"null"}        | ${null}
+  ${"undefined"}   | ${undefined}
+  ${"non-numeric"} | ${"-1"}
+  ${"< 0"}         | ${-1}
+`("rejects when targetIndex is $description", async ({ numToTake }) => {
+  expect.assertions(2);
+  try {
+    await takeLast(of("foo"), numToTake).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(RangeError);
+    expect(error.message).toMatchSnapshot();
+  }
+});
+
 test("returns same async iterator", () => {
   expect.assertions(1);
   expect(takeLast(of())).toReturnSameAsyncIterator();
@@ -15,7 +43,7 @@ test("returns a closeable iterator", async () => {
 
 test("lazily consumes provided IterableLike input", async () => {
   expect.assertions(1);
-  await expect(_ => takeLast(_)).toLazilyConsumeWrappedAsyncIterable();
+  await expect(_ => takeLast(_, 1)).toLazilyConsumeWrappedAsyncIterable();
 });
 
 test.each`
@@ -75,22 +103,6 @@ test.each`
   async ({ iterableLike }) => {
     expect.assertions(1);
     let iterator = takeLast(iterableLike, 0);
-    let result = await iterator.next();
-    expect(result.done).toBe(true);
-  }
-);
-
-test.each`
-  inputType          | iterableLike
-  ${"AsyncIterable"} | ${of("foo", "bar", "baz")}
-  ${"Iterable"}      | ${["foo", "bar", "baz"]}
-  ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")}
-  ${"Promise"}       | ${Promise.resolve("foo")}
-`(
-  "yields no values from $inputType input when `numToTake` is negative",
-  async ({ iterableLike }) => {
-    expect.assertions(1);
-    let iterator = takeLast(iterableLike, Number.NEGATIVE_INFINITY);
     let result = await iterator.next();
     expect(result.done).toBe(true);
   }

@@ -35,7 +35,7 @@
     "no-prototype-builtins": "error",
     "no-template-curly-in-string": "error",
     "no-undef": "error",
-    "no-unused-vars": "error",
+    "no-unused-vars": ["error", { "varsIgnorePattern": "^_.*" }],
     "no-use-before-define": ["error", { "functions": false }],
 
     // Best practices

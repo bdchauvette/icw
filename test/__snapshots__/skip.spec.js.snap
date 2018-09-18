@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`rejects when targetIndex is "< 0" 1`] = `"numToSkip must be a non-negative number"`;
+
+exports[`rejects when targetIndex is "non-numeric" 1`] = `"numToSkip must be a non-negative number"`;
+
+exports[`rejects when targetIndex is "null" 1`] = `"numToSkip must be a non-negative number"`;
+
+exports[`rejects when targetIndex is "undefined" 1`] = `"numToSkip must be a non-negative number"`;

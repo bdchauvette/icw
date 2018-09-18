@@ -8,7 +8,7 @@ import { toArray } from "../src/toArray";
 test("throws an error when called with a non-function argument", () => {
   expect.assertions(1);
   expect(() => pipeline()).toThrowErrorMatchingInlineSnapshot(
-    `"Must provide at least one function"`
+    `"Argument 0 is not a function"`
   );
 });
 

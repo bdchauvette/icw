@@ -3,19 +3,47 @@ import { skipLast } from "../src/skipLast";
 import { of } from "../src/of";
 import { ArrayLike } from "./helpers/ArrayLike";
 
+test("rejects on non-IterableLike input", async () => {
+  expect.assertions(2);
+  try {
+    await skipLast(null, 1).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(TypeError);
+    expect(error.message).toMatchInlineSnapshot(
+      `"Must provide an iterable, async iterable, Array-like value, or a Promise."`
+    );
+  }
+});
+
+test.each`
+  description      | numToSkip
+  ${"null"}        | ${null}
+  ${"undefined"}   | ${undefined}
+  ${"non-numeric"} | ${"-1"}
+  ${"< 0"}         | ${-1}
+`("rejects when targetIndex is $description", async ({ numToSkip }) => {
+  expect.assertions(2);
+  try {
+    await skipLast(of("foo"), numToSkip).next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(RangeError);
+    expect(error.message).toMatchSnapshot();
+  }
+});
+
 test("returns same async iterator", () => {
   expect.assertions(1);
-  expect(skipLast(of())).toReturnSameAsyncIterator();
+  expect(skipLast(of(), 1)).toReturnSameAsyncIterator();
 });
 
 test("returns a closeable iterator", async () => {
   expect.assertions(1);
-  await expect(skipLast(of())).toBeCloseableAsyncIterator();
+  await expect(skipLast(of(), 1)).toBeCloseableAsyncIterator();
 });
 
 test("lazily consumes provided IterableLike input", async () => {
   expect.assertions(1);
-  await expect(_ => skipLast(_)).toLazilyConsumeWrappedAsyncIterable();
+  await expect(_ => skipLast(_, 1)).toLazilyConsumeWrappedAsyncIterable();
 });
 
 test.each`
@@ -82,22 +110,6 @@ test.each`
   async ({ iterableLike, expectedValues }) => {
     expect.assertions(expectedValues.length);
     for await (let value of skipLast(iterableLike, 0)) {
-      expect(value).toStrictEqual(expectedValues.shift());
-    }
-  }
-);
-
-test.each`
-  inputType          | iterableLike                          | expectedValues
-  ${"AsyncIterable"} | ${of("foo", "bar", "baz")}            | ${["foo", "bar", "baz"]}
-  ${"Iterable"}      | ${["foo", "bar", "baz"]}              | ${["foo", "bar", "baz"]}
-  ${"ArrayLike"}     | ${new ArrayLike("foo", "bar", "baz")} | ${["foo", "bar", "baz"]}
-  ${"Promise"}       | ${Promise.resolve("foo")}             | ${["foo"]}
-`(
-  "yields no values from $inputType input when `numToSkip` is negative",
-  async ({ iterableLike, expectedValues }) => {
-    expect.assertions(expectedValues.length);
-    for await (let value of skipLast(iterableLike, Number.NEGATIVE_INFINITY)) {
       expect(value).toStrictEqual(expectedValues.shift());
     }
   }

@@ -3,6 +3,18 @@ import { last } from "../src/last";
 import { of } from "../src/of";
 import { ArrayLike } from "./helpers/ArrayLike";
 
+test("rejects on non-IterableLike input", async () => {
+  expect.assertions(2);
+  try {
+    await last(null);
+  } catch (error) {
+    expect(error).toBeInstanceOf(TypeError);
+    expect(error.message).toMatchInlineSnapshot(
+      `"Must provide an iterable, async iterable, Array-like value, or a Promise."`
+    );
+  }
+});
+
 test("eagerly consumes wrapped IterableLike input", async () => {
   expect.assertions(1);
   await expect(_ => last(_)).toEagerlyConsumeWrappedAsyncIterable();

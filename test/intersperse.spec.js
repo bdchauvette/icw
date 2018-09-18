@@ -3,6 +3,18 @@ import { intersperse } from "../src/intersperse";
 import { of } from "../src/of";
 import { ArrayLike } from "./helpers/ArrayLike";
 
+test("rejects on non-IterableLike input", async () => {
+  expect.assertions(2);
+  try {
+    await intersperse(null, ",").next();
+  } catch (error) {
+    expect(error).toBeInstanceOf(TypeError);
+    expect(error.message).toMatchInlineSnapshot(
+      `"Must provide an iterable, async iterable, Array-like value, or a Promise."`
+    );
+  }
+});
+
 test("returns same async iterator", () => {
   expect.assertions(1);
   expect(intersperse(of())).toReturnSameAsyncIterator();
