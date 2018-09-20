@@ -39,6 +39,7 @@ test.each([
   "tap",
   "toArray",
   "uniq",
+  "uniqBy",
   "withIndex"
   // plop-end
 ])("exports %s", async exportName => {

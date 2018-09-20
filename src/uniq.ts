@@ -1,15 +1,12 @@
-import { toIterable } from "./__internal__/toIterable";
 import { IterableLike } from "./IterableLike";
+import { uniqBy } from "./uniqBy";
 
-export async function* uniq<T>(
+export function uniq<T>(
   iterableLike: IterableLike<T>
 ): AsyncIterableIterator<T> {
-  let seenValues = new Set();
+  return uniqBy(iterableLike, identity);
+}
 
-  for await (let value of toIterable(iterableLike)) {
-    if (!seenValues.has(value)) {
-      seenValues.add(value);
-      yield value;
-    }
-  }
+function identity<T>(value: T): T {
+  return value;
 }
