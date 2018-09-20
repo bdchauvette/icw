@@ -1,4 +1,4 @@
-import { from } from "./from";
+import { toIterable } from "./__internal__/toIterable";
 import { IterableLike } from "./IterableLike";
 
 export async function* {{name}}<T>(
@@ -10,7 +10,7 @@ export async function* {{name}}<T>(
   iterableLike: IterableLike<T>
   {{/if}}
 ): AsyncIterableIterator<T> {
-  for await (let value of from(iterableLike)) {
+  for await (let value of toIterable(iterableLike)) {
     // TODO: Implement
   }
 }
