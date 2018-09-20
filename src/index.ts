@@ -38,5 +38,6 @@ export { takeLast } from "./takeLast";
 export { takeWhile } from "./takeWhile";
 export { tap } from "./tap";
 export { toArray } from "./toArray";
+export { uniq } from "./uniq";
 export { withIndex } from "./withIndex";
 // plop-end
