@@ -38,6 +38,9 @@ test.each([
   "takeWhile",
   "tap",
   "toArray",
+  "uniq",
+  "uniqBy",
+  "uniqWith",
   "withIndex"
   // plop-end
 ])("exports %s", async exportName => {
