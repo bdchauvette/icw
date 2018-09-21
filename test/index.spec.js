@@ -40,6 +40,7 @@ test.each([
   "toArray",
   "uniq",
   "uniqBy",
+  "uniqWith",
   "withIndex"
   // plop-end
 ])("exports %s", async exportName => {

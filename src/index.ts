@@ -40,5 +40,6 @@ export { tap } from "./tap";
 export { toArray } from "./toArray";
 export { uniq } from "./uniq";
 export { uniqBy } from "./uniqBy";
+export { uniqWith } from "./uniqWith";
 export { withIndex } from "./withIndex";
 // plop-end
