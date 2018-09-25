@@ -41,7 +41,8 @@ test.each([
   "uniq",
   "uniqBy",
   "uniqWith",
-  "withIndex"
+  "withIndex",
+  "zip"
   // plop-end
 ])("exports %s", async exportName => {
   expect.assertions(1);

@@ -42,4 +42,5 @@ export { uniq } from "./uniq";
 export { uniqBy } from "./uniqBy";
 export { uniqWith } from "./uniqWith";
 export { withIndex } from "./withIndex";
+export { zip } from "./zip";
 // plop-end
