@@ -128,7 +128,10 @@
 
         // eslint-plugin-typescript
         "typescript/class-name-casing": "error",
-        "typescript/explicit-function-return-type": "error",
+        "typescript/explicit-function-return-type": [
+          "error",
+          { "allowExpressions": true }
+        ],
         "typescript/no-angle-bracket-type-assertion": "error",
         "typescript/no-inferrable-types": "error",
         "typescript/no-parameter-properties": "error",
