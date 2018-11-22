@@ -5,7 +5,7 @@ const config = {
   moduleFileExtensions: ["ts", "js"],
 
   transform: { "^.+\\.(ts|js)$": "ts-jest" },
-  globals: { "ts-jest": { tsConfigFile: "tsconfig.test.json" } },
+  globals: { "ts-jest": { tsConfig: "tsconfig.test.json" } },
 
   testEnvironment: "node",
   testURL: "http://localhost",
